@@ -158,26 +158,23 @@ ul{list-style:none;}
   .modal .input-field { padding: 8px 12px; font-size: 14px; }
   
   /* Set table to fit exactly 100% of the screen (One Page) */
-  .w-table { min-width: 100%; table-layout: auto; }
-  .w-table th, .w-table td { padding: 6px 3px; font-size: 11px; }
+  .w-table { min-width: 100%; table-layout: fixed; width: 100%; }
+  .w-table th, .w-table td { padding: 8px 6px; font-size: 12px; }
   
   /* Day column */
-  .t-day-block { gap: 4px; }
-  .t-day-num { font-size: 13px; width: auto; }
-  .t-day-name { font-size: 9px; text-transform: uppercase; }
+  .t-day-block { gap: 4px; justify-content: center; }
+  .t-day-num { font-size: 14px; width: auto; font-weight: 700; }
   
   /* Value blocks */
-  .t-val-block { padding: 4px 4px; min-height: 40px; border-radius: 6px; }
-  .t-val-green, .t-val-red { font-size: 11px; }
-  .t-sub { font-size: 8px; margin-top: 0; }
-  .t-input { height: 40px; font-size: 11px; border-radius: 6px; padding: 0 4px; }
+  .t-val-block { padding: 4px 6px; min-height: 36px; border-radius: 6px; }
+  .t-val-icon-circle { width: 20px; height: 20px; font-size: 10px; margin-right: 4px; }
+  .t-val-text { font-size: 12px; }
+  .t-input { height: 36px; font-size: 12px; border-radius: 6px; padding: 0 4px; }
   
   /* Columns widths */
-  .w-col-dia { width: 12%; }
-  .w-col-ent { width: 25%; }
-  .w-col-sai { width: 25%; }
-  .w-col-sal { width: 22%; font-size: 11px !important; }
-  .w-col-act { width: 16%; }
+  .w-col-dia { width: 15%; }
+  .w-col-val { width: 50%; }
+  .w-col-sal { width: 35%; font-size: 12px !important; }
   
   .btn-sm { padding: 6px 4px; font-size: 9px; border-radius: 4px; }
 }
@@ -301,55 +298,112 @@ ul{list-style:none;}
 .week-nav-title { font-size: 16px; font-weight: 600; }
 .week-nav-sub { font-size: 12px; color: var(--text-3); }
 
-.table-wrapper { background: var(--bg-card); border-radius: var(--r-lg); border: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.w-table { width: 100%; border-collapse: collapse; text-align: left; }
-.w-table th { padding: 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
-.w-table td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table-wrapper { background: var(--bg-card); border-radius: var(--r-lg); border: 1px solid var(--border); overflow-x: hidden; }
+.w-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
+.w-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
+.w-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .w-table tr:last-child td { border-bottom: none; }
 .w-table tr:hover td { background: var(--bg-card-hover); }
-.w-table tr.today td { background: rgba(0, 113, 227, 0.04); }
 
 /* Table Columns configuration */
-.w-col-dia { width: 15%; }
-.w-col-ent { width: 25%; position: relative; }
-.w-col-sai { width: 25%; position: relative; }
-.w-col-sal { width: 20%; font-weight: 700; text-align: right; }
-.w-col-act { width: 15%; text-align: right; }
+.w-col-dia { width: 15%; text-align: center; }
+.w-col-val { width: 50%; position: relative; }
+.w-col-sal { width: 35%; font-weight: 700; text-align: right; }
 
-.t-day-block { display: flex; align-items: center; gap: 8px; }
-.t-day-num { font-size: 18px; font-weight: 700; width: 24px; text-align: center; }
-.t-day-name { font-size: 13px; font-weight: 500; color: var(--text-2); }
-.today .t-day-num { color: var(--apple-blue); }
+.t-day-block { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.t-day-num { font-size: 16px; font-weight: 700; text-align: center; }
 
+/* Day Column backgrounds */
+.dia-today { background-color: #1D1D1F !important; color: #FFFFFF !important; }
+.dia-weekend { background-color: #EFF2F5; color: var(--text-2); }
+
+/* Saldos Column backgrounds */
+.w-table td.sal-zero { background-color: #FCF5E3 !important; color: #6C5E43 !important; }
+.w-table td.sal-pos { background-color: #EAF7EE !important; color: #248A3D !important; }
+.w-table td.sal-neg { background-color: #FCECEB !important; color: #C93400 !important; }
+
+.w-table td.sal-zero-today { background-color: #F5C75D !important; color: #1D1D1F !important; }
+.w-table td.sal-pos-today { background-color: #34C759 !important; color: #FFFFFF !important; }
+.w-table td.sal-neg-today { background-color: #E55C5C !important; color: #FFFFFF !important; }
+
+/* Movimentações Cell styling */
 .t-val-block {
   display: flex;
-  flex-direction: column;
-  background: var(--bg-card);
-  border: 1.5px dashed rgba(0, 113, 227, 0.25);
-  border-radius: 8px;
-  padding: 6px 8px;
-  min-height: 46px;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-start;
+  background: var(--bg-card);
+  border: 1px dashed rgba(0, 113, 227, 0.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-height: 42px;
   transition: var(--t);
   cursor: pointer;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+  width: 100%;
 }
 .t-val-block:hover, .t-val-block:active {
   background: rgba(0, 113, 227, 0.04);
   border-color: var(--apple-blue);
   box-shadow: inset 0 1px 2px rgba(0, 113, 227, 0.05);
 }
-.t-val-green { color: var(--apple-green); font-size: 14px; font-weight: 600; }
-.t-val-red { color: var(--apple-red); font-size: 14px; font-weight: 600; }
-.t-sub { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+
+.t-val-icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  margin-right: 8px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.circle-neutral { background-color: #F2F2F7; color: #AEAEB2; }
+.circle-entrada { background-color: #EAF9EE; color: #34C759; }
+.circle-saida { background-color: #FFEAEA; color: #FF3B30; }
+
+.t-val-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.t-val-text.muted {
+  color: #AEAEB2;
+  font-weight: normal;
+}
 
 /* Inline Edit Input */
 .t-input {
-  width: 100%; height: 46px;
+  width: 100%; height: 42px;
   background: white; border: 1.5px solid var(--apple-blue); border-radius: 8px;
   font-size: 14px; font-weight: 600; text-align: center; padding: 0 6px;
   box-shadow: var(--shadow-sm); outline: none;
+}
+
+/* Header Dropdown styles */
+.weekly-toggle-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 6px 28px 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23515154' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 6px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--t);
+  outline: none;
+}
+.weekly-toggle-select:hover {
+  background-color: #F2F2F7;
+  border-color: rgba(0,0,0,0.15);
 }
 
 .w-summary { display: flex; justify-content: space-between; padding: 16px 20px; background: #FAFAFC; border-top: 1px solid var(--border); font-size: 14px; font-weight: 600; }
@@ -637,10 +691,13 @@ ul{list-style:none;}
             <thead>
               <tr>
                 <th class="w-col-dia">Dia</th>
-                <th class="w-col-ent">Entrada</th>
-                <th class="w-col-sai">Saída</th>
-                <th class="w-col-sal">Saldo do Dia</th>
-                <th class="w-col-act">Ações</th>
+                <th class="w-col-val">
+                  <select id="weekly-type-toggle" onchange="toggleWeeklyViewType(this.value)" class="weekly-toggle-select">
+                    <option value="saida">↗ Saídas</option>
+                    <option value="entrada">↙ Entradas</option>
+                  </select>
+                </th>
+                <th class="w-col-sal">Saldos</th>
               </tr>
             </thead>
             <tbody id="week-tbody">
@@ -993,6 +1050,7 @@ let curDate = new Date();
 let selectedDateForModal = null; 
 let curNewTxType = 'saida';
 let curMdType = 'saida';
+let weeklyViewType = 'saida';
 let chartDash = null; let chartAnnual = null;
 
 // ─── UTILS ───
@@ -1164,6 +1222,15 @@ function renderDash() {
 // ─── SEMANAL (Tabela Refatorada) ───
 function changeWeek(delta) { curDate.setDate(curDate.getDate() + (delta * 7)); renderSemanal(); }
 
+function toggleWeeklyViewType(val) {
+  weeklyViewType = val;
+  const toggle = $('weekly-type-toggle');
+  if (toggle && toggle.value !== val) {
+    toggle.value = val;
+  }
+  renderSemanal();
+}
+
 function renderSemanal() {
   const d = new Date(curDate); const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
@@ -1173,6 +1240,9 @@ function renderSemanal() {
   $('week-label').textContent = `Semana de ${monday.getDate()} a ${sunday.getDate()}`;
   $('week-dates').textContent = `${monday.toLocaleDateString('pt-BR',{month:'short'})} - ${sunday.toLocaleDateString('pt-BR',{month:'short'})}`;
   
+  const toggle = $('weekly-type-toggle');
+  if (toggle) toggle.value = weeklyViewType;
+
   const tbody = $('week-tbody'); tbody.innerHTML = '';
   const insts = getInstances(monday, sunday);
   
@@ -1181,6 +1251,7 @@ function renderSemanal() {
   for(let i=0; i<7; i++) {
     const curD = new Date(monday); curD.setDate(curD.getDate() + i);
     const k = dtKey(curD); const isToday = k === dtKey(new Date());
+    const isSunday = curD.getDay() === 0;
     
     const dayInsts = insts.filter(x => dtKey(x.instanceDate) === k);
     let dEnt = 0, dSai = 0;
@@ -1189,37 +1260,54 @@ function renderSemanal() {
     weekNet += (dEnt - dSai);
     const diaNet = dEnt - dSai;
     
+    const valToShow = weeklyViewType === 'entrada' ? dEnt : dSai;
+    
+    let iconClass = 'circle-neutral';
+    let iconArrow = weeklyViewType === 'entrada' ? '↙' : '↗';
+    
+    if (valToShow > 0) {
+      iconClass = weeklyViewType === 'entrada' ? 'circle-entrada' : 'circle-saida';
+    }
+    
+    const valClass = valToShow === 0 ? 'muted' : '';
+    
+    let diaClass = '';
+    if (isToday) {
+      diaClass = 'dia-today';
+    } else if (isSunday) {
+      diaClass = 'dia-weekend';
+    }
+    
+    let saldoClass = '';
+    if (isToday) {
+      if (diaNet > 0) saldoClass = 'sal-pos-today';
+      else if (diaNet < 0) saldoClass = 'sal-neg-today';
+      else saldoClass = 'sal-zero-today';
+    } else {
+      if (diaNet > 0) saldoClass = 'sal-pos';
+      else if (diaNet < 0) saldoClass = 'sal-neg';
+      else saldoClass = 'sal-zero';
+    }
+    
     const tr = document.createElement('tr');
-    if(isToday) tr.className = 'today';
     
     tr.innerHTML = `
-      <td class="w-col-dia">
+      <td class="w-col-dia ${diaClass}" onclick="openDayDetail('${k}')" style="cursor: pointer;">
         <div class="t-day-block">
           <div class="t-day-num">${curD.getDate()}</div>
-          <div class="t-day-name">${curD.toLocaleDateString('pt-BR',{weekday:'short'})}</div>
         </div>
       </td>
-      <td class="w-col-ent" onclick="showInlineInput(this)">
+      <td class="w-col-val" onclick="event.stopPropagation(); showInlineInput(this)">
         <div class="t-val-block">
-          <div class="t-val-green" style="${dEnt === 0 ? 'color:var(--text-3); font-weight:normal;' : ''}">${dEnt > 0 ? '+ '+fmt(dEnt) : '+ R$ 0,00'}</div>
-          <div class="t-sub">${dayInsts.filter(x=>x.tipo==='entrada').length} lanç.</div>
+          <span class="t-val-icon-circle ${iconClass}">${iconArrow}</span>
+          <span class="t-val-text ${valClass}">${fmt(valToShow)}</span>
         </div>
-        <input type="number" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'entrada', this)" onkeydown="if(event.key==='Enter') this.blur();" />
+        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', '${weeklyViewType}', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
-      <td class="w-col-sai" onclick="showInlineInput(this)">
-        <div class="t-val-block">
-          <div class="t-val-red" style="${dSai === 0 ? 'color:var(--text-3); font-weight:normal;' : ''}">${dSai > 0 ? '− '+fmt(dSai) : '- R$ 0,00'}</div>
-          <div class="t-sub">${dayInsts.filter(x=>x.tipo==='saida').length} lanç.</div>
-        </div>
-        <input type="number" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'saida', this)" onkeydown="if(event.key==='Enter') this.blur();" />
-      </td>
-      <td class="w-col-sal">
-        <div style="color: ${diaNet > 0 ? '#1A7F37' : (diaNet < 0 ? '#D12429' : '#86868B')}; font-weight: 600;">
+      <td class="w-col-sal ${saldoClass}" onclick="openDayDetail('${k}')" style="cursor: pointer;">
+        <div style="font-weight: 600;">
           ${diaNet > 0 ? '+' : (diaNet < 0 ? '−' : '')} ${fmt(Math.abs(diaNet))}
         </div>
-      </td>
-      <td class="w-col-act">
-        <button class="btn btn-sm btn-outline" onclick="openDayDetail('${k}')">Detalhar ⚙️</button>
       </td>
     `;
     tbody.appendChild(tr);
