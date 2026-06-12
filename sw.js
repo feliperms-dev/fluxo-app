@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fluxo-cache-v1';
+const CACHE_NAME = 'fluxo-cache-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -15,9 +15,22 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Network First strategy
   e.respondWith(
-    caches.match(e.request).then(response => {
-      return response || fetch(e.request);
-    })
+    fetch(e.request)
+      .then(response => {
+        // Clone response to put in cache if valid
+        if (response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(e.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // Fallback to cache if offline
+        return caches.match(e.request);
+      })
   );
 });
