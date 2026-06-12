@@ -1,0 +1,18 @@
+{
+  "name": "Fluxo by PlanD",
+  "short_name": "Fluxo",
+  "description": "Controle financeiro pessoal com foco em previsibilidade.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F5F5F7",
+  "theme_color": "#0071E3",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
