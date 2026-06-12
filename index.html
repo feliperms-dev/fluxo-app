@@ -172,9 +172,10 @@ ul{list-style:none;}
   .t-input { height: 36px; font-size: 12px; border-radius: 6px; padding: 0 4px; }
   
   /* Columns widths */
-  .w-col-dia { width: 15%; }
-  .w-col-val { width: 50%; }
-  .w-col-sal { width: 35%; font-size: 12px !important; }
+  .w-col-dia { width: 13%; }
+  .w-col-val { width: 42%; }
+  .w-col-sal { width: 28%; font-size: 12px !important; }
+  .w-col-act { width: 17%; }
   
   .btn-sm { padding: 6px 4px; font-size: 9px; border-radius: 4px; }
 }
@@ -276,6 +277,10 @@ ul{list-style:none;}
 .b-blue { background: rgba(0, 113, 227, 0.15); color: #00448A; }
 .b-gray { background: #E5E5EA; color: var(--text-2); }
 
+.txt-green { color: #248A3D; }
+.txt-red { color: #C93400; }
+.txt-blue { color: #0071E3; }
+
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
 .stat-box { background: var(--bg-card); padding: 20px; border-radius: var(--r-lg); border: 1px solid var(--border); }
 .stat-label { font-size: 13px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
@@ -284,6 +289,7 @@ ul{list-style:none;}
 .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
 .input-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
 .input-field {
+  width: 100%; min-width: 0;
   padding: 12px 16px; font-size: 15px; border-radius: var(--r-md);
   border: 1px solid var(--border); background: var(--bg-card); transition: var(--t);
 }
@@ -306,9 +312,10 @@ ul{list-style:none;}
 .w-table tr:hover td { background: var(--bg-card-hover); }
 
 /* Table Columns configuration */
-.w-col-dia { width: 15%; text-align: center; }
-.w-col-val { width: 50%; position: relative; }
-.w-col-sal { width: 35%; font-weight: 700; text-align: right; }
+.w-col-dia { width: 13%; text-align: center; }
+.w-col-val { width: 42%; position: relative; }
+.w-col-sal { width: 28%; font-weight: 700; text-align: right; }
+.w-col-act { width: 17%; text-align: right; }
 
 .t-day-block { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .t-day-num { font-size: 16px; font-weight: 700; text-align: center; }
@@ -401,7 +408,19 @@ ul{list-style:none;}
   transition: var(--t);
   outline: none;
 }
-.weekly-toggle-select:hover {
+.weekly-toggle-select.toggle-saida {
+  background-color: var(--apple-red) !important;
+  color: #FFFFFF !important;
+  border-color: var(--apple-red) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23ffffff' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+.weekly-toggle-select.toggle-entrada {
+  background-color: var(--apple-green) !important;
+  color: #FFFFFF !important;
+  border-color: var(--apple-green) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23ffffff' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+.weekly-toggle-select:not(.toggle-saida):not(.toggle-entrada):hover {
   background-color: #F2F2F7;
   border-color: rgba(0,0,0,0.15);
 }
@@ -651,15 +670,15 @@ ul{list-style:none;}
         <div class="stat-grid">
           <div class="stat-box">
             <div class="stat-label">Saldo Atual Estimado</div>
-            <div class="stat-val b-blue" id="dash-saldo">R$ 0,00</div>
+            <div class="stat-val txt-blue" id="dash-saldo">R$ 0,00</div>
           </div>
           <div class="stat-box">
             <div class="stat-label">Entradas no Mês</div>
-            <div class="stat-val b-green" id="dash-ent">R$ 0,00</div>
+            <div class="stat-val txt-green" id="dash-ent">R$ 0,00</div>
           </div>
           <div class="stat-box">
             <div class="stat-label">Saídas no Mês</div>
-            <div class="stat-val b-red" id="dash-sai">R$ 0,00</div>
+            <div class="stat-val txt-red" id="dash-sai">R$ 0,00</div>
           </div>
         </div>
         <div class="card card-pad">
@@ -698,6 +717,7 @@ ul{list-style:none;}
                   </select>
                 </th>
                 <th class="w-col-sal">Saldos</th>
+                <th class="w-col-act">Ações</th>
               </tr>
             </thead>
             <tbody id="week-tbody">
@@ -986,6 +1006,7 @@ ul{list-style:none;}
 
     <input type="hidden" id="ed-id" />
     <button class="btn btn-primary" style="width: 100%;" onclick="saveEditedTx()">Salvar Alterações</button>
+    <button class="btn btn-danger" style="width: 100%; margin-top: 8px;" onclick="event.preventDefault(); deleteTxFromEditModal();">Excluir Lançamento</button>
   </div>
 </div>
 
@@ -1202,20 +1223,70 @@ function renderDash() {
   $('dash-ent').textContent = fmt(ent); $('dash-sai').textContent = fmt(sai);
   $('dash-saldo').textContent = fmt(appData.saldoInicial + totalEnt - totalSai);
   
-  const labels = []; const dataVals = [];
-  for(let i=5; i>=0; i--) {
-    const dEnd = new Date(y, m-i+1, 0);
-    const pastInsts = getInstances(new Date(2000,0,1), dEnd);
-    let te=0, ts=0; pastInsts.forEach(x=>{if(x.tipo==='entrada') te+=x.valor; else ts+=x.valor;});
-    labels.push(new Date(y, m-i, 1).toLocaleDateString('pt-BR', {month:'short'}));
-    dataVals.push(appData.saldoInicial + te - ts);
+  const labels = []; 
+  const monthlyNetVals = []; 
+  const cumulativeVals = [];
+  
+  for(let i=0; i<12; i++) {
+    const monthStart = new Date(y, m + i, 1);
+    const monthEnd = new Date(y, m + i + 1, 0, 23, 59, 59, 999);
+    
+    const monthInsts = getInstances(monthStart, monthEnd);
+    let me = 0, ms = 0;
+    monthInsts.forEach(x => { if(x.tipo === 'entrada') me += x.valor; else ms += x.valor; });
+    monthlyNetVals.push(me - ms);
+    
+    const pastInsts = getInstances(new Date(2000, 0, 1), monthEnd);
+    let te = 0, ts = 0;
+    pastInsts.forEach(x => { if(x.tipo === 'entrada') te += x.valor; else ts += x.valor; });
+    cumulativeVals.push(appData.saldoInicial + te - ts);
+    
+    labels.push(monthStart.toLocaleDateString('pt-BR', {month: 'short', year: '2-digit'}).replace('.', ''));
   }
   
   const ctx = $('chart-dash').getContext('2d');
   if(chartDash) chartDash.destroy();
   chartDash = new Chart(ctx, {
-    type: 'line', data: { labels, datasets: [{ label: 'Saldo', data: dataVals, borderColor: '#0071E3', backgroundColor: 'rgba(0,113,227,0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,0.05)' } } } }
+    data: { 
+      labels, 
+      datasets: [
+        { 
+          type: 'line',
+          label: 'Saldo Acumulado', 
+          data: cumulativeVals, 
+          borderColor: '#0071E3', 
+          backgroundColor: 'rgba(0,113,227,0.1)', 
+          fill: false, 
+          tension: 0.4, 
+          borderWidth: 3, 
+          pointRadius: 4,
+          order: 1
+        },
+        {
+          type: 'bar',
+          label: 'Resultado Mensal',
+          data: monthlyNetVals,
+          backgroundColor: monthlyNetVals.map(val => val >= 0 ? 'rgba(52, 199, 89, 0.65)' : 'rgba(255, 59, 48, 0.65)'),
+          borderRadius: 4,
+          order: 2
+        }
+      ] 
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false, 
+      plugins: { 
+        legend: { 
+          display: true,
+          position: 'top',
+          labels: { boxWidth: 12, font: { size: 10 } }
+        } 
+      }, 
+      scales: { 
+        x: { grid: { display: false } }, 
+        y: { grid: { color: 'rgba(0,0,0,0.05)' } } 
+      } 
+    }
   });
 }
 
@@ -1241,7 +1312,15 @@ function renderSemanal() {
   $('week-dates').textContent = `${monday.toLocaleDateString('pt-BR',{month:'short'})} - ${sunday.toLocaleDateString('pt-BR',{month:'short'})}`;
   
   const toggle = $('weekly-type-toggle');
-  if (toggle) toggle.value = weeklyViewType;
+  if (toggle) {
+    toggle.value = weeklyViewType;
+    toggle.classList.remove('toggle-saida', 'toggle-entrada');
+    if (weeklyViewType === 'saida') {
+      toggle.classList.add('toggle-saida');
+    } else {
+      toggle.classList.add('toggle-entrada');
+    }
+  }
 
   const tbody = $('week-tbody'); tbody.innerHTML = '';
   const insts = getInstances(monday, sunday);
@@ -1308,6 +1387,9 @@ function renderSemanal() {
         <div style="font-weight: 600;">
           ${diaNet > 0 ? '+' : (diaNet < 0 ? '−' : '')} ${fmt(Math.abs(diaNet))}
         </div>
+      </td>
+      <td class="w-col-act">
+        <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 13px;" onclick="openDayDetail('${k}')">⚙️</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -1457,6 +1539,20 @@ function saveEditedTx() {
   renderMensal();
 }
 
+function deleteTxFromEditModal() {
+  const id = $('ed-id').value;
+  if(!id) return;
+  if(!confirm('Excluir este lançamento?')) return;
+  appData.transacoes = appData.transacoes.filter(x => x.id !== id);
+  saveData();
+  closeModal('modal-edit-tx');
+  toast('Lançamento excluído!');
+  
+  renderSemanal();
+  renderDash();
+  renderMensal();
+}
+
 // ─── MENSAL E ANUAL ───
 function changeMonth(delta) { curDate.setMonth(curDate.getMonth() + delta); renderMensal(); }
 function renderMensal() {
@@ -1473,7 +1569,7 @@ function renderMensal() {
   insts.sort((a,b) => b.instanceDate - a.instanceDate).forEach(i => {
     const c = i.tipo === 'entrada' ? 'var(--apple-green)' : 'var(--apple-red)';
     list.innerHTML += `
-      <div class="tx-item">
+      <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
         <div class="tx-info">
           <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
           <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
@@ -1726,7 +1822,10 @@ function saveVoiceTx() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registrado!', reg))
+      .then(reg => {
+        console.log('Service Worker registrado!', reg);
+        reg.update();
+      })
       .catch(err => console.error('Erro ao registrar Service Worker:', err));
   });
 }
