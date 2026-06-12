@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="icon-512.png" />
   
   <!-- Favicon gerado dinamicamente via SVG -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230071E3%22/><text x=%2250%22 y=%2270%22 font-family=%22Arial%22 font-size=%2260%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22>F</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230071E3%22/><path d=%22M 50 15 A 35 35 0 0 1 85 50%22 fill=%22none%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22/><path d=%22M 85 50 L 92 40 M 85 50 L 75 45%22 fill=%22none%22 stroke=%22white%22 stroke-width=%226%22 stroke-linecap=%22round%22/><path d=%22M 50 85 A 35 35 0 0 1 15 50%22 fill=%22none%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22/><path d=%22M 15 50 L 8 60 M 15 50 L 25 55%22 fill=%22none%22 stroke=%22white%22 stroke-width=%226%22 stroke-linecap=%22round%22/><text x=%2250%22 y=%2266%22 font-family=%22Arial%22 font-size=%2250%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -146,6 +146,24 @@ ul{list-style:none;}
 @media(max-width:768px){
   .sidebar{ transform: translateX(-100%); width: var(--sidebar-w) !important; box-shadow: var(--shadow-lg); background: #FFF; }
   .sidebar.open{ transform: translateX(0); }
+  
+  /* Stack input-row vertically on mobile */
+  .input-row { flex-direction: column; gap: 16px; }
+  
+  /* Make table columns responsive and prevent squishing */
+  .w-table th, .w-table td { padding: 10px 8px; font-size: 13px; }
+  .t-day-num { font-size: 15px; width: 20px; }
+  .t-day-name { font-size: 11px; }
+  .t-val-green, .t-val-red { font-size: 13px; }
+  .t-sub { font-size: 10px; }
+  
+  .w-col-dia { width: 80px; min-width: 80px; }
+  .w-col-ent { width: 115px; min-width: 115px; }
+  .w-col-sai { width: 115px; min-width: 115px; }
+  .w-col-sal { width: 105px; min-width: 105px; }
+  .w-col-act { width: 95px; min-width: 95px; }
+  
+  .btn-sm { padding: 6px 10px; font-size: 11px; }
 }
 
 .sidebar-overlay {
@@ -267,7 +285,7 @@ ul{list-style:none;}
 .week-nav-title { font-size: 16px; font-weight: 600; }
 .week-nav-sub { font-size: 12px; color: var(--text-3); }
 
-.table-wrapper { background: var(--bg-card); border-radius: var(--r-lg); border: 1px solid var(--border); overflow: hidden; }
+.table-wrapper { background: var(--bg-card); border-radius: var(--r-lg); border: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .w-table { width: 100%; border-collapse: collapse; text-align: left; }
 .w-table th { padding: 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
 .w-table td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -498,11 +516,12 @@ ul{list-style:none;}
       <div class="nav-item" data-page="lancamentos" onclick="navTo('lancamentos')">
         <div class="nav-icon">
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <path d="M7 10V19M7 10L4 13M7 10L10 13"></path>
+            <path d="M17 14V5M17 14L14 11M17 14L20 11"></path>
+            <text x="12" y="15" font-size="10" font-family="sans-serif" font-weight="900" fill="currentColor" stroke="none" text-anchor="middle">$</text>
           </svg>
         </div>
-        <div class="nav-label">Lançamentos</div>
+        <div class="nav-label">Entradas e Saídas</div>
       </div>
       <div class="nav-item" data-page="config" onclick="navTo('config')">
         <div class="nav-icon">
@@ -589,7 +608,7 @@ ul{list-style:none;}
                 <th class="w-col-dia">Dia</th>
                 <th class="w-col-ent">Entrada</th>
                 <th class="w-col-sai">Saída</th>
-                <th class="w-col-sal">Líquido do Dia</th>
+                <th class="w-col-sal">Saldo do Dia</th>
                 <th class="w-col-act">Ações</th>
               </tr>
             </thead>
@@ -650,8 +669,8 @@ ul{list-style:none;}
       <!-- ── LANÇAMENTOS ── -->
       <div id="page-lancamentos" class="page">
         <div class="page-header">
-          <h1 class="page-title">Novo Lançamento</h1>
-          <p class="page-subtitle">Crie entradas ou saídas pontuais ou recorrentes.</p>
+          <h1 class="page-title">Entradas e Saídas</h1>
+          <p class="page-subtitle">Crie fluxos de entradas ou saídas pontuais ou recorrentes.</p>
         </div>
         <div class="card card-pad" style="max-width: 500px; margin: 0 auto;">
           <div class="segment" style="margin-bottom: 24px;">
@@ -1096,7 +1115,9 @@ function renderSemanal() {
         <input type="number" class="t-input" placeholder="- Adicionar Saída" onblur="quickAdd('${k}', 'saida', this.value); this.value='';" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
       <td class="w-col-sal">
-        <div style="color: ${diaNet >= 0 ? 'var(--apple-blue)' : 'var(--apple-red)'}">${diaNet >= 0 ? '+' : '−'} ${fmt(Math.abs(diaNet))}</div>
+        <div style="color: ${diaNet > 0 ? '#1A7F37' : (diaNet < 0 ? '#D12429' : '#86868B')}; font-weight: 600;">
+          ${diaNet > 0 ? '+' : (diaNet < 0 ? '−' : '')} ${fmt(Math.abs(diaNet))}
+        </div>
       </td>
       <td class="w-col-act">
         <button class="btn btn-sm btn-outline" onclick="openDayDetail('${k}')">Detalhar ⚙️</button>
