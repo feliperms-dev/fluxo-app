@@ -510,51 +510,51 @@ ul{list-style:none;}
 <div id="auth-wrapper" class="auth-wrapper">
   
   <!-- Login -->
-  <div id="view-login" class="auth-card auth-view active">
+  <form id="view-login" class="auth-card auth-view active" onsubmit="event.preventDefault(); handleLoginSubmit();">
     <div class="auth-logo"></div>
     <h1 class="auth-title">Entrar no Fluxo</h1>
     <div class="auth-field">
-      <input type="email" id="login-email" class="auth-input" placeholder="E-mail" />
+      <input type="email" id="login-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required />
     </div>
     <div class="auth-field">
-      <input type="password" id="login-senha" class="auth-input" placeholder="Senha (6 dígitos)" maxlength="6" inputmode="numeric" />
-      <button class="auth-btn-submit" id="btn-login-submit">➔</button>
+      <input type="password" id="login-senha" name="password" autocomplete="current-password" class="auth-input" placeholder="Senha (6 dígitos)" maxlength="6" inputmode="numeric" required />
+      <button type="submit" class="auth-btn-submit" id="btn-login-submit">➔</button>
     </div>
     <div class="auth-links">
       <span class="auth-link" onclick="switchAuth('register')">Criar nova conta Fluxo</span>
       <span class="auth-link" onclick="switchAuth('recover')">Esqueceu a senha?</span>
     </div>
-  </div>
+  </form>
 
   <!-- Register -->
-  <div id="view-register" class="auth-card auth-view">
+  <form id="view-register" class="auth-card auth-view" onsubmit="event.preventDefault(); handleRegisterSubmit();">
     <div class="auth-logo"></div>
     <h1 class="auth-title">Criar Conta Fluxo</h1>
-    <div class="auth-field"><input type="text" id="reg-nome" class="auth-input" placeholder="Nome" /></div>
-    <div class="auth-field"><input type="number" id="reg-idade" class="auth-input" placeholder="Idade" /></div>
-    <div class="auth-field"><input type="email" id="reg-email" class="auth-input" placeholder="E-mail" /></div>
+    <div class="auth-field"><input type="text" id="reg-nome" name="name" autocomplete="name" class="auth-input" placeholder="Nome" required /></div>
+    <div class="auth-field"><input type="number" id="reg-idade" name="age" class="auth-input" placeholder="Idade" required /></div>
+    <div class="auth-field"><input type="email" id="reg-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required /></div>
     <div class="auth-field">
-      <input type="password" id="reg-senha" class="auth-input" placeholder="Senha (6 dígitos numéricos)" maxlength="6" inputmode="numeric" />
-      <button class="auth-btn-submit" id="btn-reg-submit">➔</button>
+      <input type="password" id="reg-senha" name="password" autocomplete="new-password" class="auth-input" placeholder="Senha (6 dígitos numéricos)" maxlength="6" inputmode="numeric" required />
+      <button type="submit" class="auth-btn-submit" id="btn-reg-submit">➔</button>
     </div>
     <div class="auth-links">
       <span class="auth-link" onclick="switchAuth('login')">Já tem uma conta? Entrar</span>
     </div>
-  </div>
+  </form>
 
   <!-- Recover -->
-  <div id="view-recover" class="auth-card auth-view">
+  <form id="view-recover" class="auth-card auth-view" onsubmit="event.preventDefault(); handleRecoverSubmit();">
     <div class="auth-logo"></div>
     <h1 class="auth-title">Recuperar Senha</h1>
     <p style="font-size:14px; color:var(--text-2); margin-bottom: 20px;">Insira seu e-mail para simular o envio de um link de recuperação.</p>
     <div class="auth-field">
-      <input type="email" id="rec-email" class="auth-input" placeholder="E-mail" />
-      <button class="auth-btn-submit" id="btn-rec-submit">➔</button>
+      <input type="email" id="rec-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required />
+      <button type="submit" class="auth-btn-submit" id="btn-rec-submit">➔</button>
     </div>
     <div class="auth-links">
       <span class="auth-link" onclick="switchAuth('login')">Voltar para o Login</span>
     </div>
-  </div>
+  </form>
 
 </div>
 
@@ -661,12 +661,13 @@ ul{list-style:none;}
         <div class="page-header">
           <div>
             <h1 class="page-title" id="dash-greeting">Olá!</h1>
-            <p class="page-subtitle">Seu resumo financeiro atual.</p>
+            <p class="page-subtitle" id="dash-subtitle">Seu resumo financeiro atual.</p>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="navTo('lancamentos')">Novo Lançamento ➕</button>
+            <button class="btn btn-primary" onclick="navTo('lancamentos')">Nova Entrada/Saída ➕</button>
           </div>
         </div>
+        <div id="dash-balance-alert" style="margin-bottom: 20px; border-radius: var(--r-md); padding: 12px 16px; font-size: 14px; font-weight: 500; display: none;"></div>
         <div class="stat-grid">
           <div class="stat-box">
             <div class="stat-label">Saldo Atual Estimado</div>
@@ -681,9 +682,18 @@ ul{list-style:none;}
             <div class="stat-val txt-red" id="dash-sai">R$ 0,00</div>
           </div>
         </div>
-        <div class="card card-pad">
-          <h3 style="margin-bottom: 16px;">Evolução de Saldo</h3>
-          <div style="height: 250px;"><canvas id="chart-dash"></canvas></div>
+        <div class="card card-pad" style="margin-top: 16px;">
+          <h3 style="margin-bottom: 12px;">Evolução de Saldo</h3>
+          <div style="height: 300px;"><canvas id="chart-dash"></canvas></div>
+        </div>
+        <div class="card card-pad" style="margin-top: 16px;">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span style="display: flex; align-items: center; gap: 8px;">🤖 Insights da IA Financeira</span>
+            <button class="btn btn-secondary btn-sm" id="btn-generate-insights" onclick="generateIAInsights()">Gerar Insights 🪄</button>
+          </h3>
+          <div id="ia-insights-container" style="font-size: 14px; color: var(--text-2); line-height: 1.6;">
+            Clique no botão acima para analisar seu perfil de gastos e receber conselhos e feedbacks da IA do Gemini.
+          </div>
         </div>
       </div>
 
@@ -717,7 +727,7 @@ ul{list-style:none;}
                   </select>
                 </th>
                 <th class="w-col-sal">Saldos</th>
-                <th class="w-col-act">Ações</th>
+                <th class="w-col-act">Detalhamento</th>
               </tr>
             </thead>
             <tbody id="week-tbody">
@@ -771,6 +781,28 @@ ul{list-style:none;}
         </div>
         <div class="card card-pad">
           <div style="height: 300px;"><canvas id="chart-annual"></canvas></div>
+        </div>
+
+        <div class="stat-grid" style="margin-top: 16px;">
+          <div class="stat-box">
+            <div class="stat-label">Receitas Anuais</div>
+            <div class="stat-val txt-green" id="an-rec">R$ 0,00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Despesas Anuais</div>
+            <div class="stat-val txt-red" id="an-des">R$ 0,00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Saldo Líquido Anual</div>
+            <div class="stat-val" id="an-liq">R$ 0,00</div>
+          </div>
+        </div>
+        
+        <div class="card card-pad" style="margin-top: 16px; margin-bottom: 16px;">
+          <h3 style="margin-bottom: 16px;">Gastos por Categoria (Áreas da Vida)</h3>
+          <div id="annual-category-list" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Gerado via JS -->
+          </div>
         </div>
       </div>
 
@@ -826,14 +858,92 @@ ul{list-style:none;}
             </select>
           </div>
 
-          <div class="input-group" style="margin-bottom: 32px;">
-            <label class="input-label">Frequência (Recorrência)</label>
-            <select id="ntx-freq" class="input-field">
-              <option value="none">Apenas uma vez</option>
-              <option value="semanal">Semanal (a cada 7 dias)</option>
-              <option value="quinzenal">Quinzenal (a cada 14 dias)</option>
-              <option value="mensal">Mensal (mesmo dia do mês)</option>
+          <div class="input-group">
+            <label class="input-label">Recorrência</label>
+            <select id="ntx-freq" class="input-field" onchange="toggleRepeatOptions(this.value)">
+              <option value="none">Não repete</option>
+              <option value="repeat">Repetir</option>
             </select>
+          </div>
+
+          <!-- Opções de Recorrência Avançadas -->
+          <div id="ntx-repeat-wrapper" style="display: none; background: #FAFAFC; padding: 12px; border-radius: var(--r-md); border: 1px solid var(--border); margin-bottom: 24px;">
+            <div class="input-group" style="margin-bottom: 12px;">
+              <label class="input-label">Frequência</label>
+              <select id="ntx-freq-base" class="input-field" onchange="toggleFreqBaseOptions(this.value)">
+                <option value="diaria">Todo dia</option>
+                <option value="semanal" selected>Toda semana</option>
+                <option value="mensal">Todo mês</option>
+              </select>
+            </div>
+            
+            <div class="input-group" style="margin-bottom: 12px;">
+              <label class="input-label">Repetir Até (Data Final)</label>
+              <input type="date" id="ntx-data-fim" class="input-field" />
+            </div>
+
+            <!-- Opções Semanais -->
+            <div id="ntx-weekly-options" style="display: block; margin-bottom: 0;">
+              <div class="input-group" style="margin-bottom: 0;">
+                <label class="input-label">Dia da Semana</label>
+                <select id="ntx-dia-semana" class="input-field">
+                  <option value="1">Segunda-feira</option>
+                  <option value="2">Terça-feira</option>
+                  <option value="3">Quarta-feira</option>
+                  <option value="4">Quinta-feira</option>
+                  <option value="5">Sexta-feira</option>
+                  <option value="6">Sábado</option>
+                  <option value="0">Domingo</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Opções Mensais -->
+            <div id="ntx-monthly-options" style="display: none; margin-bottom: 0;">
+              <div class="input-group" style="margin-bottom: 12px;">
+                <label class="input-label">Regra Mensal</label>
+                <select id="ntx-padrao-mes" class="input-field" onchange="toggleMonthlyPatternOptions(this.value)">
+                  <option value="dia_fixo">No mesmo dia do mês</option>
+                  <option value="dia_semana_especifico">Dia da semana específico</option>
+                </select>
+              </div>
+
+              <!-- Dia do mês fixo -->
+              <div id="ntx-monthly-day-fixed" style="display: block; margin-bottom: 0;">
+                <div class="input-group" style="margin-bottom: 0;">
+                  <label class="input-label">Dia do Mês</label>
+                  <select id="ntx-dia-mes" class="input-field"></select>
+                </div>
+              </div>
+
+              <!-- Dia da semana específico -->
+              <div id="ntx-monthly-weekday-spec" style="display: none; margin-bottom: 0;">
+                <div class="input-row">
+                  <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label class="input-label">Ordem</label>
+                    <select id="ntx-semana-mes" class="input-field">
+                      <option value="1">Primeira</option>
+                      <option value="2">Segunda</option>
+                      <option value="3">Terceira</option>
+                      <option value="4">Quarta</option>
+                      <option value="L">Última</option>
+                    </select>
+                  </div>
+                  <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label class="input-label">Dia da Semana</label>
+                    <select id="ntx-dia-semana-mes" class="input-field">
+                      <option value="1">Segunda-feira</option>
+                      <option value="2" selected>Terça-feira</option>
+                      <option value="3">Quarta-feira</option>
+                      <option value="4">Quinta-feira</option>
+                      <option value="5">Sexta-feira</option>
+                      <option value="6">Sábado</option>
+                      <option value="0">Domingo</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <button class="btn btn-primary" style="width: 100%;" onclick="saveNewTx()">Salvar Lançamento</button>
@@ -865,15 +975,35 @@ ul{list-style:none;}
           <h3 style="margin-bottom: 16px;">Perfil e Dados</h3>
           <div class="set-row">
             <div class="set-label">Nome</div>
-            <input type="text" id="cfg-nome" class="input-field" style="width: 200px;" onchange="updateCfg()" />
+            <input type="text" id="cfg-nome" class="input-field" style="width: 240px;" onchange="updateCfg()" />
           </div>
           <div class="set-row">
-            <div class="set-label">Saldo Inicial Acumulado (R$)</div>
-            <input type="number" id="cfg-saldo" class="input-field" style="width: 200px;" onchange="updateCfg()" />
+            <div class="set-label">Sobrenome</div>
+            <input type="text" id="cfg-sobrenome" class="input-field" style="width: 240px;" onchange="updateCfg()" />
           </div>
           <div class="set-row">
-            <div class="set-label">Exportar Dados Base</div>
-            <button class="btn btn-secondary btn-sm" onclick="exportData()">Download JSON</button>
+            <div class="set-label">E-mail (Login)</div>
+            <input type="email" id="cfg-email" class="input-field" style="width: 240px; background-color: #F2F2F7;" readonly />
+          </div>
+          <div class="set-row">
+            <div class="set-label">Data de Nascimento</div>
+            <input type="date" id="cfg-nascimento" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+          </div>
+          <div class="set-row">
+            <div class="set-label">CPF</div>
+            <input type="text" id="cfg-cpf" class="input-field" style="width: 240px;" placeholder="000.000.000-00" onchange="updateCfg()" />
+          </div>
+          <div class="set-row">
+            <div class="set-label">Telefone</div>
+            <input type="text" id="cfg-telefone" class="input-field" style="width: 240px;" placeholder="(00) 00000-0000" onchange="updateCfg()" />
+          </div>
+          <div class="set-row">
+            <div class="set-label">Profissão</div>
+            <input type="text" id="cfg-profissao" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+          </div>
+          <div class="set-row">
+            <div class="set-label">Salário Mensal (R$)</div>
+            <input type="number" id="cfg-salario" class="input-field" style="width: 240px;" onchange="updateCfg()" />
           </div>
           <div class="set-row" style="border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px;">
             <button class="btn btn-danger" style="width: 100%;" onclick="logout()">Encerrar Sessão</button>
@@ -1104,7 +1234,7 @@ function switchAuth(view) {
   $(`view-${view}`).classList.add('active');
 }
 
-$('btn-reg-submit').onclick = () => {
+function handleRegisterSubmit() {
   const nome = $('reg-nome').value.trim();
   const idade = $('reg-idade').value.trim();
   const email = $('reg-email').value.trim().toLowerCase();
@@ -1116,9 +1246,9 @@ $('btn-reg-submit').onclick = () => {
   saveUsers(users);
   localStorage.setItem(`pland_data_${email}`, JSON.stringify({ saldoInicial: 0, transacoes: [] }));
   toast('Conta Fluxo criada!'); switchAuth('login');
-};
+}
 
-$('btn-login-submit').onclick = () => {
+function handleLoginSubmit() {
   const email = $('login-email').value.trim().toLowerCase();
   const senha = $('login-senha').value.trim();
   const users = loadUsers();
@@ -1127,16 +1257,16 @@ $('btn-login-submit').onclick = () => {
     currentUser = u; localStorage.setItem('pland_logged_in', email);
     toast(`Bem-vindo, ${u.nome}!`); startApp();
   } else { toast('E-mail ou senha incorretos.'); }
-};
+}
 
-$('btn-rec-submit').onclick = () => {
+function handleRecoverSubmit() {
   const email = $('rec-email').value.trim().toLowerCase();
   const users = loadUsers();
   if(users.find(u => u.email === email)) {
     toast('Um link fictício foi enviado para ' + email);
     setTimeout(()=>switchAuth('login'), 2000);
   } else { toast('E-mail não encontrado.'); }
-};
+}
 
 function logout() {
   localStorage.removeItem('pland_logged_in'); currentUser = null; appData = null;
@@ -1152,6 +1282,18 @@ function loadData() {
 }
 function saveData() { if(currentUser) localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData)); }
 
+function isNthWeekdayOfMonth(d, semanaMes, diaSemanaMes) {
+  if (d.getDay() !== diaSemanaMes) return false;
+  if (semanaMes === 'L') {
+    const nextWeek = new Date(d);
+    nextWeek.setDate(d.getDate() + 7);
+    return nextWeek.getMonth() !== d.getMonth();
+  } else {
+    const nth = parseInt(semanaMes);
+    return Math.ceil(d.getDate() / 7) === nth;
+  }
+}
+
 function getInstances(startDate, endDate) {
   const instances = [];
   const start = new Date(startDate); start.setHours(0,0,0,0);
@@ -1159,20 +1301,77 @@ function getInstances(startDate, endDate) {
   
   appData.transacoes.forEach(tx => {
     const txDate = parseDt(tx.data);
+    
+    // Legacy support
     if (tx.frequencia === 'none') {
-      if (txDate >= start && txDate <= end) instances.push({...tx, instanceDate: txDate});
+      if (txDate >= start && txDate <= end) {
+        instances.push({...tx, instanceDate: new Date(txDate)});
+      }
     } 
     else if (tx.frequencia === 'semanal') {
       let cur = new Date(txDate);
-      while(cur <= end) { if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setDate(cur.getDate() + 7); }
+      while(cur <= end) { 
+        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
+        cur.setDate(cur.getDate() + 7); 
+      }
     }
     else if (tx.frequencia === 'quinzenal') {
       let cur = new Date(txDate);
-      while(cur <= end) { if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setDate(cur.getDate() + 14); }
+      while(cur <= end) { 
+        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
+        cur.setDate(cur.getDate() + 14); 
+      }
     }
     else if (tx.frequencia === 'mensal') {
       let cur = new Date(txDate);
-      while(cur <= end) { if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setMonth(cur.getMonth() + 1); }
+      while(cur <= end) { 
+        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
+        cur.setMonth(cur.getMonth() + 1); 
+      }
+    }
+    // Advanced Recurrence Engine
+    else if (tx.frequencia === 'repeat' && tx.recurrence) {
+      const rec = tx.recurrence;
+      const dataInicio = new Date(txDate); dataInicio.setHours(0,0,0,0);
+      const dataFim = new Date(rec.dataFim); dataFim.setHours(23,59,59,999);
+      
+      const loopStart = new Date(Math.max(start, dataInicio));
+      const loopEnd = new Date(Math.min(end, dataFim));
+      
+      if (loopStart <= loopEnd) {
+        let cur = new Date(loopStart);
+        while (cur <= loopEnd) {
+          let match = false;
+          
+          if (rec.freqBase === 'diaria') {
+            match = true;
+          } 
+          else if (rec.freqBase === 'semanal') {
+            if (cur.getDay() === rec.diaSemana) {
+              match = true;
+            }
+          } 
+          else if (rec.freqBase === 'mensal') {
+            if (rec.regraMensal === 'dia_fixo') {
+              const lastDay = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
+              const targetDay = Math.min(rec.diaMes, lastDay);
+              if (cur.getDate() === targetDay) {
+                match = true;
+              }
+            } else if (rec.regraMensal === 'dia_semana_especifico') {
+              if (isNthWeekdayOfMonth(cur, rec.semanaMes, rec.diaSemanaMes)) {
+                match = true;
+              }
+            }
+          }
+          
+          if (match) {
+            instances.push({...tx, instanceDate: new Date(cur)});
+          }
+          
+          cur.setDate(cur.getDate() + 1);
+        }
+      }
     }
   });
   return instances;
@@ -1181,8 +1380,27 @@ function getInstances(startDate, endDate) {
 // ─── UI CONTROLLERS ───
 function startApp() {
   $('auth-wrapper').classList.add('hidden'); $('app-layout').style.display = 'flex';
-  $('ui-name').textContent = currentUser.nome; $('ui-email').textContent = currentUser.email;
+  $('ui-name').textContent = currentUser.nome + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
+  $('ui-email').textContent = currentUser.email;
   $('ui-avatar').textContent = currentUser.nome.charAt(0).toUpperCase();
+  
+  // Set initial and change listeners for default recurrence weekdays/days of month
+  const ntxDataInput = $('ntx-data');
+  if (ntxDataInput) {
+    ntxDataInput.addEventListener('change', () => {
+      const selectedVal = ntxDataInput.value;
+      if (selectedVal) {
+        const d = parseDt(selectedVal);
+        $('ntx-dia-semana').value = d.getDay().toString();
+        $('ntx-dia-mes').value = d.getDate().toString();
+      }
+    });
+    // Trigger initial set for today
+    const d = new Date();
+    $('ntx-dia-semana').value = d.getDay().toString();
+    $('ntx-dia-mes').value = d.getDate().toString();
+  }
+  
   loadData(); curDate = new Date(); $('ntx-data').value = dtKey(curDate); navTo('dash');
 }
 
@@ -1192,14 +1410,30 @@ function navTo(page) {
   $(`page-${page}`).classList.add('active'); document.querySelector(`[data-page="${page}"]`).classList.add('active');
   if(window.innerWidth <= 768) { $('sidebar').classList.remove('open'); $('sidebar-overlay').classList.remove('visible'); }
 
+  // Control dynamic visibility of the voice FAB
+  const mic = $('fab-mic');
+  if (mic) {
+    if (['semanal', 'mensal', 'anual', 'config'].includes(page)) {
+      mic.style.display = 'none';
+    } else {
+      mic.style.display = 'flex';
+    }
+  }
+
   if (page === 'dash') renderDash();
   if (page === 'semanal') renderSemanal();
   if (page === 'mensal') renderMensal();
   if (page === 'anual') renderAnual();
   if (page === 'config') { 
-    $('cfg-nome').value = currentUser.nome; 
-    $('cfg-saldo').value = appData.saldoInicial; 
-    $('cfg-gemini-key').value = localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+    $('cfg-nome').value = currentUser.nome || ''; 
+    $('cfg-sobrenome').value = currentUser.sobrenome || '';
+    $('cfg-email').value = currentUser.email || '';
+    $('cfg-nascimento').value = currentUser.nascimento || '';
+    $('cfg-cpf').value = currentUser.cpf || '';
+    $('cfg-telefone').value = currentUser.telefone || '';
+    $('cfg-profissao').value = currentUser.profissao || '';
+    $('cfg-salario').value = currentUser.salario || 0;
+    $('cfg-gemini-key').value = currentUser.geminiKey || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
   }
 }
 
@@ -1209,27 +1443,76 @@ function closeModal(id) { $(id).classList.remove('active'); }
 function openModal(id) { $(id).classList.add('active'); }
 
 // ─── DASHBOARD ───
+let iaInsightsCached = null;
+
 function renderDash() {
   $('dash-greeting').textContent = `Olá, ${currentUser.nome.split(' ')[0]}!`;
+  
+  // 1. Subtítulo dinâmico da página com a data atual formatada
+  const today = new Date();
+  const dayStr = today.getDate();
+  const monthStr = today.toLocaleDateString('pt-BR', { month: 'long' });
+  const yearStr = today.getFullYear();
+  const formattedDate = `${dayStr} de ${monthStr.charAt(0).toUpperCase() + monthStr.slice(1)} de ${yearStr}`;
+  $('dash-subtitle').textContent = `Seu resumo financeiro atual — ${formattedDate}`;
+
   const y = curDate.getFullYear(); const m = curDate.getMonth();
   const start = new Date(y, m, 1); const end = new Date(y, m+1, 0);
   const insts = getInstances(start, end);
   let ent=0, sai=0;
   insts.forEach(i => { if(i.tipo==='entrada') ent+=i.valor; else sai+=i.valor; });
-  const allPast = getInstances(new Date(2000,0,1), end);
-  let totalEnt=0, totalSai=0;
-  allPast.forEach(i => { if(i.tipo==='entrada') totalEnt+=i.valor; else totalSai+=i.valor; });
+  
+  // 2. Calcular o saldo acumulado atual (até hoje) para o card de saldo e o alerta sutil
+  const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
+  const allPastToday = getInstances(new Date(2000, 0, 1), todayEnd);
+  let totalEntToday = 0, totalSaiToday = 0;
+  allPastToday.forEach(i => { if(i.tipo==='entrada') totalEntToday+=i.valor; else totalSaiToday+=i.valor; });
+  const saldoToday = appData.saldoInicial + totalEntToday - totalSaiToday;
   
   $('dash-ent').textContent = fmt(ent); $('dash-sai').textContent = fmt(sai);
-  $('dash-saldo').textContent = fmt(appData.saldoInicial + totalEnt - totalSai);
+  $('dash-saldo').textContent = fmt(saldoToday);
   
+  // 3. Alerta sutil de saldo positivo/negativo/neutro
+  const alertBox = $('dash-balance-alert');
+  if (saldoToday < 0) {
+    alertBox.style.display = 'block';
+    alertBox.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
+    alertBox.style.color = 'var(--apple-red)';
+    alertBox.style.border = '1px solid rgba(255, 59, 48, 0.2)';
+    alertBox.textContent = 'Atenção: Seu saldo está negativo. Evite fazer novos gastos para manter suas finanças sob controle.';
+  } else if (saldoToday > 0) {
+    alertBox.style.display = 'block';
+    alertBox.style.backgroundColor = 'rgba(52, 199, 89, 0.1)';
+    alertBox.style.color = 'var(--apple-green)';
+    alertBox.style.border = '1px solid rgba(52, 199, 89, 0.2)';
+    alertBox.textContent = 'Parabéns! Seu saldo está positivo. Lembre-se de gastar de forma consciente.';
+  } else {
+    alertBox.style.display = 'none';
+  }
+  
+  // 4. Auto-geração ou carregamento de insights da IA
+  if (iaInsightsCached) {
+    $('ia-insights-container').innerHTML = iaInsightsCached;
+  } else {
+    const apiKey = (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+    if (apiKey) {
+      generateIAInsights();
+    } else {
+      $('ia-insights-container').innerHTML = 'Adicione sua chave de API do Gemini nos Ajustes para obter insights automatizados sobre seus gastos.';
+    }
+  }
+
+  // 5. Gráfico de Evolução (Fixado a partir de hoje até +11 meses)
   const labels = []; 
   const monthlyNetVals = []; 
   const cumulativeVals = [];
   
+  const chartY = today.getFullYear();
+  const chartM = today.getMonth();
+  
   for(let i=0; i<12; i++) {
-    const monthStart = new Date(y, m + i, 1);
-    const monthEnd = new Date(y, m + i + 1, 0, 23, 59, 59, 999);
+    const monthStart = new Date(chartY, chartM + i, 1);
+    const monthEnd = new Date(chartY, chartM + i + 1, 0, 23, 59, 59, 999);
     
     const monthInsts = getInstances(monthStart, monthEnd);
     let me = 0, ms = 0;
@@ -1389,7 +1672,15 @@ function renderSemanal() {
         </div>
       </td>
       <td class="w-col-act">
-        <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 13px;" onclick="openDayDetail('${k}')">⚙️</button>
+        <button class="btn btn-sm btn-outline" style="padding: 6px; display: inline-flex; align-items: center; justify-content: center;" onclick="openDayDetail('${k}')" title="Detalhamento">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            <line x1="9" y1="9" x2="15" y2="9"></line>
+            <line x1="9" y1="13" x2="15" y2="13"></line>
+            <line x1="9" y1="17" x2="15" y2="17"></line>
+          </svg>
+        </button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -1559,29 +1850,171 @@ function renderMensal() {
   const y = curDate.getFullYear(); const m = curDate.getMonth();
   $('month-label').textContent = curDate.toLocaleDateString('pt-BR', {month:'long', year:'numeric'}).replace(/^./, c => c.toUpperCase());
   const insts = getInstances(new Date(y, m, 1), new Date(y, m+1, 0));
-  let ent = 0, sai = 0; insts.forEach(i => { if(i.tipo === 'entrada') ent+=i.valor; else sai+=i.valor; });
+  
+  let ent = 0, sai = 0;
+  const entradas = [];
+  const saidas = [];
+  
+  insts.forEach(i => { 
+    if(i.tipo === 'entrada') {
+      ent += i.valor;
+      entradas.push(i);
+    } else {
+      sai += i.valor;
+      saidas.push(i);
+    }
+  });
+  
   $('m-rec').textContent = fmt(ent); $('m-des').textContent = fmt(sai);
   $('m-liq').textContent = fmt(ent - sai); $('m-liq').style.color = (ent - sai) >= 0 ? 'var(--apple-blue)' : 'var(--apple-red)';
   
   const list = $('month-tx-list'); list.innerHTML = '';
   if(insts.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center;">Sem lançamentos no mês.</div>'; return; }
   
-  insts.sort((a,b) => b.instanceDate - a.instanceDate).forEach(i => {
-    const c = i.tipo === 'entrada' ? 'var(--apple-green)' : 'var(--apple-red)';
-    list.innerHTML += `
-      <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
-        <div class="tx-info">
-          <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
-          <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
+  // Sort descending by date
+  entradas.sort((a,b) => b.instanceDate - a.instanceDate);
+  saidas.sort((a,b) => b.instanceDate - a.instanceDate);
+  
+  // Build Entradas section
+  let entradasHTML = '';
+  if (entradas.length === 0) {
+    entradasHTML = '<div style="padding:12px; text-align:center; color:var(--text-3); font-size: 14px;">Sem entradas no mês.</div>';
+  } else {
+    entradas.forEach(i => {
+      entradasHTML += `
+        <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
+          <div class="tx-info">
+            <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
+            <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
+          </div>
+          <div class="tx-val" style="color: var(--apple-green)">${fmt(i.valor)}</div>
         </div>
-        <div class="tx-val" style="color: ${c}">${fmt(i.valor)}</div>
+      `;
+    });
+  }
+  
+  // Build Saidas section
+  let saidasHTML = '';
+  if (saidas.length === 0) {
+    saidasHTML = '<div style="padding:12px; text-align:center; color:var(--text-3); font-size: 14px;">Sem saídas no mês.</div>';
+  } else {
+    saidas.forEach(i => {
+      saidasHTML += `
+        <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
+          <div class="tx-info">
+            <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
+            <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
+          </div>
+          <div class="tx-val" style="color: var(--apple-red)">${fmt(i.valor)}</div>
+        </div>
+      `;
+    });
+  }
+  
+  list.innerHTML = `
+    <!-- Seção Entradas -->
+    <div style="margin-bottom: 16px;">
+      <div onclick="toggleMonthlySection('entradas')" style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px; background:#FAFAFC; border:1px solid var(--border); border-radius:var(--r-md); cursor:pointer; font-weight:600; margin-bottom: 8px; user-select:none;">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span style="transform: rotate(${monthlySections.entradas ? '90' : '0'}deg); transition: transform 0.2s; display:inline-block; font-size: 10px;">▶</span>
+          ↙ Entradas
+        </span>
+        <span class="txt-green" style="font-weight: 700;">${fmt(ent)}</span>
       </div>
-    `;
-  });
+      <div style="display: ${monthlySections.entradas ? 'flex' : 'none'}; flex-direction:column; gap:8px; padding-left: 4px;">
+        ${entradasHTML}
+      </div>
+    </div>
+    
+    <!-- Seção Saídas -->
+    <div style="margin-bottom: 16px;">
+      <div onclick="toggleMonthlySection('saidas')" style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px; background:#FAFAFC; border:1px solid var(--border); border-radius:var(--r-md); cursor:pointer; font-weight:600; margin-bottom: 8px; user-select:none;">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span style="transform: rotate(${monthlySections.saidas ? '90' : '0'}deg); transition: transform 0.2s; display:inline-block; font-size: 10px;">▶</span>
+          ↗ Saídas
+        </span>
+        <span class="txt-red" style="font-weight: 700;">${fmt(sai)}</span>
+      </div>
+      <div style="display: ${monthlySections.saidas ? 'flex' : 'none'}; flex-direction:column; gap:8px; padding-left: 4px;">
+        ${saidasHTML}
+      </div>
+    </div>
+  `;
 }
 
 function renderAnual() {
   const y = curDate.getFullYear(); $('year-label').textContent = y;
+  
+  // 1. Calcular totais anuais e agrupamento por macrocategoria
+  const yearStart = new Date(y, 0, 1);
+  const yearEnd = new Date(y, 11, 31, 23, 59, 59, 999);
+  const yearInsts = getInstances(yearStart, yearEnd);
+  
+  let yearEntradas = 0;
+  let yearSaidas = 0;
+  const categoryTotals = {};
+  
+  yearInsts.forEach(inst => {
+    if (inst.tipo === 'entrada') {
+      yearEntradas += inst.valor;
+    } else {
+      yearSaidas += inst.valor;
+      const cat = inst.macro || 'Outros';
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + inst.valor;
+    }
+  });
+  
+  $('an-rec').textContent = fmt(yearEntradas);
+  $('an-des').textContent = fmt(yearSaidas);
+  $('an-liq').textContent = fmt(yearEntradas - yearSaidas);
+  $('an-liq').style.color = (yearEntradas - yearSaidas) >= 0 ? 'var(--apple-blue)' : 'var(--apple-red)';
+  
+  // 2. Renderizar lista de gastos por categoria ordenada do maior para o menor com barra de progresso
+  const sortedCategories = Object.keys(categoryTotals).map(cat => ({
+    name: cat,
+    total: categoryTotals[cat]
+  })).sort((a, b) => b.total - a.total);
+  
+  const catList = $('annual-category-list');
+  catList.innerHTML = '';
+  
+  if (sortedCategories.length === 0) {
+    catList.innerHTML = '<div style="text-align:center; color:var(--text-3); font-size:14px; padding:20px;">Sem saídas registradas neste ano.</div>';
+  } else {
+    sortedCategories.forEach(item => {
+      const pct = yearSaidas > 0 ? (item.total / yearSaidas) * 100 : 0;
+      const icons = {
+        'Moradia': '🏠',
+        'Alimentação': '🍔',
+        'Transporte': '🚗',
+        'Saúde': '❤️',
+        'Lazer': '🎉',
+        'Educação': '📚',
+        'Salário': '💰',
+        'Outros': '📦'
+      };
+      const icon = icons[item.name] || '📦';
+      
+      catList.innerHTML += `
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px; font-weight:500;">
+            <span style="display:flex; align-items:center; gap:6px; color:var(--text-1); font-weight:600;">
+              <span>${icon}</span>
+              <span>${item.name}</span>
+            </span>
+            <span style="color:var(--text-2); font-weight:500;">
+              ${fmt(item.total)} <span style="font-size:12px; color:var(--text-3); margin-left:4px;">(${pct.toFixed(1)}%)</span>
+            </span>
+          </div>
+          <div style="width:100%; height:8px; background:#E5E5EA; border-radius:4px; overflow:hidden; border:1px solid rgba(0,0,0,0.02);">
+            <div style="width:${pct}%; height:100%; background:var(--apple-blue); border-radius:4px; transition: width 0.5s ease-out;"></div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // 3. Gráfico de Saldo Histórico Anual
   const labels = []; const data = []; const colors = [];
   for(let m=0; m<12; m++) {
     const pastInsts = getInstances(new Date(2000,0,1), new Date(y, m+1, 0));
@@ -1607,22 +2040,96 @@ function saveNewTx() {
   const val = parseFloat($('ntx-val').value);
   const data = $('ntx-data').value;
   if(isNaN(val) || val <= 0 || !data) { toast('Preencha os valores.'); return; }
-  appData.transacoes.push({ id: uuid(), tipo: curNewTxType, valor: val, desc, data, frequencia: $('ntx-freq').value, macro: $('ntx-cat').value, formaPagamento: $('ntx-pag').value });
-  saveData(); toast('Lançamento salvo!'); $('ntx-desc').value = ''; $('ntx-val').value = ''; navTo('dash');
+  
+  const freq = $('ntx-freq').value;
+  let txObj = {
+    id: uuid(),
+    tipo: curNewTxType,
+    valor: val,
+    desc,
+    data,
+    frequencia: freq,
+    macro: $('ntx-cat').value,
+    formaPagamento: $('ntx-pag').value
+  };
+  
+  if (freq === 'repeat') {
+    const freqBase = $('ntx-freq-base').value;
+    const dataFim = $('ntx-data-fim').value || '2099-12-31';
+    
+    let diaSemana = null;
+    if (freqBase === 'semanal') {
+      diaSemana = parseInt($('ntx-dia-semana').value);
+    }
+    
+    let regraMensal = null;
+    let diaMes = null;
+    let semanaMes = null;
+    let diaSemanaMes = null;
+    if (freqBase === 'mensal') {
+      regraMensal = $('ntx-padrao-mes').value;
+      if (regraMensal === 'dia_fixo') {
+        diaMes = parseInt($('ntx-dia-mes').value);
+      } else {
+        semanaMes = $('ntx-semana-mes').value;
+        diaSemanaMes = parseInt($('ntx-dia-semana-mes').value);
+      }
+    }
+    
+    txObj.recurrence = {
+      freqBase,
+      dataFim,
+      diaSemana,
+      regraMensal,
+      diaMes,
+      semanaMes,
+      diaSemanaMes
+    };
+  }
+  
+  appData.transacoes.push(txObj);
+  saveData();
+  toast('Lançamento salvo!');
+  $('ntx-desc').value = '';
+  $('ntx-val').value = '';
+  $('ntx-freq').value = 'none';
+  toggleRepeatOptions('none');
+  navTo('dash');
 }
 
 // ─── CONFIG & IMPORT IA CSV ───
 function updateCfg() {
   const nome = $('cfg-nome').value.trim();
-  if(nome) {
-    currentUser.nome = nome; const users = loadUsers();
+  const sobrenome = $('cfg-sobrenome').value.trim();
+  const nascimento = $('cfg-nascimento').value;
+  const cpf = $('cfg-cpf').value.trim();
+  const telefone = $('cfg-telefone').value.trim();
+  const profissao = $('cfg-profissao').value.trim();
+  const salario = parseFloat($('cfg-salario').value) || 0;
+  const geminiKey = $('cfg-gemini-key').value.trim();
+  
+  if (nome) {
+    currentUser.nome = nome;
+    currentUser.sobrenome = sobrenome;
+    currentUser.nascimento = nascimento;
+    currentUser.cpf = cpf;
+    currentUser.telefone = telefone;
+    currentUser.profissao = profissao;
+    currentUser.salario = salario;
+    currentUser.geminiKey = geminiKey;
+    
+    const users = loadUsers();
     const idx = users.findIndex(u => u.email === currentUser.email);
-    if(idx !== -1) { users[idx].nome = nome; saveUsers(users); }
-    $('ui-name').textContent = nome; $('dash-greeting').textContent = `Olá, ${nome.split(' ')[0]}!`;
+    if (idx !== -1) {
+      users[idx] = { ...users[idx], ...currentUser };
+      saveUsers(users);
+    }
+    $('ui-name').textContent = nome + (sobrenome ? ' ' + sobrenome : '');
+    $('dash-greeting').textContent = `Olá, ${nome.split(' ')[0]}!`;
   }
-  appData.saldoInicial = parseFloat($('cfg-saldo').value) || 0; 
-  localStorage.setItem('gemini_api_key_' + currentUser.email, $('cfg-gemini-key').value.trim());
-  saveData(); toast('Ajustes salvos!');
+  localStorage.setItem('gemini_api_key_' + currentUser.email, geminiKey);
+  saveData();
+  toast('Ajustes salvos!');
 }
 
 function exportData() {
@@ -1827,6 +2334,117 @@ if ('serviceWorker' in navigator) {
         reg.update();
       })
       .catch(err => console.error('Erro ao registrar Service Worker:', err));
+  });
+}
+
+// ─── RECORRÊNCIA AUXILIAR & MÉTODOS ───
+function toggleRepeatOptions(val) {
+  const wrapper = $('ntx-repeat-wrapper');
+  if (wrapper) wrapper.style.display = val === 'repeat' ? 'block' : 'none';
+}
+function toggleFreqBaseOptions(val) {
+  const w = $('ntx-weekly-options');
+  const m = $('ntx-monthly-options');
+  if (w) w.style.display = val === 'semanal' ? 'block' : 'none';
+  if (m) m.style.display = val === 'mensal' ? 'block' : 'none';
+}
+function toggleMonthlyPatternOptions(val) {
+  const fixed = $('ntx-monthly-day-fixed');
+  const spec = $('ntx-monthly-weekday-spec');
+  if (fixed) fixed.style.display = val === 'dia_fixo' ? 'block' : 'none';
+  if (spec) spec.style.display = val === 'dia_semana_especifico' ? 'block' : 'none';
+}
+
+// Populate 1-31 days in select
+(function() {
+  const selectDiaMes = $('ntx-dia-mes');
+  if (selectDiaMes) {
+    selectDiaMes.innerHTML = '';
+    for (let d = 1; d <= 31; d++) {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = `${d}`;
+      selectDiaMes.appendChild(opt);
+    }
+  }
+})();
+
+// ─── COLLAPSIBLE MONTHLY SECTIONS ───
+let monthlySections = { entradas: true, saidas: true };
+function toggleMonthlySection(section) {
+  monthlySections[section] = !monthlySections[section];
+  renderMensal();
+}
+
+// ─── GEMINI IA FINANCIAL INSIGHTS ───
+function generateIAInsights() {
+  const apiKey = (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+  if (!apiKey) {
+    toast('Configure sua chave de API do Gemini nos Ajustes primeiro!');
+    return;
+  }
+  
+  const container = $('ia-insights-container');
+  container.innerHTML = '<div style="display:flex; align-items:center; gap:8px;"><span>Analisando perfil de gastos com Gemini IA...</span><span style="font-size: 16px;">⏳</span></div>';
+  
+  const btn = $('btn-generate-insights');
+  if (btn) btn.disabled = true;
+  
+  const txSummary = appData.transacoes.map(t => ({
+    data: t.data,
+    tipo: t.tipo,
+    valor: t.valor,
+    macro: t.macro,
+    desc: t.desc,
+    frequencia: t.frequencia
+  }));
+  
+  const prompt = `Você é o planejador financeiro oficial do app Fluxo (by PlanD).
+Analise o histórico financeiro e o perfil deste usuário para gerar um resumo de desempenho de forma inteligente.
+Dados do usuário:
+- Nome: ${currentUser.nome} ${currentUser.sobrenome || ''}
+- Salário Mensal Cadastrado: R$ ${currentUser.salario || 0}
+- Profissão: ${currentUser.profissao || 'Não informada'}
+- Histórico de Lançamentos: ${JSON.stringify(txSummary)}
+
+Objetivos da sua análise:
+1. Avaliar o desempenho financeiro geral desde o início do ano até o momento e as projeções futuras.
+2. Identificar categorias (áreas da vida) onde há maior gasto e analisar o comportamento de consumo (frequência de gastos, gastos pontuais vs recorrentes).
+3. Gerar um feedback personalizado para o usuário: elogie se houver boa gestão (economias, investimentos, gastos sob controle) ou alerte de forma sutil se houver risco de endividamento ou gastos desnecessários.
+4. Fornecer 2 a 3 sugestões práticas e acionáveis de melhoria no comportamento ou na classificação de despesas para gerar insights valiosos.
+
+Formato de retorno: Retorne APENAS código HTML limpo, usando tags como <p>, <ul>, <li>, <strong> para estruturação. Não use blocos de código markdown (\`\`\`html) ou explicações extras. Seja direto, empático e extremamente analítico.`;
+
+  fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }]
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Falha na API');
+    return res.json();
+  })
+  .then(result => {
+    let htmlText = result.candidates[0].content.parts[0].text.trim();
+    if (htmlText.startsWith('```')) {
+      htmlText = htmlText.replace(/^```html\s*/i, '').replace(/```$/, '').trim();
+    }
+    container.innerHTML = htmlText;
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = '<span style="color:var(--apple-red);">Erro ao gerar insights. Tente novamente ou verifique sua API Key nos Ajustes.</span>';
+  })
+  .finally(() => {
+    if (btn) btn.disabled = false;
   });
 }
 
