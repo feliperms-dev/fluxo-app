@@ -21,6 +21,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Firebase SDKs (Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <style>
 /* ═══════════════════════════════════════════════════
    iCloud / Apple Minimalist Theme Tokens
@@ -520,6 +524,10 @@ ul{list-style:none;}
       <input type="password" id="login-senha" name="password" autocomplete="current-password" class="auth-input" placeholder="Senha (6 dígitos)" maxlength="6" inputmode="numeric" required />
       <button type="submit" class="auth-btn-submit" id="btn-login-submit">➔</button>
     </div>
+    <div style="display: flex; align-items: center; gap: 8px; margin: -4px 0 20px 0; font-size: 13px; color: var(--text-2); text-align: left; padding-left: 4px;">
+      <input type="checkbox" id="login-remember" style="width: 15px; height: 15px; accent-color: var(--apple-blue); cursor: pointer;" checked />
+      <label for="login-remember" style="cursor: pointer; user-select: none;">Lembrar login neste dispositivo</label>
+    </div>
     <div class="auth-links">
       <span class="auth-link" onclick="switchAuth('register')">Criar nova conta Fluxo</span>
       <span class="auth-link" onclick="switchAuth('recover')">Esqueceu a senha?</span>
@@ -971,6 +979,30 @@ ul{list-style:none;}
           <button class="btn btn-primary" style="width: 100%;" onclick="processCSV()">Processar com Gemini IA 🚀</button>
         </div>
 
+        <div class="card card-pad" style="max-width: 600px; margin-bottom: 24px;">
+          <h3 style="margin-bottom: 16px;">☁️ Sincronização em Nuvem (Firebase)</h3>
+          <p style="font-size: 14px; color: var(--text-2); margin-bottom: 16px; line-height: 1.5;">
+            Sincronize seus dados automaticamente entre celular e computador. Deixe os campos em branco para o modo offline (salvamento local). Para sincronizar, crie um projeto gratuito no Firebase Console e preencha as chaves abaixo.
+          </p>
+          <div class="input-group">
+            <label class="input-label">API Key</label>
+            <input type="text" id="fb-api-key" class="input-field" placeholder="Ex: AIzaSyA..." />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Auth Domain</label>
+            <input type="text" id="fb-auth-domain" class="input-field" placeholder="Ex: projeto.firebaseapp.com" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Project ID</label>
+            <input type="text" id="fb-project-id" class="input-field" placeholder="Ex: projeto-id" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">App ID</label>
+            <input type="text" id="fb-app-id" class="input-field" placeholder="Ex: 1:12345:web:abcd..." />
+          </div>
+          <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="saveFirebaseConfig()">Salvar e Conectar Nuvem ⚡</button>
+        </div>
+
         <div class="card card-pad" style="max-width: 600px;">
           <h3 style="margin-bottom: 16px;">Perfil e Dados</h3>
           <div class="set-row">
@@ -1192,6 +1224,39 @@ ul{list-style:none;}
 <script>
 'use strict';
 
+// ─── FIREBASE CONFIG (CLOUD SYNC) ───
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCACYJEwQ2GPj5gjTAIcxQW_K6Cplv1M-o",
+  authDomain: "weekly-flow-bb73d.firebaseapp.com",
+  projectId: "weekly-flow-bb73d",
+  storageBucket: "weekly-flow-bb73d.firebasestorage.app",
+  messagingSenderId: "1014937869337",
+  appId: "1:1014937869337:web:0debedc2fa66fdbc80de88"
+};
+
+let activeFirebaseConfig = null;
+try {
+  const customConfig = localStorage.getItem('pland_firebase_config');
+  if (customConfig) {
+    activeFirebaseConfig = JSON.parse(customConfig);
+  } else {
+    activeFirebaseConfig = DEFAULT_FIREBASE_CONFIG;
+  }
+} catch (e) {
+  activeFirebaseConfig = DEFAULT_FIREBASE_CONFIG;
+}
+
+let useFirebase = false;
+if (typeof firebase !== 'undefined' && activeFirebaseConfig.apiKey && activeFirebaseConfig.apiKey !== "SUA_API_KEY") {
+  try {
+    firebase.initializeApp(activeFirebaseConfig);
+    useFirebase = true;
+    console.log("Firebase inicializado!");
+  } catch (err) {
+    console.error("Erro ao inicializar o Firebase:", err);
+  }
+}
+
 // ─── STATE & DB ───
 const USERS_KEY = 'pland_users';
 let currentUser = null;
@@ -1220,13 +1285,38 @@ function loadUsers() { const u = localStorage.getItem(USERS_KEY); return u ? JSO
 function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
 
 function initAuth() {
-  const loggedEmail = localStorage.getItem('pland_logged_in');
-  if (loggedEmail) {
-    const users = loadUsers();
-    currentUser = users.find(u => u.email === loggedEmail);
-    if (currentUser) { startApp(); return; }
+  if (useFirebase) {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const uid = user.uid;
+        firebase.firestore().collection('users').doc(uid).get()
+          .then(doc => {
+            if (doc.exists) {
+              currentUser = doc.data();
+              currentUser.uid = uid;
+            } else {
+              currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
+            }
+            startApp();
+          })
+          .catch(err => {
+            console.error("Erro ao carregar do Firestore:", err);
+            currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
+            startApp();
+          });
+      } else {
+        $('auth-wrapper').classList.remove('hidden');
+      }
+    });
+  } else {
+    const loggedEmail = localStorage.getItem('pland_logged_in') || sessionStorage.getItem('pland_logged_in');
+    if (loggedEmail) {
+      const users = loadUsers();
+      currentUser = users.find(u => u.email === loggedEmail);
+      if (currentUser) { startApp(); return; }
+    }
+    $('auth-wrapper').classList.remove('hidden');
   }
-  $('auth-wrapper').classList.remove('hidden');
 }
 
 function switchAuth(view) {
@@ -1236,51 +1326,216 @@ function switchAuth(view) {
 
 function handleRegisterSubmit() {
   const nome = $('reg-nome').value.trim();
-  const idade = $('reg-idade').value.trim();
+  const idade = parseInt($('reg-idade').value) || 0;
   const email = $('reg-email').value.trim().toLowerCase();
   const senha = $('reg-senha').value.trim();
   if(!nome || !email || senha.length !== 6) { toast('Preencha os dados corretamente (senha 6 dígitos).'); return; }
-  const users = loadUsers();
-  if(users.find(u => u.email === email)) { toast('E-mail já cadastrado.'); return; }
-  users.push({ nome, idade, email, senha });
-  saveUsers(users);
-  localStorage.setItem(`pland_data_${email}`, JSON.stringify({ saldoInicial: 0, transacoes: [] }));
-  toast('Conta Fluxo criada!'); switchAuth('login');
+  
+  if (useFirebase) {
+    const btn = $('btn-reg-submit');
+    const oldText = btn.textContent;
+    btn.disabled = true; btn.textContent = '...';
+    
+    firebase.auth().createUserWithEmailAndPassword(email, senha)
+      .then(userCredential => {
+        const uid = userCredential.user.uid;
+        currentUser = {
+          nome,
+          idade,
+          email,
+          uid,
+          saldoInicial: 0,
+          salario: 0,
+          profissao: '',
+          geminiKey: '',
+          sobrenome: '',
+          nascimento: '',
+          cpf: '',
+          telefone: ''
+        };
+        return firebase.firestore().collection('users').doc(uid).set(currentUser);
+      })
+      .then(() => {
+        toast('Conta criada com sucesso!');
+        return firebase.auth().signOut();
+      })
+      .then(() => {
+        switchAuth('login');
+      })
+      .catch(err => {
+        toast('Erro ao registrar: ' + err.message);
+      })
+      .finally(() => {
+        btn.disabled = false; btn.textContent = oldText;
+      });
+  } else {
+    const users = loadUsers();
+    if(users.find(u => u.email === email)) { toast('E-mail já cadastrado.'); return; }
+    users.push({ nome, idade, email, senha });
+    saveUsers(users);
+    localStorage.setItem(`pland_data_${email}`, JSON.stringify({ saldoInicial: 0, transacoes: [] }));
+    toast('Conta Fluxo criada!'); switchAuth('login');
+  }
 }
 
 function handleLoginSubmit() {
   const email = $('login-email').value.trim().toLowerCase();
   const senha = $('login-senha').value.trim();
-  const users = loadUsers();
-  const u = users.find(x => x.email === email && x.senha === senha);
-  if (u) {
-    currentUser = u; localStorage.setItem('pland_logged_in', email);
-    toast(`Bem-vindo, ${u.nome}!`); startApp();
-  } else { toast('E-mail ou senha incorretos.'); }
+  const remember = $('login-remember').checked;
+  
+  if (useFirebase) {
+    const btn = $('btn-login-submit');
+    const oldText = btn.textContent;
+    btn.disabled = true; btn.textContent = '...';
+    
+    const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+    
+    firebase.auth().setPersistence(persistence)
+      .then(() => {
+        return firebase.auth().signInWithEmailAndPassword(email, senha);
+      })
+      .then(userCredential => {
+        const uid = userCredential.user.uid;
+        return firebase.firestore().collection('users').doc(uid).get();
+      })
+      .then(doc => {
+        if (doc.exists) {
+          currentUser = doc.data();
+          currentUser.uid = firebase.auth().currentUser.uid;
+        } else {
+          currentUser = { email, nome: email.split('@')[0], uid: firebase.auth().currentUser.uid };
+        }
+        toast(`Bem-vindo, ${currentUser.nome}!`);
+      })
+      .catch(err => {
+        toast('E-mail ou senha incorretos: ' + err.message);
+      })
+      .finally(() => {
+        btn.disabled = false; btn.textContent = oldText;
+      });
+  } else {
+    const users = loadUsers();
+    const u = users.find(x => x.email === email && x.senha === senha);
+    if (u) {
+      currentUser = u;
+      if (remember) {
+        localStorage.setItem('pland_logged_in', email);
+      } else {
+        sessionStorage.setItem('pland_logged_in', email);
+      }
+      toast(`Bem-vindo, ${u.nome}!`); startApp();
+    } else { toast('E-mail ou senha incorretos.'); }
+  }
 }
 
 function handleRecoverSubmit() {
   const email = $('rec-email').value.trim().toLowerCase();
-  const users = loadUsers();
-  if(users.find(u => u.email === email)) {
-    toast('Um link fictício foi enviado para ' + email);
-    setTimeout(()=>switchAuth('login'), 2000);
-  } else { toast('E-mail não encontrado.'); }
+  if (useFirebase) {
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        toast('Link de redefinição enviado para o e-mail!');
+        setTimeout(()=>switchAuth('login'), 2000);
+      })
+      .catch(err => {
+        toast('Erro: ' + err.message);
+      });
+  } else {
+    const users = loadUsers();
+    if(users.find(u => u.email === email)) {
+      toast('Um link fictício foi enviado para ' + email);
+      setTimeout(()=>switchAuth('login'), 2000);
+    } else { toast('E-mail não encontrado.'); }
+  }
 }
 
 function logout() {
-  localStorage.removeItem('pland_logged_in'); currentUser = null; appData = null;
-  $('app-layout').style.display = 'none'; $('auth-wrapper').classList.remove('hidden');
-  switchAuth('login');
+  if (useFirebase) {
+    firebase.auth().signOut()
+      .then(() => {
+        currentUser = null; appData = null;
+        $('app-layout').style.display = 'none'; $('auth-wrapper').classList.remove('hidden');
+        switchAuth('login');
+      })
+      .catch(err => {
+        toast('Erro ao sair: ' + err.message);
+      });
+  } else {
+    localStorage.removeItem('pland_logged_in');
+    sessionStorage.removeItem('pland_logged_in');
+    currentUser = null; appData = null;
+    $('app-layout').style.display = 'none'; $('auth-wrapper').classList.remove('hidden');
+    switchAuth('login');
+  }
 }
 
 // ─── DATA ENGINE ───
-function loadData() {
-  const d = localStorage.getItem(`pland_data_${currentUser.email}`);
-  if (d) appData = JSON.parse(d);
-  else appData = { saldoInicial: 0, transacoes: [] };
+function loadData(callback) {
+  if (useFirebase && currentUser && currentUser.uid) {
+    firebase.firestore().collection('users').doc(currentUser.uid).get()
+      .then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          appData = { 
+            saldoInicial: data.saldoInicial || 0, 
+            transacoes: data.transacoes || [] 
+          };
+        } else {
+          appData = { saldoInicial: 0, transacoes: [] };
+        }
+        if (callback && typeof callback === 'function') callback();
+      })
+      .catch(err => {
+        console.error("Erro ao carregar do Firestore:", err);
+        const d = localStorage.getItem(`pland_data_${currentUser.email}`);
+        appData = d ? JSON.parse(d) : { saldoInicial: 0, transacoes: [] };
+        if (callback && typeof callback === 'function') callback();
+      });
+  } else {
+    const d = localStorage.getItem(`pland_data_${currentUser.email}`);
+    if (d) appData = JSON.parse(d);
+    else appData = { saldoInicial: 0, transacoes: [] };
+    if (callback && typeof callback === 'function') callback();
+  }
 }
-function saveData() { if(currentUser) localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData)); }
+
+function saveData() {
+  if (currentUser) {
+    localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
+    if (useFirebase && currentUser.uid) {
+      firebase.firestore().collection('users').doc(currentUser.uid).update({
+        transacoes: appData.transacoes,
+        saldoInicial: appData.saldoInicial || 0
+      }).catch(err => console.error("Erro ao salvar no Firestore:", err));
+    }
+  }
+}
+
+function saveFirebaseConfig() {
+  const apiKey = $('fb-api-key').value.trim();
+  const authDomain = $('fb-auth-domain').value.trim();
+  const projectId = $('fb-project-id').value.trim();
+  const appId = $('fb-app-id').value.trim();
+  
+  if (!apiKey || apiKey === 'SUA_API_KEY') {
+    localStorage.removeItem('pland_firebase_config');
+    toast("Configuração do Firebase removida. Modo local ativo.");
+    setTimeout(() => location.reload(), 1500);
+    return;
+  }
+  
+  const config = {
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket: `${projectId}.appspot.com`,
+    messagingSenderId: "",
+    appId
+  };
+  
+  localStorage.setItem('pland_firebase_config', JSON.stringify(config));
+  toast("Configurações salvas! Reiniciando para conectar...");
+  setTimeout(() => location.reload(), 1500);
+}
 
 function isNthWeekdayOfMonth(d, semanaMes, diaSemanaMes) {
   if (d.getDay() !== diaSemanaMes) return false;
@@ -1401,7 +1656,11 @@ function startApp() {
     $('ntx-dia-mes').value = d.getDate().toString();
   }
   
-  loadData(); curDate = new Date(); $('ntx-data').value = dtKey(curDate); navTo('dash');
+  loadData(() => {
+    curDate = new Date(); 
+    $('ntx-data').value = dtKey(curDate); 
+    navTo('dash');
+  });
 }
 
 function navTo(page) {
@@ -1434,6 +1693,13 @@ function navTo(page) {
     $('cfg-profissao').value = currentUser.profissao || '';
     $('cfg-salario').value = currentUser.salario || 0;
     $('cfg-gemini-key').value = currentUser.geminiKey || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+    
+    // Load Firebase config values
+    const config = JSON.parse(localStorage.getItem('pland_firebase_config')) || DEFAULT_FIREBASE_CONFIG;
+    $('fb-api-key').value = config.apiKey === 'SUA_API_KEY' ? '' : config.apiKey;
+    $('fb-auth-domain').value = config.authDomain === 'SEU_AUTH_DOMAIN' ? '' : config.authDomain;
+    $('fb-project-id').value = config.projectId === 'SEU_PROJECT_ID' ? '' : config.projectId;
+    $('fb-app-id').value = config.appId === 'SEU_APP_ID' ? '' : config.appId;
   }
 }
 
