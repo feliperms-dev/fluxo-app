@@ -1989,6 +1989,16 @@ function toast(msg) {
 function dtKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function parseDt(k) { const [y,m,d] = k.split('-'); return new Date(y, m-1, d); }
 
+function getEmailKey() {
+  let email = '';
+  if (currentUser && currentUser.email) {
+    email = currentUser.email;
+  } else if (useFirebase && firebase.auth().currentUser && firebase.auth().currentUser.email) {
+    email = firebase.auth().currentUser.email;
+  }
+  return email ? email.toLowerCase().trim() : 'default';
+}
+
 // ─── AUTH LOGIC ───
 function loadUsers() { const u = localStorage.getItem(USERS_KEY); return u ? JSON.parse(u) : []; }
 function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
@@ -2014,11 +2024,13 @@ function initAuth() {
             } else {
               currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
             }
+            if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
             startApp();
           })
           .catch(err => {
             console.error('Erro ao carregar do Firestore:', err);
             currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
+            if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
             startApp();
           });
       } else {
@@ -2121,6 +2133,7 @@ function handleLoginSubmit() {
         } else {
           currentUser = { email, nome: email.split('@')[0], uid: firebase.auth().currentUser.uid };
         }
+        if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
         toast(`Bem-vindo, ${currentUser.nome}! 🎉`);
         startApp();
       })
@@ -2187,98 +2200,135 @@ function logout() {
 }
 
 // ─── DATA ENGINE ───
+// ─── PERSISTÊNCIA: localStorage é a fonte primária; Firestore é backup de nuvem ───
 function loadData(callback) {
   if (currentUser && !currentUser.email && useFirebase && firebase.auth().currentUser) {
     currentUser.email = firebase.auth().currentUser.email;
   }
-  // Sempre restaura do backup local primeiro para rapidez e offline
-  const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
   if (currentUser && currentUser.email) {
-    const localProfile = localStorage.getItem('pland_profile_' + currentUser.email);
+    currentUser.email = currentUser.email.toLowerCase().trim();
+  }
+
+  const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
+
+  // PASSO 1: Carrega imediatamente do localStorage (rápido, sempre disponível)
+  const localDataStr = localStorage.getItem(`pland_data_${getEmailKey()}`);
+  const localData = localDataStr ? (() => { try { return JSON.parse(localDataStr); } catch(e) { return null; } })() : null;
+  const localLastUpdated = (localData && localData.lastUpdated) ? localData.lastUpdated : 0;
+
+  // Restaura perfil local
+  if (currentUser && currentUser.email) {
+    const localProfile = localStorage.getItem('pland_profile_' + getEmailKey());
     if (localProfile) {
-      const pData = JSON.parse(localProfile);
+      const pData = (() => { try { return JSON.parse(localProfile); } catch(e) { return {}; } })();
       profileFields.forEach(f => { if (pData[f] !== undefined) currentUser[f] = pData[f]; });
     }
   }
 
+  // Inicializa appData com dados locais imediatamente (garante que a UI tem dados)
+  if (localData && (localData.transacoes || localData.saldoInicial !== undefined)) {
+    appData = {
+      saldoInicial: localData.saldoInicial !== undefined ? localData.saldoInicial : 0,
+      transacoes: localData.transacoes || [],
+      lastUpdated: localLastUpdated
+    };
+  } else {
+    appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
+  }
+
   if (useFirebase && currentUser && currentUser.uid) {
+    // PASSO 2: Tenta sincronizar com Firestore em background (sem bloquear a UI)
+    // Callback já é chamado aqui com os dados do localStorage para iniciar a UI imediatamente
+    if (callback && typeof callback === 'function') callback();
+
     firebase.firestore().collection('users').doc(currentUser.uid).get()
       .then(doc => {
         if (doc.exists) {
           const data = doc.data();
           const dbTransacoes = data.transacoes || [];
           const dbLastUpdated = data.lastUpdated || 0;
-          
-          const localDataStr = localStorage.getItem(`pland_data_${currentUser.email}`);
-          const localData = localDataStr ? JSON.parse(localDataStr) : null;
-          const localLastUpdated = (localData && localData.lastUpdated) ? localData.lastUpdated : 0;
-          
-          if (localData && localData.transacoes && localLastUpdated > dbLastUpdated) {
+
+          // Lógica de merge: prefere sempre a versão com mais dados ou mais recente
+          const localTxCount = (localData && localData.transacoes) ? localData.transacoes.length : 0;
+          const dbTxCount = dbTransacoes.length;
+
+          // Usa dados locais se: (a) são mais recentes OU (b) têm mais transações E são igualmente recentes
+          const useLocal = localData && localData.transacoes && (
+            localLastUpdated > dbLastUpdated ||
+            (localLastUpdated === dbLastUpdated && localTxCount >= dbTxCount) ||
+            (localTxCount > 0 && dbTxCount === 0)
+          );
+
+          if (useLocal) {
             appData = {
               saldoInicial: localData.saldoInicial !== undefined ? localData.saldoInicial : (data.saldoInicial || 0),
               transacoes: localData.transacoes,
               lastUpdated: localLastUpdated
             };
-            console.log("Restaurando transações do backup local (mais recente) e salvando no Firestore...");
-            saveData();
+            console.log(`[DinDimpass] Local mais recente (${localTxCount} tx). Sincronizando no Firestore...`);
+            // Sincroniza local → Firestore sem alterar timestamps
+            firebase.firestore().collection('users').doc(currentUser.uid).set({
+              transacoes: appData.transacoes,
+              saldoInicial: appData.saldoInicial || 0,
+              lastUpdated: appData.lastUpdated,
+              email: currentUser.email || ''
+            }, { merge: true }).catch(err => console.error('[DinDimpass] Erro sync Firestore:', err));
+          } else if (dbTxCount > localTxCount) {
+            // Firestore tem mais dados — atualiza local e re-renderiza a UI
+            appData = {
+              saldoInicial: data.saldoInicial || 0,
+              transacoes: dbTransacoes,
+              lastUpdated: dbLastUpdated
+            };
+            console.log(`[DinDimpass] Firestore mais completo (${dbTxCount} tx). Atualizando localStorage e UI...`);
+            localStorage.setItem(`pland_data_${getEmailKey()}`, JSON.stringify(appData));
+            // Re-renderiza a página atual para mostrar dados atualizados
+            try {
+              const activePage = document.querySelector('.page.active');
+              if (activePage) {
+                const pageId = activePage.id.replace('page-', '');
+                if (pageId === 'dash') renderDash();
+                else if (pageId === 'semanal') renderSemanal();
+                else if (pageId === 'mensal') renderMensal();
+                else if (pageId === 'anual') renderAnual();
+                else if (pageId === 'horizonte') renderHorizonte();
+                else if (pageId === 'totais') renderTotais();
+              }
+            } catch(e) { console.warn('[DinDimpass] Re-render após sync:', e); }
           } else {
-            if (dbTransacoes.length === 0 && localData && localData.transacoes && localData.transacoes.length > 0) {
-              appData = {
-                saldoInicial: data.saldoInicial || localData.saldoInicial || 0,
-                transacoes: localData.transacoes,
-                lastUpdated: localLastUpdated
-              };
-              console.log("Restaurando transações do backup local (Firestore vazio) e salvando no Firestore...");
-              saveData();
-            } else {
-              appData = {
-                saldoInicial: data.saldoInicial || 0,
-                transacoes: dbTransacoes,
-                lastUpdated: dbLastUpdated
-              };
-            }
+            // Firestore e local têm mesma quantidade — mantém local (já carregado)
+            console.log(`[DinDimpass] Dados sincronizados (${dbTxCount} tx).`);
           }
+
           // Restaura perfil do usuário a partir do Firestore
           profileFields.forEach(f => { if (data[f] !== undefined) currentUser[f] = data[f]; });
-          
-          // Sincroniza de volta no localStorage de backup e na chave da gemini key
-          localStorage.setItem('pland_profile_' + currentUser.email, JSON.stringify(currentUser));
+          localStorage.setItem('pland_profile_' + getEmailKey(), JSON.stringify(currentUser));
           if (currentUser.geminiKey)
-            localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
-            
-          // Atualiza UI se tiver mudado
+            localStorage.setItem('gemini_api_key_' + getEmailKey(), currentUser.geminiKey);
+
           $('ui-name').textContent = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
           $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
         } else {
-          const localDataStr = localStorage.getItem(`pland_data_${currentUser.email}`);
-          const localData = localDataStr ? JSON.parse(localDataStr) : null;
+          // Documento não existe no Firestore — sobe os dados locais
           if (localData && localData.transacoes && localData.transacoes.length > 0) {
-            appData = {
-              saldoInicial: localData.saldoInicial || 0,
-              transacoes: localData.transacoes,
-              lastUpdated: localData.lastUpdated || Date.now()
-            };
-            console.log("Documento inexistente. Sincronizando backup local no Firestore...");
-            saveData();
-          } else {
-            appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
+            console.log('[DinDimpass] Documento inexistente no Firestore. Sincronizando backup local...');
+            firebase.firestore().collection('users').doc(currentUser.uid).set({
+              transacoes: appData.transacoes,
+              saldoInicial: appData.saldoInicial || 0,
+              lastUpdated: appData.lastUpdated || Date.now(),
+              email: currentUser.email || ''
+            }, { merge: true }).catch(err => console.error('[DinDimpass] Erro ao criar doc Firestore:', err));
           }
         }
-        if (callback && typeof callback === 'function') callback();
+        // Callback já foi chamado antes - apenas sincroniza dados em background
       })
       .catch(err => {
-        console.error('Erro ao carregar do Firestore:', err);
-        const d = localStorage.getItem(`pland_data_${currentUser.email}`);
-        appData = d ? JSON.parse(d) : { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
-        if (callback && typeof callback === 'function') callback();
+        // Erro de rede/Firestore — usa dados locais (já carregados e callback já chamado)
+        console.error('[DinDimpass] Firestore indisponível, usando localStorage:', err.message || err);
       });
   } else {
-    // Modo local: carrega transacoes
-    const d = localStorage.getItem(`pland_data_${currentUser.email}`);
-    if (d) appData = JSON.parse(d);
-    else appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
-    // Restaura geminiKey do localStorage local
-    const localKey = localStorage.getItem('gemini_api_key_' + currentUser.email);
+    // Modo local puro
+    const localKey = localStorage.getItem('gemini_api_key_' + getEmailKey());
     if (localKey) currentUser.geminiKey = localKey;
     if (callback && typeof callback === 'function') callback();
   }
@@ -2289,9 +2339,12 @@ function saveData() {
     if (!currentUser.email && useFirebase && firebase.auth().currentUser) {
       currentUser.email = firebase.auth().currentUser.email;
     }
+    if (currentUser.email) {
+      currentUser.email = currentUser.email.toLowerCase().trim();
+    }
     iaInsightsCached = null;
     appData.lastUpdated = Date.now();
-    localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
+    localStorage.setItem(`pland_data_${getEmailKey()}`, JSON.stringify(appData));
     if (useFirebase && currentUser.uid) {
       firebase.firestore().collection('users').doc(currentUser.uid).set({
         transacoes: appData.transacoes,
@@ -2306,6 +2359,9 @@ function saveData() {
 // Salva o perfil completo do usuário (inclui geminiKey, salario, etc.)
 function saveUserProfile() {
   if (!currentUser) return;
+  if (currentUser.email) {
+    currentUser.email = currentUser.email.toLowerCase().trim();
+  }
 
   const profileData = {
     nome:       currentUser.nome       || '',
@@ -2320,11 +2376,11 @@ function saveUserProfile() {
   };
 
   // 1. Sempre salva no localStorage dedicado
-  localStorage.setItem('pland_profile_' + currentUser.email, JSON.stringify(profileData));
+  localStorage.setItem('pland_profile_' + getEmailKey(), JSON.stringify(profileData));
   
   // 2. Mantém o backup da lista global de usuários local
   const users = loadUsers();
-  const idx = users.findIndex(u => u.email === currentUser.email);
+  const idx = users.findIndex(u => u.email.toLowerCase().trim() === getEmailKey());
   if (idx !== -1) {
     users[idx] = { ...users[idx], ...profileData };
   } else {
@@ -2334,7 +2390,7 @@ function saveUserProfile() {
 
   // Mantém geminiKey no localStorage dedicado também
   if (currentUser.geminiKey)
-    localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
+    localStorage.setItem('gemini_api_key_' + getEmailKey(), currentUser.geminiKey);
 
   // 3. Se Firebase ativo, salva o perfil completo no Firestore
   if (useFirebase && currentUser.uid) {
@@ -2513,7 +2569,7 @@ function getInstances(startDate, endDate) {
 function startApp() {
   // Restaura backup do perfil local antes de renderizar
   if (currentUser && currentUser.email) {
-    const localProfile = localStorage.getItem('pland_profile_' + currentUser.email);
+    const localProfile = localStorage.getItem('pland_profile_' + getEmailKey());
     if (localProfile) {
       const pData = JSON.parse(localProfile);
       const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
@@ -2585,7 +2641,7 @@ function navTo(page) {
     $('cfg-telefone').value = currentUser.telefone || '';
     $('cfg-profissao').value = currentUser.profissao || '';
     $('cfg-salario').value = currentUser.salario || 0;
-    $('cfg-gemini-key').value = currentUser.geminiKey || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+    $('cfg-gemini-key').value = currentUser.geminiKey || localStorage.getItem('gemini_api_key_' + getEmailKey()) || '';
     // Aplica blur se houver chave salva (segurança visual)
     initApiKeyField();
     
