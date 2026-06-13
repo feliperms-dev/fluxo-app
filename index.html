@@ -489,7 +489,7 @@ ul{list-style:none;}
 .tx-desc { font-size: 14px; font-weight: 600; }
 .tx-meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .tx-val { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 12px;}
-.tx-del { color: var(--apple-red); cursor: pointer; font-size: 16px; }
+.tx-del { color: #8B0000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
 
 /* Toast */
 .toast {
@@ -937,7 +937,6 @@ ul{list-style:none;}
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M7 10V19M7 10L4 13M7 10L10 13"></path>
             <path d="M17 14V5M17 14L14 11M17 14L20 11"></path>
-            <text x="12" y="15" font-size="10" font-family="sans-serif" font-weight="900" fill="currentColor" stroke="none" text-anchor="middle">$</text>
           </svg>
         </div>
         <div class="nav-label">Entradas e Saídas</div>
@@ -1363,14 +1362,14 @@ ul{list-style:none;}
           <label class="input-label" style="margin-bottom: 8px; display: block;">Tipo de Lançamento</label>
           <div class="tx-type-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
             <div class="tx-type-card active saida" id="type-card-saida" onclick="setNewTxType('saida')">
-              <div style="background: var(--apple-red); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↗</div>
+              <div style="background: var(--apple-red); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↑</div>
               <div style="overflow: hidden;">
                 <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Saída</div>
                 <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Fixo, boletos</div>
               </div>
             </div>
             <div class="tx-type-card entrada" id="type-card-entrada" onclick="setNewTxType('entrada')">
-              <div style="background: var(--apple-green); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↙</div>
+              <div style="background: var(--apple-green); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↓</div>
               <div style="overflow: hidden;">
                 <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Entrada</div>
                 <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Salário, vales</div>
@@ -3098,7 +3097,14 @@ function renderDayTxList() {
         </div>
         <div class="tx-val" style="color: ${c}">
           ${fmt(i.valor)} 
-          <div class="tx-del" onclick="event.stopPropagation(); deleteTx('${i.id}')">✕</div>
+          <div class="tx-del" onclick="event.stopPropagation(); deleteTx('${i.id}')" title="Excluir lançamento">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </div>
         </div>
       </div>
     `;
@@ -3106,7 +3112,6 @@ function renderDayTxList() {
 }
 
 function deleteTx(id) {
-  if(!confirm('Excluir este lançamento?')) return;
   appData.transacoes = appData.transacoes.filter(x => x.id !== id);
   saveData(); renderDayTxList(); renderSemanal();
 }
