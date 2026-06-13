@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Fluxo (by PlanD) — Controle financeiro com previsibilidade." />
-  <title>Fluxo (by PlanD)</title>
+  <meta name="description" content="DinDimpass (by PlanD) — O Gympass das suas finanças." />
+  <title>DinDimpass (by PlanD)</title>
   
   <!-- PWA Manifest & Meta Tags -->
   <link rel="manifest" href="manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Fluxo" />
+  <meta name="apple-mobile-web-app-title" content="DinDimpass" />
   <link rel="apple-touch-icon" href="icon-512.png" />
   
   <!-- Favicon gerado dinamicamente via SVG -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230071E3%22/><path d=%22M 50 15 A 35 35 0 0 1 85 50%22 fill=%22none%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22/><path d=%22M 85 50 L 92 40 M 85 50 L 75 45%22 fill=%22none%22 stroke=%22white%22 stroke-width=%226%22 stroke-linecap=%22round%22/><path d=%22M 50 85 A 35 35 0 0 1 15 50%22 fill=%22none%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22/><path d=%22M 15 50 L 8 60 M 15 50 L 25 55%22 fill=%22none%22 stroke=%22white%22 stroke-width=%226%22 stroke-linecap=%22round%22/><text x=%2250%22 y=%2266%22 font-family=%22Arial%22 font-size=%2250%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230071E3%22/><g transform=%22translate(29, 38) rotate(-15)%22><path d=%22M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z%22 fill=%22%23E5E5EA%22/><path d=%22M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z%22 fill=%22%23E5E5EA%22/><rect x=%220%22 y=%220%22 width=%2242%22 height=%2224%22 rx=%223%22 fill=%22%2334C759%22 stroke=%22white%22 stroke-width=%221.5%22/><circle cx=%2221%22 cy=%2212%22 r=%226%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.5%22/><text x=%2221%22 y=%2216%22 font-family=%22Arial%22 font-size=%2211%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22>$</text></g></svg>" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -103,12 +103,9 @@ ul{list-style:none;}
 }
 
 .auth-logo {
-  width: 50px; height: 34px; margin: 0 auto 20px;
-  background: var(--text-1); border-radius: 20px; position: relative;
+  width: 64px; height: 64px; margin: 0 auto 20px;
   display: flex; align-items: center; justify-content: center;
 }
-.auth-logo::before { content: ''; position: absolute; top: -10px; left: 8px; width: 20px; height: 20px; background: var(--text-1); border-radius: 50%; }
-.auth-logo::after { content: ''; position: absolute; top: -15px; right: 8px; width: 24px; height: 24px; background: var(--text-1); border-radius: 50%; }
 .auth-title { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 30px; }
 
 .auth-field { position: relative; margin-bottom: 16px; }
@@ -171,15 +168,16 @@ ul{list-style:none;}
   
   /* Value blocks */
   .t-val-block { padding: 4px 6px; min-height: 36px; border-radius: 6px; }
-  .t-val-icon-circle { width: 20px; height: 20px; font-size: 10px; margin-right: 4px; }
+  .t-val-icon-circle { display: none !important; }
   .t-val-text { font-size: 12px; }
   .t-input { height: 36px; font-size: 12px; border-radius: 6px; padding: 0 4px; }
   
   /* Columns widths */
-  .w-col-dia { width: 13%; }
-  .w-col-val { width: 42%; }
-  .w-col-sal { width: 28%; font-size: 12px !important; }
-  .w-col-act { width: 17%; }
+  .w-col-dia { width: 10%; }
+  .w-col-ent { width: 27%; }
+  .w-col-sai { width: 27%; }
+  .w-col-sal { width: 23%; font-size: 11px !important; }
+  .w-col-act { width: 13%; }
   
   .btn-sm { padding: 6px 4px; font-size: 9px; border-radius: 4px; }
 }
@@ -224,6 +222,7 @@ ul{list-style:none;}
 .user-name { font-size: 14px; font-weight: 600; }
 .user-email { font-size: 11px; color: var(--text-3); }
 .sidebar.collapsed .user-info { opacity: 0; width: 0; }
+.sidebar.collapsed #sidebar-streak { display: none !important; }
 
 .main-content {
   margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column;
@@ -316,10 +315,11 @@ ul{list-style:none;}
 .w-table tr:hover td { background: var(--bg-card-hover); }
 
 /* Table Columns configuration */
-.w-col-dia { width: 13%; text-align: center; }
-.w-col-val { width: 42%; position: relative; }
-.w-col-sal { width: 28%; font-weight: 700; text-align: right; }
-.w-col-act { width: 17%; text-align: right; }
+.w-col-dia { width: 10%; text-align: center; }
+.w-col-ent { width: 27%; position: relative; }
+.w-col-sai { width: 27%; position: relative; }
+.w-col-sal { width: 23%; font-weight: 700; text-align: right; }
+.w-col-act { width: 13%; text-align: right; }
 
 .t-day-block { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .t-day-num { font-size: 16px; font-weight: 700; text-align: center; }
@@ -515,8 +515,19 @@ ul{list-style:none;}
   
   <!-- Login -->
   <form id="view-login" class="auth-card auth-view active" onsubmit="event.preventDefault(); handleLoginSubmit();">
-    <div class="auth-logo"></div>
-    <h1 class="auth-title">Entrar no Fluxo</h1>
+    <div class="auth-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+        <rect width="100" height="100" rx="22" fill="#0071E3"/>
+        <g transform="translate(29, 38) rotate(-15)">
+          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
+          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
+          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
+          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        </g>
+      </svg>
+    </div>
+    <h1 class="auth-title">Entrar no DinDimpass</h1>
     <div class="auth-field">
       <input type="email" id="login-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required />
     </div>
@@ -529,15 +540,26 @@ ul{list-style:none;}
       <label for="login-remember" style="cursor: pointer; user-select: none;">Lembrar login neste dispositivo</label>
     </div>
     <div class="auth-links">
-      <span class="auth-link" onclick="switchAuth('register')">Criar nova conta Fluxo</span>
+      <span class="auth-link" onclick="switchAuth('register')">Criar nova conta DinDimpass</span>
       <span class="auth-link" onclick="switchAuth('recover')">Esqueceu a senha?</span>
     </div>
   </form>
 
   <!-- Register -->
   <form id="view-register" class="auth-card auth-view" onsubmit="event.preventDefault(); handleRegisterSubmit();">
-    <div class="auth-logo"></div>
-    <h1 class="auth-title">Criar Conta Fluxo</h1>
+    <div class="auth-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+        <rect width="100" height="100" rx="22" fill="#0071E3"/>
+        <g transform="translate(29, 38) rotate(-15)">
+          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
+          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
+          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
+          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        </g>
+      </svg>
+    </div>
+    <h1 class="auth-title">Criar Conta DinDimpass</h1>
     <div class="auth-field"><input type="text" id="reg-nome" name="name" autocomplete="name" class="auth-input" placeholder="Nome" required /></div>
     <div class="auth-field"><input type="number" id="reg-idade" name="age" class="auth-input" placeholder="Idade" required /></div>
     <div class="auth-field"><input type="email" id="reg-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required /></div>
@@ -552,7 +574,18 @@ ul{list-style:none;}
 
   <!-- Recover -->
   <form id="view-recover" class="auth-card auth-view" onsubmit="event.preventDefault(); handleRecoverSubmit();">
-    <div class="auth-logo"></div>
+    <div class="auth-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+        <rect width="100" height="100" rx="22" fill="#0071E3"/>
+        <g transform="translate(29, 38) rotate(-15)">
+          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
+          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
+          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
+          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        </g>
+      </svg>
+    </div>
     <h1 class="auth-title">Recuperar Senha</h1>
     <p style="font-size:14px; color:var(--text-2); margin-bottom: 20px;">Insira seu e-mail para simular o envio de um link de recuperação.</p>
     <div class="auth-field">
@@ -575,8 +608,19 @@ ul{list-style:none;}
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo-icon">F</div>
-      <div class="sidebar-title">Fluxo <span style="font-size:10px; font-weight:normal; opacity:0.6;">by PlanD</span></div>
+      <div class="sidebar-logo-icon" style="background: none; border-radius: 0; width: 32px; height: 32px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+          <rect width="100" height="100" rx="22" fill="#0071E3"/>
+          <g transform="translate(29, 38) rotate(-15)">
+            <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
+            <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
+            <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
+            <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+            <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+          </g>
+        </svg>
+      </div>
+      <div class="sidebar-title">DinDimpass <span style="font-size:10px; font-weight:normal; opacity:0.6;">by PlanD</span></div>
       <button class="sidebar-toggle" onclick="toggleSidebar()">◀</button>
     </div>
     <nav class="sidebar-nav">
@@ -646,19 +690,20 @@ ul{list-style:none;}
       </div>
     </nav>
 
-    <div class="user-profile" onclick="navTo('config')">
+    <div class="user-profile" onclick="navTo('config')" style="position: relative;">
       <div class="user-avatar" id="ui-avatar">U</div>
       <div class="user-info">
         <div class="user-name" id="ui-name">Usuário</div>
         <div class="user-email" id="ui-email">email@teste.com</div>
       </div>
+      <div id="sidebar-streak" style="margin-left: auto; font-size: 13px; font-weight: 700; color: var(--apple-orange); display: flex; align-items: center; gap: 4px;" title="Sua ofensiva de acessos diários!">🔥 <span id="sidebar-streak-count">1</span> dias</div>
     </div>
   </aside>
 
   <main class="main-content">
     <header class="mobile-header">
       <button class="hamburger" onclick="toggleMobileSidebar()">☰</button>
-      <div class="mobile-title">Fluxo</div>
+      <div class="mobile-title">DinDimpass</div>
       <div style="width:24px;"></div>
     </header>
 
@@ -668,28 +713,44 @@ ul{list-style:none;}
       <div id="page-dash" class="page active">
         <div class="page-header">
           <div>
-            <h1 class="page-title" id="dash-greeting">Olá!</h1>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 4px;">
+              <h1 class="page-title" id="dash-greeting" style="margin-bottom: 0;">Olá!</h1>
+              <span id="dash-streak-badge" class="badge" style="background: rgba(255, 149, 0, 0.15); color: #C97200; font-size: 14px; padding: 6px 12px; display: flex; align-items: center; gap: 4px; font-weight: 700;">🔥 <span id="dash-streak-count">1</span> Dias</span>
+            </div>
             <p class="page-subtitle" id="dash-subtitle">Seu resumo financeiro atual.</p>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="navTo('lancamentos')">Nova Entrada/Saída ➕</button>
+            <button class="btn btn-primary" onclick="navTo('lancamentos')">Nova Entrada/Saída +</button>
           </div>
         </div>
         <div id="dash-balance-alert" style="margin-bottom: 20px; border-radius: var(--r-md); padding: 12px 16px; font-size: 14px; font-weight: 500; display: none;"></div>
         <div class="stat-grid">
           <div class="stat-box">
-            <div class="stat-label">Saldo Atual Estimado</div>
-            <div class="stat-val txt-blue" id="dash-saldo">R$ 0,00</div>
+            <div class="stat-label">Tutu na Carteira (Saldo)</div>
+            <div class="stat-val" id="dash-saldo" style="color: var(--text-1);">R$ 0,00</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label">Entradas no Mês</div>
+            <div class="stat-label">Faz-me-rir do Mês (Entradas)</div>
             <div class="stat-val txt-green" id="dash-ent">R$ 0,00</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label">Saídas no Mês</div>
+            <div class="stat-label">Merrecas do Mês (Saídas)</div>
             <div class="stat-val txt-red" id="dash-sai">R$ 0,00</div>
           </div>
         </div>
+        <!-- Frequência Semanal Card -->
+        <div class="card card-pad" style="margin-top: 16px;">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📊 Frequência Semanal DinDimpass</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span id="gamification-rank" style="font-weight: 700; font-size: 16px; color: var(--text-1);">Sedentário Financeiro 💤</span>
+            <span id="gamification-score" style="font-weight: 700; font-size: 15px; color: var(--apple-blue);">0/7 dias</span>
+          </div>
+          <div style="width: 100%; height: 12px; background: #E5E5EA; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
+            <div id="gamification-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34C759, #0071E3); border-radius: 6px; transition: width 0.5s ease;"></div>
+          </div>
+          <p id="gamification-phrase" style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Você ainda não registrou transações esta semana. Que tal começar a anotar suas despesas hoje?</p>
+        </div>
+
         <div class="card card-pad" style="margin-top: 16px;">
           <h3 style="margin-bottom: 12px;">Evolução de Saldo</h3>
           <div style="height: 300px;"><canvas id="chart-dash"></canvas></div>
@@ -697,7 +758,17 @@ ul{list-style:none;}
         <div class="card card-pad" style="margin-top: 16px;">
           <h3 style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
             <span style="display: flex; align-items: center; gap: 8px;">🤖 Insights da IA Financeira</span>
-            <button class="btn btn-secondary btn-sm" id="btn-generate-insights" onclick="generateIAInsights()">Gerar Insights 🪄</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <select id="ia-insight-type" class="weekly-toggle-select" style="padding: 6px 28px 6px 12px; font-size: 13px;" onchange="generateIAInsights()">
+                <option value="completo">Diagnóstico Completo</option>
+                <option value="mes_atual">Diagnóstico Mês Atual</option>
+                <option value="proj_3">Projeção (3 Meses)</option>
+                <option value="proj_6">Projeção (6 Meses)</option>
+                <option value="proj_12">Projeção (12 Meses)</option>
+                <option value="sugestoes">Sugestões de Ações</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" id="btn-generate-insights" onclick="generateIAInsights()">Gerar 🪄</button>
+            </div>
           </h3>
           <div id="ia-insights-container" style="font-size: 14px; color: var(--text-2); line-height: 1.6;">
             Clique no botão acima para analisar seu perfil de gastos e receber conselhos e feedbacks da IA do Gemini.
@@ -711,6 +782,10 @@ ul{list-style:none;}
           <div>
             <h1 class="page-title">Visão Semanal</h1>
             <p class="page-subtitle">Planeje e classifique entradas e saídas por dia.</p>
+          </div>
+          <div class="segment" style="width: 240px; margin-top: 8px;">
+            <div class="seg-btn active" id="btn-view-semana" onclick="setWeeklyViewMode('semana')">Semana</div>
+            <div class="seg-btn" id="btn-view-mes" onclick="setWeeklyViewMode('mes')">Mês Inteiro</div>
           </div>
         </div>
 
@@ -728,14 +803,10 @@ ul{list-style:none;}
             <thead>
               <tr>
                 <th class="w-col-dia">Dia</th>
-                <th class="w-col-val">
-                  <select id="weekly-type-toggle" onchange="toggleWeeklyViewType(this.value)" class="weekly-toggle-select">
-                    <option value="saida">↗ Saídas</option>
-                    <option value="entrada">↙ Entradas</option>
-                  </select>
-                </th>
+                <th class="w-col-ent">↙ Entradas</th>
+                <th class="w-col-sai">↗ Saídas</th>
                 <th class="w-col-sal">Saldos</th>
-                <th class="w-col-act">Detalhamento</th>
+                <th class="w-col-act">Detalhar</th>
               </tr>
             </thead>
             <tbody id="week-tbody">
@@ -743,7 +814,7 @@ ul{list-style:none;}
             </tbody>
           </table>
           <div class="w-summary">
-            <span>Projeção da Semana (Saldo Líquido)</span>
+            <span>Saldo Líquido no Período</span>
             <span id="week-total-saldo" class="b-blue">R$ 0,00</span>
           </div>
         </div>
@@ -966,20 +1037,33 @@ ul{list-style:none;}
         </div>
         
         <div class="card card-pad" style="max-width: 600px; margin-bottom: 24px;">
-          <h3 style="margin-bottom: 16px;">🤖 Importar Planilha (IA Gemini)</h3>
+          <h3 style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span>🤖 Importar Planilha (IA Gemini)</span>
+            <a href="https://aistudio.google.com/" target="_blank" class="txt-blue" style="font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">Obter chave de API gratuita ↗</a>
+          </h3>
           <p style="font-size: 14px; color: var(--text-2); margin-bottom: 16px; line-height: 1.5;">
             Insira sua chave do Gemini abaixo e faça o upload do seu extrato em formato CSV ou Excel. O Gemini processará os dados inteligentemente, interpretando colunas bagunçadas, datas contendo apenas o nome do mês e aplicando as categorias adequadas.
           </p>
+          
+          <!-- Tutorial Rápido da API Key -->
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-1);">Como obter sua chave em 3 cliques:</div>
+            <ol style="font-size: 12px; color: var(--text-2); padding-left: 16px; display: flex; flex-direction: column; gap: 6px;">
+              <li>Acesse o <a href="https://aistudio.google.com/" target="_blank" style="color: var(--apple-blue); font-weight: 600;">Google AI Studio ↗</a> e faça login com sua conta Google.</li>
+              <li>Clique no botão azul <strong>"Get API Key"</strong> no canto superior esquerdo.</li>
+              <li>Clique em <strong>"Create API Key"</strong>, escolha ou crie um projeto e copie a chave gerada.</li>
+            </ol>
+          </div>
+
           <div class="input-group" style="margin-bottom: 16px;">
             <label class="input-label">Chave de API do Gemini</label>
             <input type="password" id="cfg-gemini-key" class="input-field" placeholder="Cole sua chave AI Studio (AIzaSy...)" onchange="updateCfg()" />
-            <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Você pode obter sua chave gratuitamente no Google AI Studio. Ela fica salva com segurança localmente.</div>
           </div>
           <input type="file" id="csv-upload" accept=".csv, .xlsx, .xls" class="input-field" style="width: 100%; margin-bottom: 12px;" />
           <button class="btn btn-primary" style="width: 100%;" onclick="processCSV()">Processar com Gemini IA 🚀</button>
         </div>
 
-        <div class="card card-pad" style="max-width: 600px; margin-bottom: 24px;">
+        <div class="card card-pad" style="max-width: 600px; margin-bottom: 24px; display: none;">
           <h3 style="margin-bottom: 16px;">☁️ Sincronização em Nuvem (Firebase)</h3>
           <p style="font-size: 14px; color: var(--text-2); margin-bottom: 16px; line-height: 1.5;">
             Sincronize seus dados automaticamente entre celular e computador. Deixe os campos em branco para o modo offline (salvamento local). Para sincronizar, crie um projeto gratuito no Firebase Console e preencha as chaves abaixo.
@@ -1056,7 +1140,7 @@ ul{list-style:none;}
 
 <div class="voice-overlay" id="voice-overlay">
   <div class="voice-text" id="voice-text">Ouvindo... Fale algo como "Gastei 50 reais de gasolina hoje".</div>
-  <div class="voice-sub">IA Local do Fluxo processando sua voz</div>
+  <div class="voice-sub">IA do DinDimpass ouvindo sua grana... 🎙️</div>
   <button class="btn btn-secondary" style="margin-top: 30px;" onclick="$('voice-overlay').classList.remove('active');">Cancelar</button>
 </div>
 
@@ -1267,6 +1351,7 @@ let selectedDateForModal = null;
 let curNewTxType = 'saida';
 let curMdType = 'saida';
 let weeklyViewType = 'saida';
+let weeklyViewMode = 'semana'; // 'semana' ou 'mes'
 let chartDash = null; let chartAnnual = null;
 
 // ─── UTILS ───
@@ -1374,7 +1459,7 @@ function handleRegisterSubmit() {
     users.push({ nome, idade, email, senha });
     saveUsers(users);
     localStorage.setItem(`pland_data_${email}`, JSON.stringify({ saldoInicial: 0, transacoes: [] }));
-    toast('Conta Fluxo criada!'); switchAuth('login');
+    toast('Conta DinDimpass criada! Bora fazer sua grana trabalhar! 🚀'); switchAuth('login');
   }
 }
 
@@ -1500,6 +1585,7 @@ function loadData(callback) {
 
 function saveData() {
   if (currentUser) {
+    iaInsightsCached = null; // Invalidate IA Insights cache on data change
     localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
     if (useFirebase && currentUser.uid) {
       firebase.firestore().collection('users').doc(currentUser.uid).update({
@@ -1659,6 +1745,7 @@ function startApp() {
   loadData(() => {
     curDate = new Date(); 
     $('ntx-data').value = dtKey(curDate); 
+    updateStreak();
     navTo('dash');
   });
 }
@@ -1714,6 +1801,10 @@ let iaInsightsCached = null;
 function renderDash() {
   $('dash-greeting').textContent = `Olá, ${currentUser.nome.split(' ')[0]}!`;
   
+  // Render streak count on dash
+  const dashStreak = $('dash-streak-count');
+  if (dashStreak) dashStreak.textContent = appData.streakCount || 1;
+  
   // 1. Subtítulo dinâmico da página com a data atual formatada
   const today = new Date();
   const dayStr = today.getDate();
@@ -1755,6 +1846,43 @@ function renderDash() {
   } else {
     alertBox.style.display = 'none';
   }
+
+  // 3b. Lógica da Frequência Semanal DinDimpass (Gamificação)
+  const curDay = today.getDay();
+  const diffToMon = today.getDate() - curDay + (curDay === 0 ? -6 : 1);
+  const mon = new Date(today.getFullYear(), today.getMonth(), diffToMon);
+  mon.setHours(0,0,0,0);
+  const sun = new Date(mon);
+  sun.setDate(sun.getDate() + 6);
+  sun.setHours(23,59,59,999);
+
+  const weekInsts = getInstances(mon, sun);
+  const uniqueDays = new Set();
+  weekInsts.forEach(inst => {
+    uniqueDays.add(dtKey(inst.instanceDate));
+  });
+  const daysCount = uniqueDays.size;
+
+  let rank = '';
+  let phrase = '';
+  if (daysCount <= 1) {
+    rank = 'Sedentário Financeiro 💤';
+    phrase = 'Você ainda não registrou quase nada esta semana. Lembre-se: consistência é a chave para o sucesso financeiro! 💤';
+  } else if (daysCount <= 3) {
+    rank = 'Caminhada Consciente 🚶‍♂️';
+    phrase = 'Bom começo! Você está criando o hábito de registrar seus gastos. Continue assim para dominar suas finanças! 🚶‍♂️';
+  } else if (daysCount <= 5) {
+    rank = 'Atleta da Poupança 🏃‍♂️';
+    phrase = 'Consistência incrível! Você está no controle quase diário das suas finanças. Continue focado! 🏃‍♂️';
+  } else {
+    rank = 'Monstro da Gestão 🏋️‍♂️';
+    phrase = 'Nível Monstro! Você registra tudo e tem controle total do seu fluxo financeiro. Estilo Gym Rat das finanças! 🏋️‍♂️';
+  }
+
+  $('gamification-rank').textContent = rank;
+  $('gamification-score').textContent = `${daysCount}/7 dias`;
+  $('gamification-progress').style.width = `${(daysCount / 7) * 100}%`;
+  $('gamification-phrase').textContent = phrase;
   
   // 4. Auto-geração ou carregamento de insights da IA
   if (iaInsightsCached) {
@@ -1840,69 +1968,78 @@ function renderDash() {
 }
 
 // ─── SEMANAL (Tabela Refatorada) ───
-function changeWeek(delta) { curDate.setDate(curDate.getDate() + (delta * 7)); renderSemanal(); }
-
-function toggleWeeklyViewType(val) {
-  weeklyViewType = val;
-  const toggle = $('weekly-type-toggle');
-  if (toggle && toggle.value !== val) {
-    toggle.value = val;
+function changeWeek(delta) {
+  if (weeklyViewMode === 'semana') {
+    curDate.setDate(curDate.getDate() + (delta * 7));
+  } else {
+    curDate.setMonth(curDate.getMonth() + delta);
   }
   renderSemanal();
 }
 
 function renderSemanal() {
-  const d = new Date(curDate); const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(d.setDate(diff));
-  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
-  
-  $('week-label').textContent = `Semana de ${monday.getDate()} a ${sunday.getDate()}`;
-  $('week-dates').textContent = `${monday.toLocaleDateString('pt-BR',{month:'short'})} - ${sunday.toLocaleDateString('pt-BR',{month:'short'})}`;
-  
-  const toggle = $('weekly-type-toggle');
-  if (toggle) {
-    toggle.value = weeklyViewType;
-    toggle.classList.remove('toggle-saida', 'toggle-entrada');
-    if (weeklyViewType === 'saida') {
-      toggle.classList.add('toggle-saida');
-    } else {
-      toggle.classList.add('toggle-entrada');
-    }
+  let startDate, endDate, label, subLabel, loopDays;
+  if (weeklyViewMode === 'semana') {
+    const d = new Date(curDate); const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.setDate(diff));
+    monday.setHours(0,0,0,0);
+    const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+    sunday.setHours(23,59,59,999);
+    
+    startDate = monday;
+    endDate = sunday;
+    label = `Semana de ${monday.getDate()} a ${sunday.getDate()}`;
+    subLabel = `${monday.toLocaleDateString('pt-BR',{month:'short'})} - ${sunday.toLocaleDateString('pt-BR',{month:'short'})}`;
+    loopDays = 7;
+  } else {
+    const y = curDate.getFullYear(); const m = curDate.getMonth();
+    const startMonth = new Date(y, m, 1);
+    startMonth.setHours(0,0,0,0);
+    const endMonth = new Date(y, m + 1, 0);
+    endMonth.setHours(23,59,59,999);
+    
+    startDate = startMonth;
+    endDate = endMonth;
+    const monthName = curDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    label = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    subLabel = `Mês Inteiro (${endMonth.getDate()} dias)`;
+    loopDays = endMonth.getDate();
   }
+  
+  $('week-label').textContent = label;
+  $('week-dates').textContent = subLabel;
 
   const tbody = $('week-tbody'); tbody.innerHTML = '';
-  const insts = getInstances(monday, sunday);
+  const insts = getInstances(startDate, endDate);
   
-  let weekNet = 0;
+  let periodNet = 0;
 
-  for(let i=0; i<7; i++) {
-    const curD = new Date(monday); curD.setDate(curD.getDate() + i);
+  for(let i=0; i<loopDays; i++) {
+    const curD = new Date(startDate); curD.setDate(curD.getDate() + i);
     const k = dtKey(curD); const isToday = k === dtKey(new Date());
-    const isSunday = curD.getDay() === 0;
+    const isWeekend = curD.getDay() === 0 || curD.getDay() === 6;
     
     const dayInsts = insts.filter(x => dtKey(x.instanceDate) === k);
     let dEnt = 0, dSai = 0;
     dayInsts.forEach(x => { if(x.tipo==='entrada') dEnt+=x.valor; else dSai+=x.valor; });
     
-    weekNet += (dEnt - dSai);
+    periodNet += (dEnt - dSai);
     const diaNet = dEnt - dSai;
     
-    const valToShow = weeklyViewType === 'entrada' ? dEnt : dSai;
+    let entIconClass = 'circle-neutral';
+    if (dEnt > 0) entIconClass = 'circle-entrada';
     
-    let iconClass = 'circle-neutral';
-    let iconArrow = weeklyViewType === 'entrada' ? '↙' : '↗';
+    let saiIconClass = 'circle-neutral';
+    if (dSai > 0) saiIconClass = 'circle-saida';
     
-    if (valToShow > 0) {
-      iconClass = weeklyViewType === 'entrada' ? 'circle-entrada' : 'circle-saida';
-    }
-    
-    const valClass = valToShow === 0 ? 'muted' : '';
+    const entValClass = dEnt === 0 ? 'muted' : '';
+    const saiValClass = dSai === 0 ? 'muted' : '';
     
     let diaClass = '';
     if (isToday) {
       diaClass = 'dia-today';
-    } else if (isSunday) {
+    } else if (isWeekend) {
       diaClass = 'dia-weekend';
     }
     
@@ -1925,12 +2062,19 @@ function renderSemanal() {
           <div class="t-day-num">${curD.getDate()}</div>
         </div>
       </td>
-      <td class="w-col-val" onclick="event.stopPropagation(); showInlineInput(this)">
+      <td class="w-col-ent" onclick="event.stopPropagation(); showInlineInput(this)">
         <div class="t-val-block">
-          <span class="t-val-icon-circle ${iconClass}">${iconArrow}</span>
-          <span class="t-val-text ${valClass}">${fmt(valToShow)}</span>
+          <span class="t-val-icon-circle ${entIconClass}">↙</span>
+          <span class="t-val-text ${entValClass}">${fmt(dEnt)}</span>
         </div>
-        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', '${weeklyViewType}', this)" onkeydown="if(event.key==='Enter') this.blur();" />
+        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'entrada', this)" onkeydown="if(event.key==='Enter') this.blur();" />
+      </td>
+      <td class="w-col-sai" onclick="event.stopPropagation(); showInlineInput(this)">
+        <div class="t-val-block">
+          <span class="t-val-icon-circle ${saiIconClass}">↗</span>
+          <span class="t-val-text ${saiValClass}">${fmt(dSai)}</span>
+        </div>
+        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'saida', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
       <td class="w-col-sal ${saldoClass}" onclick="openDayDetail('${k}')" style="cursor: pointer;">
         <div style="font-weight: 600;">
@@ -1953,8 +2097,8 @@ function renderSemanal() {
   }
   
   const wt = $('week-total-saldo');
-  wt.textContent = (weekNet > 0 ? '+ ' : '') + fmt(weekNet);
-  wt.className = weekNet >= 0 ? 'b-blue' : 'b-red';
+  wt.textContent = (periodNet > 0 ? '+ ' : '') + fmt(periodNet);
+  wt.className = periodNet >= 0 ? 'b-blue' : 'b-red';
 }
 
 function showInlineInput(td) {
@@ -2400,7 +2544,7 @@ function updateCfg() {
 
 function exportData() {
   const blob = new Blob([JSON.stringify(appData, null, 2)], {type: 'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `fluxo_data_${currentUser.email}.json`; a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dindimpass_data_${currentUser.email}.json`; a.click();
 }
 
 function processCSV() {
@@ -2430,7 +2574,7 @@ function processCSV() {
       btn.textContent = 'IA Gemini Processando... ⏳';
       btn.disabled = true;
 
-      const prompt = `Você é a inteligência financeira do app Fluxo.
+      const prompt = `Você é a inteligência financeira do app DinDimpass.
 Analise os seguintes dados brutos extraídos de uma planilha financeira (CSV/Excel).
 Seus objetivos:
 1. Identificar cada transação (data, descrição, valor).
@@ -2552,98 +2696,93 @@ if (SpeechRecognition) {
     // IA Categoria
     let macro = 'Outros';
     const catRules = { 'Alimentação': ['comida', 'ifood', 'pizza', 'mercado'], 'Transporte': ['uber', 'gasolina', 'onibus', 'posto'], 'Saúde': ['farmácia', 'remédio', 'médico'] };
-    for(let cat in catRules) {
-      if(catRules[cat].some(w => transcript.includes(w))) { macro = cat; break; }
-    }
-
-    if (valor > 0) {
-      // Pre-fill modal
-      $('vi-tipo').value = tipo;
-      $('vi-desc').value = transcript.charAt(0).toUpperCase() + transcript.slice(1);
-      $('vi-val').value = valor;
-      $('vi-cat').value = macro;
-      openModal('modal-voice');
-    } else {
-      toast('IA: Não consegui identificar o valor. Tente novamente!');
-    }
-  };
-
-  recognition.onerror = function() {
-    $('voice-overlay').classList.remove('active');
-    toast('IA: Erro ao capturar voz.');
-  };
-}
-
-function startVoiceAI() {
-  if(!recognition) { toast('Seu navegador não suporta IA de Voz.'); return; }
-  $('voice-overlay').classList.add('active');
-  $('voice-text').textContent = 'Ouvindo...';
-  recognition.start();
-}
-
-function saveVoiceTx() {
-  const val = parseFloat($('vi-val').value);
-  if(isNaN(val) || val <= 0) { toast('Valor inválido.'); return; }
-  appData.transacoes.push({
-    id: uuid(), tipo: $('vi-tipo').value, valor: val, desc: $('vi-desc').value,
-    data: dtKey(new Date()), frequencia: 'none', macro: $('vi-cat').value, formaPagamento: 'Outros'
-  });
-  saveData(); closeModal('modal-voice'); toast('Salvo via IA!'); renderDash();
-}
-
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        console.log('Service Worker registrado!', reg);
-        reg.update();
-      })
-      .catch(err => console.error('Erro ao registrar Service Worker:', err));
-  });
-}
-
-// ─── RECORRÊNCIA AUXILIAR & MÉTODOS ───
-function toggleRepeatOptions(val) {
-  const wrapper = $('ntx-repeat-wrapper');
-  if (wrapper) wrapper.style.display = val === 'repeat' ? 'block' : 'none';
-}
-function toggleFreqBaseOptions(val) {
-  const w = $('ntx-weekly-options');
-  const m = $('ntx-monthly-options');
-  if (w) w.style.display = val === 'semanal' ? 'block' : 'none';
-  if (m) m.style.display = val === 'mensal' ? 'block' : 'none';
-}
-function toggleMonthlyPatternOptions(val) {
-  const fixed = $('ntx-monthly-day-fixed');
-  const spec = $('ntx-monthly-weekday-spec');
-  if (fixed) fixed.style.display = val === 'dia_fixo' ? 'block' : 'none';
-  if (spec) spec.style.display = val === 'dia_semana_especifico' ? 'block' : 'none';
-}
-
-// Populate 1-31 days in select
-(function() {
-  const selectDiaMes = $('ntx-dia-mes');
-  if (selectDiaMes) {
-    selectDiaMes.innerHTML = '';
-    for (let d = 1; d <= 31; d++) {
-      const opt = document.createElement('option');
-      opt.value = d; opt.textContent = `${d}`;
-      selectDiaMes.appendChild(opt);
-    }
-  }
-})();
-
-// ─── COLLAPSIBLE MONTHLY SECTIONS ───
-let monthlySections = { entradas: true, saidas: true };
-function toggleMonthlySection(section) {
-  monthlySections[section] = !monthlySections[section];
-  renderMensal();
-}
-
-// ─── GEMINI IA FINANCIAL INSIGHTS ───
-function generateIAInsights() {
+    for(function generateIAInsights() {
   const apiKey = (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+  if (!apiKey) {
+    toast('Configure sua chave de API do Gemini nos Ajustes primeiro!');
+    return;
+  }
+  
+  const container = $('ia-insights-container');
+  container.innerHTML = '<div style="display:flex; align-items:center; gap:8px;"><span>Analisando perfil de gastos com Gemini IA...</span><span style="font-size: 16px;">⏳</span></div>';
+  
+  const btn = $('btn-generate-insights');
+  if (btn) btn.disabled = true;
+  
+  const txSummary = appData.transacoes.map(t => ({
+    data: t.data,
+    tipo: t.tipo,
+    valor: t.valor,
+    macro: t.macro,
+    desc: t.desc,
+    frequencia: t.frequencia
+  }));
+
+  const type = $('ia-insight-type').value;
+  let focusPrompt = '';
+  if (type === 'completo') {
+    focusPrompt = 'Faça um Diagnóstico Completo do perfil financeiro. Analise o saldo acumulado, as maiores categorias de despesa e dê um panorama geral do comportamento de consumo.';
+  } else if (type === 'mes_atual') {
+    focusPrompt = 'Faça um Diagnóstico do Mês Atual. Foque estritamente nas receitas, despesas e saldo do mês corrente. Aponte picos de gastos e como fechar o mês no azul.';
+  } else if (type === 'proj_3') {
+    focusPrompt = 'Faça uma Projeção Financeira para os próximos 3 meses com base na média de receitas e despesas atuais. Aponte tendências e o saldo acumulado projetado.';
+  } else if (type === 'proj_6') {
+    focusPrompt = 'Faça uma Projeção Financeira para os próximos 6 meses com base na média de receitas e despesas atuais. Aponte tendências de longo prazo.';
+  } else if (type === 'proj_12') {
+    focusPrompt = 'Faça uma Projeção Financeira para os próximos 12 meses com base na média de receitas e despesas atuais. Aponte metas de poupança futures.';
+  } else if (type === 'sugestoes') {
+    focusPrompt = 'Forneça Sugestões de Ações práticas, como opções de investimentos (Ex: Tesouro, CDB), diversificação (Ex: criptomoedas se adequado), e corte de gastos supérfluos recorrentes sem utilidade.';
+  }
+  
+  const prompt = `Você é a inteligência artificial financeira oficial do app DinDimpass (by PlanD).
+Analise o histórico financeiro e o perfil deste usuário para gerar um resumo de desempenho de forma inteligente.
+Dados do usuário:
+- Nome: ${currentUser.nome} ${currentUser.sobrenome || ''}
+- Salário Mensal Cadastrado: R$ ${currentUser.salario || 0}
+- Profissão: ${currentUser.profissao || 'Não informada'}
+- Histórico de Lançamentos: ${JSON.stringify(txSummary)}
+ 
+Foco da Análise: ${focusPrompt}
+
+Objetivos da sua análise:
+1. Seja direto, empático e extremamente analítico.
+2. Gere insights bem enxutos, focados e resumidos em poucos bullet points fáceis de ler.
+3. Use tags HTML limpas (<ul>, <li>, <strong>, <p>) para estruturar o texto. Não use blocos de código markdown (\`\`\`html) ou qualquer introdução/conclusão longa. Vá direto ao ponto.`;
+ 
+  fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }]
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Falha na API');
+    return res.json();
+  })
+  .then(result => {
+    let htmlText = result.candidates[0].content.parts[0].text.trim();
+    if (htmlText.startsWith('```')) {
+      htmlText = htmlText.replace(/^```html\s*/i, '').replace(/```$/, '').trim();
+    }
+    container.innerHTML = htmlText;
+    iaInsightsCached = htmlText;
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = '<span style="color:var(--apple-red);">Erro ao gerar insights. Tente novamente ou verifique sua API Key nos Ajustes.</span>';
+  })
+  .finally(() => {
+    if (btn) btn.disabled = false;
+  });
+} (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
   if (!apiKey) {
     toast('Configure sua chave de API do Gemini nos Ajustes primeiro!');
     return;
