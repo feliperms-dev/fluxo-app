@@ -68,8 +68,8 @@
 ═══════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0; -webkit-tap-highlight-color: transparent;}
 html{font-size:16px; -webkit-text-size-adjust:100%;}
-.seg-btn, .nav-item, .w-table tbody tr { transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease; }
-.seg-btn:active, .nav-item:active, .w-table tbody tr:active { transform: scale(0.97); }
+.seg-btn, .nav-item { transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease; }
+.seg-btn:active, .nav-item:active { transform: scale(0.97); }
 body{
   font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background:var(--bg); color:var(--text-1);
@@ -314,13 +314,12 @@ ul{list-style:none;}
 .w-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
 .w-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .w-table tr:last-child td { border-bottom: none; }
-.w-table tbody tr { cursor: pointer; }
 .w-table tr:hover td { background: var(--bg-card-hover); }
 
 /* Table Columns configuration */
 .w-col-dia { width: 10%; text-align: center; }
-.w-col-ent { width: 27%; position: relative; }
-.w-col-sai { width: 27%; position: relative; }
+.w-col-ent { width: 27%; position: relative; cursor: pointer; }
+.w-col-sai { width: 27%; position: relative; cursor: pointer; }
 .w-col-sal { width: 23%; font-weight: 700; text-align: right; }
 .w-col-act { width: 13%; text-align: right; }
 
@@ -1191,33 +1190,116 @@ ul{list-style:none;}
       <div class="m-close" onclick="closeModal('modal-dia')">✕</div>
     </div>
     
-    <div style="background: #FAFAFC; padding: 16px; border-radius: var(--r-md); border: 1px solid var(--border); margin-bottom: 20px;">
+    <div style="background: #FAFAFC; padding: 16px; border-radius: var(--r-md); border: 1px solid var(--border); margin-bottom: 20px; max-height: 400px; overflow-y: auto;">
       <div style="font-weight: 600; font-size: 14px; margin-bottom: 12px;">Adicionar Lançamento</div>
+      
       <div class="segment" style="margin-bottom: 12px;">
         <div class="seg-btn active" id="md-seg-saida" onclick="setMdType('saida')">Saída</div>
         <div class="seg-btn" id="md-seg-entrada" onclick="setMdType('entrada')">Entrada</div>
       </div>
-      <div class="input-row">
-        <input type="text" id="md-desc" class="input-field" placeholder="Descrição" style="flex:2;" />
-        <input type="number" id="md-val" class="input-field" placeholder="R$" style="flex:1;" />
+      
+      <div class="input-group" style="margin-bottom: 10px;">
+        <label class="input-label">Descrição</label>
+        <input type="text" id="md-desc" class="input-field" placeholder="Ex: Salário, Mercado..." />
       </div>
-      <div class="input-row" style="margin-top: 8px;">
-        <select id="md-cat" class="input-field" style="flex:1;">
-          <option value="Moradia">🏠 Moradia</option>
-          <option value="Alimentação" selected>🍔 Alimentação</option>
-          <option value="Transporte">🚗 Transporte</option>
-          <option value="Saúde">❤️ Saúde</option>
-          <option value="Lazer">🎉 Lazer</option>
-          <option value="Outros">📦 Outros</option>
+
+      <div class="input-group" style="margin-bottom: 10px;">
+        <label class="input-label">Valor (R$)</label>
+        <input type="number" id="md-val" class="input-field" placeholder="0,00" />
+      </div>
+
+      <div class="input-group" style="margin-bottom: 10px;">
+        <label class="input-label">Macro Categoria</label>
+        <select id="md-cat" class="input-field">
+          <option value="Moradia">Moradia</option>
+          <option value="Alimentação" selected>Alimentação</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Lazer">Lazer</option>
+          <option value="Educação">Educação</option>
+          <option value="Salário">Salário</option>
+          <option value="Outros">Outros</option>
         </select>
-        <select id="md-pag" class="input-field" style="flex:1;">
+      </div>
+
+      <div class="input-group" style="margin-bottom: 10px;">
+        <label class="input-label">Forma de Pagamento</label>
+        <select id="md-pag" class="input-field">
           <option value="Pix">Pix</option>
-          <option value="Crédito">Crédito</option>
-          <option value="Débito">Débito</option>
+          <option value="Crédito">Cartão de Crédito</option>
+          <option value="Débito">Cartão de Débito</option>
           <option value="Dinheiro">Dinheiro</option>
         </select>
       </div>
-      <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="saveMdTx()">Adicionar</button>
+
+      <div class="input-group" style="margin-bottom: 10px;">
+        <label class="input-label">Recorrência</label>
+        <select id="md-freq" class="input-field" onchange="toggleMdRepeatOptions(this.value)">
+          <option value="none">Não repete (pontual)</option>
+          <option value="diaria">Todo dia</option>
+          <option value="semanal">Toda semana</option>
+          <option value="quinzenal">A cada 2 semanas (quinzenal)</option>
+          <option value="mensal">Todo mês (mesmo dia)</option>
+          <option value="custom">Personalizado ✨</option>
+        </select>
+      </div>
+
+      <!-- Bloco Personalizado -->
+      <div id="md-repeat-wrapper" style="display:none; background:linear-gradient(135deg,rgba(0,113,227,0.04),rgba(52,199,89,0.04)); padding:16px; border-radius:var(--r-md); border:1px solid rgba(0,113,227,0.15); margin-bottom:14px;">
+        <!-- Intervalo -->
+        <div style="margin-bottom:14px;">
+          <label class="input-label">🔁 Repetir a cada</label>
+          <div class="input-row" style="gap:8px;">
+            <input type="number" id="md-custom-interval" class="input-field" value="1" min="1" style="flex:1; max-width:90px;" />
+            <select id="md-custom-unit" class="input-field" style="flex:2;" onchange="toggleMdCustomUnitOptions(this.value)">
+              <option value="dias">Dia(s)</option>
+              <option value="semanas">Semana(s)</option>
+              <option value="meses">Mês(es)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dias da semana (multi-check) -->
+        <div id="md-custom-weekdays" style="display:none; margin-bottom:14px;">
+          <label class="input-label">📅 Nos dias da semana</label>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;">
+            <label class="day-chip"><input type="checkbox" value="1" class="md-wd-check" /><span>Seg</span></label>
+            <label class="day-chip"><input type="checkbox" value="2" class="md-wd-check" /><span>Ter</span></label>
+            <label class="day-chip"><input type="checkbox" value="3" class="md-wd-check" /><span>Qua</span></label>
+            <label class="day-chip"><input type="checkbox" value="4" class="md-wd-check" /><span>Qui</span></label>
+            <label class="day-chip"><input type="checkbox" value="5" class="md-wd-check" /><span>Sex</span></label>
+            <label class="day-chip"><input type="checkbox" value="6" class="md-wd-check" /><span>Sáb</span></label>
+            <label class="day-chip"><input type="checkbox" value="0" class="md-wd-check" /><span>Dom</span></label>
+          </div>
+        </div>
+
+        <!-- Dias do mês -->
+        <div id="md-custom-monthdays" style="display:none; margin-bottom:14px;">
+          <label class="input-label">📆 No(s) dia(s) do mês</label>
+          <div class="input-row" style="gap:8px; margin-top:6px;">
+            <input type="number" id="md-monthday1" class="input-field" min="1" max="31" placeholder="Ex: 5" style="flex:1;" />
+            <span style="align-self:center; color:var(--text-3); font-size:13px;">e</span>
+            <input type="number" id="md-monthday2" class="input-field" min="1" max="31" placeholder="Ex: 20" style="flex:1;" />
+          </div>
+        </div>
+
+        <!-- Condição de término -->
+        <div style="margin-bottom:14px;">
+          <label class="input-label">🏁 Termina</label>
+          <select id="md-end-type" class="input-field" onchange="toggleMdEndCondition(this.value)" style="margin-bottom:8px;">
+            <option value="infinito">Nunca (conta fixa recorrente)</option>
+            <option value="data">Em uma data específica</option>
+            <option value="parcelas">Após N parcelas</option>
+          </select>
+          <input type="date" id="md-data-fim" class="input-field" style="display:none;" />
+          <div id="md-parcelas-wrap" style="display:none; align-items:center; gap:8px;">
+            <input type="number" id="md-parcelas" class="input-field" min="2" max="999" placeholder="Ex: 6" style="flex:1;" />
+            <span style="font-size:13px; color:var(--text-2);">parcelas</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="saveMdTx()">Adicionar Lançamento</button>
     </div>
 
     <div class="m-title" style="font-size: 16px;">Lançamentos do Dia</div>
@@ -2217,7 +2299,6 @@ function renderSemanal() {
     }
     
     const tr = document.createElement('tr');
-    tr.setAttribute('onclick', `openDayDetail('${k}')`);
     
     tr.innerHTML = `
       <td class="w-col-dia ${diaClass}">
@@ -2225,17 +2306,19 @@ function renderSemanal() {
           <div class="t-day-num">${curD.getDate()}</div>
         </div>
       </td>
-      <td class="w-col-ent">
+      <td class="w-col-ent" onclick="event.stopPropagation(); showInlineInput(this)">
         <div class="t-val-block">
           <span class="t-val-icon-circle ${entIconClass}">↙</span>
           <span class="t-val-text ${entValClass}">${fmt(dEnt)}</span>
         </div>
+        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'entrada', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
-      <td class="w-col-sai">
+      <td class="w-col-sai" onclick="event.stopPropagation(); showInlineInput(this)">
         <div class="t-val-block">
           <span class="t-val-icon-circle ${saiIconClass}">↗</span>
           <span class="t-val-text ${saiValClass}">${fmt(dSai)}</span>
         </div>
+        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'saida', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
       <td class="w-col-sal ${saldoClass}">
         <div style="font-weight: 600;">
@@ -2243,7 +2326,7 @@ function renderSemanal() {
         </div>
       </td>
       <td class="w-col-act">
-        <button class="btn btn-sm btn-outline" style="padding: 6px; display: inline-flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); openDayDetail('${k}')" title="Detalhamento">
+        <button class="btn btn-sm btn-outline" style="padding: 6px; display: inline-flex; align-items: center; justify-content: center;" onclick="openDayDetail('${k}')" title="Detalhamento">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -2305,14 +2388,93 @@ function setMdType(tipo) {
   $('md-seg-entrada').classList.toggle('active', tipo === 'entrada');
 }
 
+// Funções de Toggle de Recorrência no Modal do Dia
+function toggleMdRepeatOptions(val) {
+  const wrapper = $('md-repeat-wrapper');
+  if (wrapper) wrapper.style.display = val === 'custom' ? 'block' : 'none';
+}
+
+function toggleMdCustomUnitOptions(unit) {
+  const wd = $('md-custom-weekdays');
+  const md = $('md-custom-monthdays');
+  if (wd) wd.style.display = unit === 'semanas' ? 'block' : 'none';
+  if (md) md.style.display = unit === 'meses' ? 'block' : 'none';
+}
+
+function toggleMdEndCondition(type) {
+  const df = $('md-data-fim');
+  const pw = $('md-parcelas-wrap');
+  if (df) df.style.display = type === 'data' ? 'block' : 'none';
+  if (pw) pw.style.display = type === 'parcelas' ? 'flex' : 'none';
+}
+
 function saveMdTx() {
   const val = parseFloat($('md-val').value);
   const desc = $('md-desc').value.trim() || (curMdType === 'entrada' ? 'Entrada' : 'Saída');
-  if(isNaN(val) || val <= 0) { toast('Valor inválido.'); return; }
-  appData.transacoes.push({
-    id: uuid(), tipo: curMdType, valor: val, desc, data: selectedDateForModal, frequencia: 'none', macro: $('md-cat').value, formaPagamento: $('md-pag').value
-  });
-  saveData(); $('md-val').value = ''; $('md-desc').value = ''; renderDayTxList(); renderSemanal();
+  if (isNaN(val) || val <= 0) { toast('Valor inválido.'); return; }
+
+  const freq = $('md-freq').value;
+  let txObj = {
+    id: uuid(),
+    tipo: curMdType,
+    valor: val,
+    desc,
+    data: selectedDateForModal,
+    frequencia: freq,
+    macro: $('md-cat').value,
+    formaPagamento: $('md-pag').value
+  };
+
+  if (freq === 'custom') {
+    const unit = $('md-custom-unit').value;
+    const interval = parseInt($('md-custom-interval').value) || 1;
+    const endType = $('md-end-type').value;
+
+    let dataFim = null;
+    let parcelas = null;
+
+    if (endType === 'data') {
+      dataFim = $('md-data-fim').value || null;
+      if (!dataFim) { toast('Defina a data de término.'); return; }
+    } else if (endType === 'parcelas') {
+      parcelas = parseInt($('md-parcelas').value) || null;
+      if (!parcelas || parcelas < 2) { toast('Informe o número de parcelas (mínimo 2).'); return; }
+    }
+
+    // Dias da semana selecionados
+    let weekdays = [];
+    if (unit === 'semanas') {
+      document.querySelectorAll('.md-wd-check:checked').forEach(cb => weekdays.push(parseInt(cb.value)));
+      if (!weekdays.length) { toast('Selecione ao menos um dia da semana.'); return; }
+    }
+
+    // Dias do mês
+    let monthdays = [];
+    if (unit === 'meses') {
+      const d1 = parseInt($('md-monthday1').value);
+      const d2 = parseInt($('md-monthday2').value);
+      if (!d1 || d1 < 1 || d1 > 31) { toast('Informe o dia do mês (1–31).'); return; }
+      monthdays.push(d1);
+      if (d2 >= 1 && d2 <= 31 && d2 !== d1) monthdays.push(d2);
+    }
+
+    txObj.recurrence = { unit, interval, dataFim, parcelas, weekdays, monthdays };
+  }
+
+  appData.transacoes.push(txObj);
+  saveData();
+
+  // Limpa o formulário do modal
+  $('md-val').value = '';
+  $('md-desc').value = '';
+  $('md-freq').value = 'none';
+  toggleMdRepeatOptions('none');
+
+  renderDayTxList();
+  renderSemanal();
+
+  const freqLabel = { none:'pontual', diaria:'diária', semanal:'semanal', quinzenal:'quinzenal', mensal:'mensal', custom:'personalizada' }[freq] || freq;
+  toast(`✅ Lançamento ${freqLabel} adicionado!`);
 }
 
 function renderDayTxList() {
