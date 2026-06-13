@@ -66,8 +66,10 @@
 /* ═══════════════════════════════════════════════════
    RESET & BASE
 ═══════════════════════════════════════════════════ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0; -webkit-tap-highlight-color: transparent;}
 html{font-size:16px; -webkit-text-size-adjust:100%;}
+.seg-btn, .nav-item, .w-table tbody tr { transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease; }
+.seg-btn:active, .nav-item:active, .w-table tbody tr:active { transform: scale(0.97); }
 body{
   font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background:var(--bg); color:var(--text-1);
@@ -312,6 +314,7 @@ ul{list-style:none;}
 .w-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
 .w-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .w-table tr:last-child td { border-bottom: none; }
+.w-table tbody tr { cursor: pointer; }
 .w-table tr:hover td { background: var(--bg-card-hover); }
 
 /* Table Columns configuration */
@@ -552,7 +555,7 @@ ul{list-style:none;}
       <input type="email" id="login-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required />
     </div>
     <div class="auth-field">
-      <input type="password" id="login-senha" name="password" autocomplete="current-password" class="auth-input" placeholder="Senha (6 dígitos)" maxlength="6" inputmode="numeric" required />
+      <input type="password" id="login-senha" name="password" autocomplete="current-password" class="auth-input" placeholder="Senha (mínimo 6 caracteres)" required />
       <button type="submit" class="auth-btn-submit" id="btn-login-submit">➔</button>
     </div>
     <div style="display: flex; align-items: center; gap: 8px; margin: -4px 0 20px 0; font-size: 13px; color: var(--text-2); text-align: left; padding-left: 4px;">
@@ -581,10 +584,9 @@ ul{list-style:none;}
     </div>
     <h1 class="auth-title">Criar Conta DinDimpass</h1>
     <div class="auth-field"><input type="text" id="reg-nome" name="name" autocomplete="name" class="auth-input" placeholder="Nome" required /></div>
-    <div class="auth-field"><input type="number" id="reg-idade" name="age" class="auth-input" placeholder="Idade" required /></div>
     <div class="auth-field"><input type="email" id="reg-email" name="email" autocomplete="username" class="auth-input" placeholder="E-mail" required /></div>
     <div class="auth-field">
-      <input type="password" id="reg-senha" name="password" autocomplete="new-password" class="auth-input" placeholder="Senha (6 dígitos numéricos)" maxlength="6" inputmode="numeric" required />
+      <input type="password" id="reg-senha" name="password" autocomplete="new-password" class="auth-input" placeholder="Senha (mínimo 6 caracteres)" required />
       <button type="submit" class="auth-btn-submit" id="btn-reg-submit">➔</button>
     </div>
     <div class="auth-links">
@@ -708,6 +710,16 @@ ul{list-style:none;}
         </div>
         <div class="nav-label">Ajustes & IA</div>
       </div>
+      <div class="nav-item" onclick="logout()" style="color: var(--apple-red); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+        <div class="nav-label">Encerrar Sessão</div>
+      </div>
     </nav>
 
     <div class="user-profile" onclick="navTo('config')" style="position: relative;">
@@ -746,16 +758,19 @@ ul{list-style:none;}
         <div id="dash-balance-alert" style="margin-bottom: 20px; border-radius: var(--r-md); padding: 12px 16px; font-size: 14px; font-weight: 500; display: none;"></div>
         <div class="stat-grid">
           <div class="stat-box">
-            <div class="stat-label">Tutu na Carteira (Saldo)</div>
+            <div class="stat-label">Saldo</div>
             <div class="stat-val" id="dash-saldo" style="color: var(--text-1);">R$ 0,00</div>
+            <div style="font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Tutu na Carteira</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label">Faz-me-rir do Mês (Entradas)</div>
+            <div class="stat-label">Entradas (Mês)</div>
             <div class="stat-val txt-green" id="dash-ent">R$ 0,00</div>
+            <div style="font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Faz-me-rir</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label">Merrecas do Mês (Saídas)</div>
+            <div class="stat-label">Saídas (Mês)</div>
             <div class="stat-val txt-red" id="dash-sai">R$ 0,00</div>
+            <div style="font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Merrecas</div>
           </div>
         </div>
         <!-- Frequência Semanal Card -->
@@ -800,7 +815,7 @@ ul{list-style:none;}
       <div id="page-semanal" class="page">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Visão Semanal</h1>
+            <h1 class="page-title" id="semanal-title">Visão Semanal</h1>
             <p class="page-subtitle">Planeje e classifique entradas e saídas por dia.</p>
           </div>
           <div class="segment" style="width: 240px; margin-top: 8px;">
@@ -1442,10 +1457,9 @@ function switchAuth(view) {
 
 function handleRegisterSubmit() {
   const nome = $('reg-nome').value.trim();
-  const idade = parseInt($('reg-idade').value) || 0;
   const email = $('reg-email').value.trim().toLowerCase();
   const senha = $('reg-senha').value.trim();
-  if(!nome || !email || senha.length !== 6) { toast('Preencha os dados corretamente (senha 6 dígitos).'); return; }
+  if(!nome || !email || senha.length < 6) { toast('Preencha os dados corretamente (senha mínimo 6 caracteres).'); return; }
   
   if (useFirebase) {
     const btn = $('btn-reg-submit');
@@ -1457,7 +1471,6 @@ function handleRegisterSubmit() {
         const uid = userCredential.user.uid;
         currentUser = {
           nome,
-          idade,
           email,
           uid,
           saldoInicial: 0,
@@ -1487,7 +1500,7 @@ function handleRegisterSubmit() {
   } else {
     const users = loadUsers();
     if(users.find(u => u.email === email)) { toast('E-mail já cadastrado.'); return; }
-    users.push({ nome, idade, email, senha });
+    users.push({ nome, email, senha });
     saveUsers(users);
     localStorage.setItem(`pland_data_${email}`, JSON.stringify({ saldoInicial: 0, transacoes: [] }));
     toast('Conta DinDimpass criada! Bora fazer sua grana trabalhar! 🚀'); switchAuth('login');
@@ -1632,10 +1645,10 @@ function saveData() {
     iaInsightsCached = null;
     localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
     if (useFirebase && currentUser.uid) {
-      firebase.firestore().collection('users').doc(currentUser.uid).update({
+      firebase.firestore().collection('users').doc(currentUser.uid).set({
         transacoes: appData.transacoes,
         saldoInicial: appData.saldoInicial || 0
-      }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
+      }, { merge: true }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
     }
   }
 }
@@ -2084,7 +2097,16 @@ function renderDash() {
       }, 
       scales: { 
         x: { grid: { display: false } }, 
-        y: { grid: { color: 'rgba(0,0,0,0.05)' } } 
+        y: { 
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          suggestedMin: 0,
+          suggestedMax: 1000,
+          ticks: {
+            callback: function(value) {
+              return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            }
+          }
+        } 
       } 
     }
   });
@@ -2096,6 +2118,13 @@ function setWeeklyViewMode(mode) {
   // Atualiza visual dos botões de toggle
   $('btn-view-semana').classList.toggle('active', mode === 'semana');
   $('btn-view-mes').classList.toggle('active', mode === 'mes');
+  
+  // Atualiza o título da página dinamicamente
+  const titleEl = $('semanal-title');
+  if (titleEl) {
+    titleEl.textContent = mode === 'semana' ? 'Visão Semanal' : 'Visão Mensal';
+  }
+  
   // Reseta a data para hoje ao trocar de modo
   curDate = new Date();
   renderSemanal();
@@ -2188,34 +2217,33 @@ function renderSemanal() {
     }
     
     const tr = document.createElement('tr');
+    tr.setAttribute('onclick', `openDayDetail('${k}')`);
     
     tr.innerHTML = `
-      <td class="w-col-dia ${diaClass}" onclick="openDayDetail('${k}')" style="cursor: pointer;">
+      <td class="w-col-dia ${diaClass}">
         <div class="t-day-block">
           <div class="t-day-num">${curD.getDate()}</div>
         </div>
       </td>
-      <td class="w-col-ent" onclick="event.stopPropagation(); showInlineInput(this)">
+      <td class="w-col-ent">
         <div class="t-val-block">
           <span class="t-val-icon-circle ${entIconClass}">↙</span>
           <span class="t-val-text ${entValClass}">${fmt(dEnt)}</span>
         </div>
-        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'entrada', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
-      <td class="w-col-sai" onclick="event.stopPropagation(); showInlineInput(this)">
+      <td class="w-col-sai">
         <div class="t-val-block">
           <span class="t-val-icon-circle ${saiIconClass}">↗</span>
           <span class="t-val-text ${saiValClass}">${fmt(dSai)}</span>
         </div>
-        <input type="number" step="any" class="t-input" style="display:none;" placeholder="0.00" onblur="saveInlineInput('${k}', 'saida', this)" onkeydown="if(event.key==='Enter') this.blur();" />
       </td>
-      <td class="w-col-sal ${saldoClass}" onclick="openDayDetail('${k}')" style="cursor: pointer;">
+      <td class="w-col-sal ${saldoClass}">
         <div style="font-weight: 600;">
           ${diaNet > 0 ? '+' : (diaNet < 0 ? '−' : '')} ${fmt(Math.abs(diaNet))}
         </div>
       </td>
       <td class="w-col-act">
-        <button class="btn btn-sm btn-outline" style="padding: 6px; display: inline-flex; align-items: center; justify-content: center;" onclick="openDayDetail('${k}')" title="Detalhamento">
+        <button class="btn btn-sm btn-outline" style="padding: 6px; display: inline-flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); openDayDetail('${k}')" title="Detalhamento">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -2568,7 +2596,31 @@ function renderAnual() {
   }
   const ctx = $('chart-annual').getContext('2d');
   if(chartAnnual) chartAnnual.destroy();
-  chartAnnual = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Saldo', data, backgroundColor: colors, borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,0.05)' } } } } });
+  chartAnnual = new Chart(ctx, { 
+    type: 'bar', 
+    data: { 
+      labels, 
+      datasets: [{ label: 'Saldo', data, backgroundColor: colors, borderRadius: 6 }] 
+    }, 
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false, 
+      plugins: { legend: { display: false } }, 
+      scales: { 
+        x: { grid: { display: false } }, 
+        y: { 
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          suggestedMin: 0,
+          suggestedMax: 1000,
+          ticks: {
+            callback: function(value) {
+              return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            }
+          }
+        } 
+      } 
+    } 
+  });
 }
 
 // ─── LANÇAMENTO ───
