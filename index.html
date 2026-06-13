@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -1371,7 +1371,14 @@ function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users
 
 function initAuth() {
   if (useFirebase) {
+    // Timeout defensivo: se o Firebase travar, exibe o login em 5s
+    const authTimeout = setTimeout(() => {
+      console.warn('Firebase auth timeout — exibindo tela de login.');
+      $('auth-wrapper').classList.remove('hidden');
+    }, 5000);
+
     firebase.auth().onAuthStateChanged(user => {
+      clearTimeout(authTimeout);
       if (user) {
         const uid = user.uid;
         firebase.firestore().collection('users').doc(uid).get()
@@ -1385,7 +1392,7 @@ function initAuth() {
             startApp();
           })
           .catch(err => {
-            console.error("Erro ao carregar do Firestore:", err);
+            console.error('Erro ao carregar do Firestore:', err);
             currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
             startApp();
           });
@@ -1490,10 +1497,12 @@ function handleLoginSubmit() {
         } else {
           currentUser = { email, nome: email.split('@')[0], uid: firebase.auth().currentUser.uid };
         }
-        toast(`Bem-vindo, ${currentUser.nome}!`);
+        toast(`Bem-vindo, ${currentUser.nome}! 🎉`);
+        startApp();
       })
       .catch(err => {
         toast('E-mail ou senha incorretos: ' + err.message);
+        btn.disabled = false; btn.textContent = oldText;
       })
       .finally(() => {
         btn.disabled = false; btn.textContent = oldText;
@@ -2696,7 +2705,35 @@ if (SpeechRecognition) {
     // IA Categoria
     let macro = 'Outros';
     const catRules = { 'Alimentação': ['comida', 'ifood', 'pizza', 'mercado'], 'Transporte': ['uber', 'gasolina', 'onibus', 'posto'], 'Saúde': ['farmácia', 'remédio', 'médico'] };
-    for(function generateIAInsights() {
+    for(const [cat, kws] of Object.entries(catRules)) {
+      if(kws.some(kw => transcript.includes(kw))) { macro = cat; break; }
+    }
+    
+    if(valor > 0) {
+      const tx = { id: uuid(), data: dtKey(new Date()), tipo, valor, desc: transcript, macro, frequencia: 'none' };
+      appData.transacoes.push(tx);
+      saveData();
+      renderDash();
+      toast(`Registrado via voz: ${tipo} de ${fmt(valor)}`);
+    } else {
+      toast('Não consegui identificar um valor. Tente novamente.');
+    }
+  };
+
+  recognition.onerror = function(event) {
+    $('voice-overlay').classList.remove('active');
+    toast('Erro no reconhecimento de voz: ' + event.error);
+  };
+}
+
+function startVoice() {
+  if(!recognition) { toast('Reconhecimento de voz não suportado neste navegador.'); return; }
+  $('voice-overlay').classList.add('active');
+  recognition.start();
+}
+
+// ─── IA INSIGHTS (Gemini) ───
+function generateIAInsights() {
   const apiKey = (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
   if (!apiKey) {
     toast('Configure sua chave de API do Gemini nos Ajustes primeiro!');
@@ -2718,7 +2755,7 @@ if (SpeechRecognition) {
     frequencia: t.frequencia
   }));
 
-  const type = $('ia-insight-type').value;
+  const type = $('ia-insight-type') ? $('ia-insight-type').value : 'completo';
   let focusPrompt = '';
   if (type === 'completo') {
     focusPrompt = 'Faça um Diagnóstico Completo do perfil financeiro. Analise o saldo acumulado, as maiores categorias de despesa e dê um panorama geral do comportamento de consumo.';
@@ -2729,7 +2766,7 @@ if (SpeechRecognition) {
   } else if (type === 'proj_6') {
     focusPrompt = 'Faça uma Projeção Financeira para os próximos 6 meses com base na média de receitas e despesas atuais. Aponte tendências de longo prazo.';
   } else if (type === 'proj_12') {
-    focusPrompt = 'Faça uma Projeção Financeira para os próximos 12 meses com base na média de receitas e despesas atuais. Aponte metas de poupança futures.';
+    focusPrompt = 'Faça uma Projeção Financeira para os próximos 12 meses com base na média de receitas e despesas atuais. Aponte metas de poupança futuras.';
   } else if (type === 'sugestoes') {
     focusPrompt = 'Forneça Sugestões de Ações práticas, como opções de investimentos (Ex: Tesouro, CDB), diversificação (Ex: criptomoedas se adequado), e corte de gastos supérfluos recorrentes sem utilidade.';
   }
@@ -2749,7 +2786,7 @@ Objetivos da sua análise:
 2. Gere insights bem enxutos, focados e resumidos em poucos bullet points fáceis de ler.
 3. Use tags HTML limpas (<ul>, <li>, <strong>, <p>) para estruturar o texto. Não use blocos de código markdown (\`\`\`html) ou qualquer introdução/conclusão longa. Vá direto ao ponto.`;
  
-  fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
+  fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -2764,7 +2801,7 @@ Objetivos da sua análise:
     })
   })
   .then(res => {
-    if (!res.ok) throw new Error('Falha na API');
+    if (!res.ok) throw new Error('Falha na API: ' + res.status);
     return res.json();
   })
   .then(result => {
@@ -2774,75 +2811,6 @@ Objetivos da sua análise:
     }
     container.innerHTML = htmlText;
     iaInsightsCached = htmlText;
-  })
-  .catch(err => {
-    console.error(err);
-    container.innerHTML = '<span style="color:var(--apple-red);">Erro ao gerar insights. Tente novamente ou verifique sua API Key nos Ajustes.</span>';
-  })
-  .finally(() => {
-    if (btn) btn.disabled = false;
-  });
-} (currentUser && currentUser.geminiKey) || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
-  if (!apiKey) {
-    toast('Configure sua chave de API do Gemini nos Ajustes primeiro!');
-    return;
-  }
-  
-  const container = $('ia-insights-container');
-  container.innerHTML = '<div style="display:flex; align-items:center; gap:8px;"><span>Analisando perfil de gastos com Gemini IA...</span><span style="font-size: 16px;">⏳</span></div>';
-  
-  const btn = $('btn-generate-insights');
-  if (btn) btn.disabled = true;
-  
-  const txSummary = appData.transacoes.map(t => ({
-    data: t.data,
-    tipo: t.tipo,
-    valor: t.valor,
-    macro: t.macro,
-    desc: t.desc,
-    frequencia: t.frequencia
-  }));
-  
-  const prompt = `Você é o planejador financeiro oficial do app Fluxo (by PlanD).
-Analise o histórico financeiro e o perfil deste usuário para gerar um resumo de desempenho de forma inteligente.
-Dados do usuário:
-- Nome: ${currentUser.nome} ${currentUser.sobrenome || ''}
-- Salário Mensal Cadastrado: R$ ${currentUser.salario || 0}
-- Profissão: ${currentUser.profissao || 'Não informada'}
-- Histórico de Lançamentos: ${JSON.stringify(txSummary)}
-
-Objetivos da sua análise:
-1. Avaliar o desempenho financeiro geral desde o início do ano até o momento e as projeções futuras.
-2. Identificar categorias (áreas da vida) onde há maior gasto e analisar o comportamento de consumo (frequência de gastos, gastos pontuais vs recorrentes).
-3. Gerar um feedback personalizado para o usuário: elogie se houver boa gestão (economias, investimentos, gastos sob controle) ou alerte de forma sutil se houver risco de endividamento ou gastos desnecessários.
-4. Fornecer 2 a 3 sugestões práticas e acionáveis de melhoria no comportamento ou na classificação de despesas para gerar insights valiosos.
-
-Formato de retorno: Retorne APENAS código HTML limpo, usando tags como <p>, <ul>, <li>, <strong> para estruturação. Não use blocos de código markdown (\`\`\`html) ou explicações extras. Seja direto, empático e extremamente analítico.`;
-
-  fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey
-    },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: prompt
-        }]
-      }]
-    })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Falha na API');
-    return res.json();
-  })
-  .then(result => {
-    let htmlText = result.candidates[0].content.parts[0].text.trim();
-    if (htmlText.startsWith('```')) {
-      htmlText = htmlText.replace(/^```html\s*/i, '').replace(/```$/, '').trim();
-    }
-    container.innerHTML = htmlText;
   })
   .catch(err => {
     console.error(err);
