@@ -2843,6 +2843,19 @@ function renderSemanal() {
   
   let periodNet = 0;
 
+  // Calcula o saldo inicial acumulado antes do início do período (startDate)
+  const prevEnd = new Date(startDate);
+  prevEnd.setDate(prevEnd.getDate() - 1);
+  prevEnd.setHours(23, 59, 59, 999);
+  
+  const pastInsts = getInstances(new Date(2000, 0, 1), prevEnd);
+  let te = 0, ts = 0;
+  pastInsts.forEach(x => {
+    if (x.tipo === 'entrada') te += x.valor;
+    else ts += x.valor;
+  });
+  let runningBalance = (appData.saldoInicial || 0) + te - ts;
+
   for(let i=0; i<loopDays; i++) {
     const curD = new Date(startDate); curD.setDate(curD.getDate() + i);
     const k = dtKey(curD); const isToday = k === dtKey(new Date());
@@ -2853,7 +2866,8 @@ function renderSemanal() {
     dayInsts.forEach(x => { if(x.tipo==='entrada') dEnt+=x.valor; else dSai+=x.valor; });
     
     periodNet += (dEnt - dSai);
-    const diaNet = dEnt - dSai;
+    runningBalance += (dEnt - dSai);
+    const dayRunningBalance = runningBalance;
     
     let entIconClass = 'circle-neutral';
     if (dEnt > 0) entIconClass = 'circle-entrada';
@@ -2873,12 +2887,12 @@ function renderSemanal() {
     
     let saldoClass = '';
     if (isToday) {
-      if (diaNet > 0) saldoClass = 'sal-pos-today';
-      else if (diaNet < 0) saldoClass = 'sal-neg-today';
+      if (dayRunningBalance > 0) saldoClass = 'sal-pos-today';
+      else if (dayRunningBalance < 0) saldoClass = 'sal-neg-today';
       else saldoClass = 'sal-zero-today';
     } else {
-      if (diaNet > 0) saldoClass = 'sal-pos';
-      else if (diaNet < 0) saldoClass = 'sal-neg';
+      if (dayRunningBalance > 0) saldoClass = 'sal-pos';
+      else if (dayRunningBalance < 0) saldoClass = 'sal-neg';
       else saldoClass = 'sal-zero';
     }
     
@@ -2906,7 +2920,7 @@ function renderSemanal() {
       </td>
       <td class="w-col-sal ${saldoClass}">
         <div style="font-weight: 600;">
-          ${diaNet > 0 ? '+' : (diaNet < 0 ? '−' : '')} ${fmt(Math.abs(diaNet))}
+          ${dayRunningBalance > 0 ? '+' : (dayRunningBalance < 0 ? '−' : '')} ${fmt(Math.abs(dayRunningBalance))}
         </div>
       </td>
       <td class="w-col-act">
@@ -3736,6 +3750,7 @@ function renderHorizonte() {
       else {
         if (i.tipo === 'entrada') mEnt += i.valor;
         else if (i.tipo === 'saida') mSai += i.valor;
+        else if (i.tipo === 'diario') mSai += i.valor;
         else if (i.tipo === 'economia') mEco += i.valor;
       }
     });
