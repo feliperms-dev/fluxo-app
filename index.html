@@ -4006,7 +4006,7 @@ Retorne APENAS o JSON limpo, sem markdown, sem explicações.
 Dados brutos da planilha:
 ${JSON.stringify(rowsToProcess)}`;
 
-      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+      fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -4208,7 +4208,7 @@ Objetivos da sua análise:
 2. Gere insights bem enxutos, focados e resumidos em poucos bullet points fáceis de ler.
 3. Use tags HTML limpas (<ul>, <li>, <strong>, <p>) para estruturar o texto. Não use blocos de código markdown (\`\`\`html) ou qualquer introdução/conclusão longa. Vá direto ao ponto.`;
  
-  fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+  fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
