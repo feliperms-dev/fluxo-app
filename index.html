@@ -1058,7 +1058,28 @@ ul{list-style:none;}
 
           <div class="input-group" style="margin-bottom: 16px;">
             <label class="input-label">Chave de API do Gemini</label>
-            <input type="password" id="cfg-gemini-key" class="input-field" placeholder="Cole sua chave AI Studio (AIzaSy...)" onchange="updateCfg()" />
+            <div style="position:relative;">
+              <input
+                type="text"
+                id="cfg-gemini-key"
+                class="input-field"
+                placeholder="Cole sua chave AI Studio (AIzaSy...)"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                style="padding-right:44px; font-family:monospace; font-size:13px; letter-spacing:0.03em;"
+                onchange="updateCfg()"
+              />
+              <button
+                type="button"
+                onclick="toggleApiKeyVisibility()"
+                id="btn-toggle-apikey"
+                title="Mostrar/ocultar chave"
+                style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-3); padding:0; line-height:1;"
+              >👁️</button>
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">Sua chave fica salva apenas no seu perfil. Nunca é enviada a terceiros.</div>
           </div>
           <input type="file" id="csv-upload" accept=".csv, .xlsx, .xls" class="input-field" style="width: 100%; margin-bottom: 12px;" />
           <button class="btn btn-primary" style="width: 100%;" onclick="processCSV()">Processar com Gemini IA 🚀</button>
@@ -1090,38 +1111,40 @@ ul{list-style:none;}
 
         <div class="card card-pad" style="max-width: 600px;">
           <h3 style="margin-bottom: 16px;">Perfil e Dados</h3>
+          <form autocomplete="off" onsubmit="return false;" style="display:contents;">
           <div class="set-row">
             <div class="set-label">Nome</div>
-            <input type="text" id="cfg-nome" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+            <input type="text" id="cfg-nome" class="input-field" style="width: 240px;" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">Sobrenome</div>
-            <input type="text" id="cfg-sobrenome" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+            <input type="text" id="cfg-sobrenome" class="input-field" style="width: 240px;" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">E-mail (Login)</div>
-            <input type="email" id="cfg-email" class="input-field" style="width: 240px; background-color: #F2F2F7;" readonly />
+            <input type="email" id="cfg-email" class="input-field" style="width: 240px; background-color: #F2F2F7;" autocomplete="off" readonly />
           </div>
           <div class="set-row">
             <div class="set-label">Data de Nascimento</div>
-            <input type="date" id="cfg-nascimento" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+            <input type="date" id="cfg-nascimento" class="input-field" style="width: 240px;" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">CPF</div>
-            <input type="text" id="cfg-cpf" class="input-field" style="width: 240px;" placeholder="000.000.000-00" onchange="updateCfg()" />
+            <input type="text" id="cfg-cpf" class="input-field" style="width: 240px;" placeholder="000.000.000-00" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">Telefone</div>
-            <input type="text" id="cfg-telefone" class="input-field" style="width: 240px;" placeholder="(00) 00000-0000" onchange="updateCfg()" />
+            <input type="text" id="cfg-telefone" class="input-field" style="width: 240px;" placeholder="(00) 00000-0000" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">Profissão</div>
-            <input type="text" id="cfg-profissao" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+            <input type="text" id="cfg-profissao" class="input-field" style="width: 240px;" autocomplete="off" onchange="updateCfg()" />
           </div>
           <div class="set-row">
             <div class="set-label">Salário Mensal (R$)</div>
-            <input type="number" id="cfg-salario" class="input-field" style="width: 240px;" onchange="updateCfg()" />
+            <input type="number" id="cfg-salario" class="input-field" style="width: 240px;" autocomplete="off" onchange="updateCfg()" />
           </div>
+          </form>
           <div class="set-row" style="border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px;">
             <button class="btn btn-danger" style="width: 100%;" onclick="logout()">Encerrar Sessão</button>
           </div>
@@ -1570,39 +1593,84 @@ function loadData(callback) {
       .then(doc => {
         if (doc.exists) {
           const data = doc.data();
-          appData = { 
-            saldoInicial: data.saldoInicial || 0, 
-            transacoes: data.transacoes || [] 
+          // Restaura transacoes
+          appData = {
+            saldoInicial: data.saldoInicial || 0,
+            transacoes: data.transacoes || []
           };
+          // Restaura perfil do usuário a partir do Firestore
+          const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
+          profileFields.forEach(f => { if (data[f] !== undefined) currentUser[f] = data[f]; });
+          // Sincroniza geminiKey no localStorage também
+          if (currentUser.geminiKey)
+            localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
         } else {
           appData = { saldoInicial: 0, transacoes: [] };
         }
         if (callback && typeof callback === 'function') callback();
       })
       .catch(err => {
-        console.error("Erro ao carregar do Firestore:", err);
+        console.error('Erro ao carregar do Firestore:', err);
         const d = localStorage.getItem(`pland_data_${currentUser.email}`);
         appData = d ? JSON.parse(d) : { saldoInicial: 0, transacoes: [] };
         if (callback && typeof callback === 'function') callback();
       });
   } else {
+    // Modo local: carrega transacoes
     const d = localStorage.getItem(`pland_data_${currentUser.email}`);
     if (d) appData = JSON.parse(d);
     else appData = { saldoInicial: 0, transacoes: [] };
+    // Restaura geminiKey do localStorage local
+    const localKey = localStorage.getItem('gemini_api_key_' + currentUser.email);
+    if (localKey) currentUser.geminiKey = localKey;
     if (callback && typeof callback === 'function') callback();
   }
 }
 
 function saveData() {
   if (currentUser) {
-    iaInsightsCached = null; // Invalidate IA Insights cache on data change
+    iaInsightsCached = null;
     localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
     if (useFirebase && currentUser.uid) {
       firebase.firestore().collection('users').doc(currentUser.uid).update({
         transacoes: appData.transacoes,
         saldoInicial: appData.saldoInicial || 0
-      }).catch(err => console.error("Erro ao salvar no Firestore:", err));
+      }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
     }
+  }
+}
+
+// Salva o perfil completo do usuário (inclui geminiKey, salario, etc.)
+function saveUserProfile() {
+  if (!currentUser) return;
+
+  // 1. Sempre salva no localStorage (modo local e backup)
+  const users = loadUsers();
+  const idx = users.findIndex(u => u.email === currentUser.email);
+  if (idx !== -1) {
+    users[idx] = { ...users[idx], ...currentUser };
+    saveUsers(users);
+  }
+  // Mantém geminiKey no localStorage dedicado também
+  if (currentUser.geminiKey)
+    localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
+
+  // 2. Se Firebase ativo, salva o perfil completo no Firestore
+  if (useFirebase && currentUser.uid) {
+    const profileData = {
+      nome:       currentUser.nome       || '',
+      sobrenome:  currentUser.sobrenome  || '',
+      nascimento: currentUser.nascimento || '',
+      cpf:        currentUser.cpf        || '',
+      telefone:   currentUser.telefone   || '',
+      profissao:  currentUser.profissao  || '',
+      salario:    currentUser.salario    || 0,
+      geminiKey:  currentUser.geminiKey  || '',
+      email:      currentUser.email      || ''
+    };
+    firebase.firestore().collection('users').doc(currentUser.uid)
+      .set(profileData, { merge: true })
+      .catch(err => console.error('Erro ao salvar perfil no Firestore:', err));
   }
 }
 
@@ -1833,6 +1901,8 @@ function navTo(page) {
     $('cfg-profissao').value = currentUser.profissao || '';
     $('cfg-salario').value = currentUser.salario || 0;
     $('cfg-gemini-key').value = currentUser.geminiKey || localStorage.getItem('gemini_api_key_' + currentUser.email) || '';
+    // Aplica blur se houver chave salva (segurança visual)
+    initApiKeyField();
     
     // Load Firebase config values
     const config = JSON.parse(localStorage.getItem('pland_firebase_config')) || DEFAULT_FIREBASE_CONFIG;
@@ -2597,7 +2667,37 @@ function saveNewTx() {
 }
 
 // ─── CONFIG & IMPORT IA CSV ───
+// Alterna visibilidade da chave de API (sem usar type=password para evitar gerenciador de senhas)
+function toggleApiKeyVisibility() {
+  const input = $('cfg-gemini-key');
+  const btn = $('btn-toggle-apikey');
+  const isHidden = input.style.filter === 'blur(4px)';
+  if (isHidden) {
+    input.style.filter = 'none';
+    input.style.letterSpacing = '0.03em';
+    btn.textContent = '👁️';
+    btn.title = 'Ocultar chave';
+  } else {
+    input.style.filter = 'blur(4px)';
+    input.style.letterSpacing = '0.3em';
+    btn.textContent = '🙈';
+    btn.title = 'Mostrar chave';
+  }
+}
+
+// Aplica blur inicial na chave assim que a página de config é carregada
+function initApiKeyField() {
+  const input = $('cfg-gemini-key');
+  if (input && input.value) {
+    input.style.filter = 'blur(4px)';
+    input.style.letterSpacing = '0.3em';
+    const btn = $('btn-toggle-apikey');
+    if (btn) { btn.textContent = '🙈'; btn.title = 'Mostrar chave'; }
+  }
+}
+
 function updateCfg() {
+
   const nome = $('cfg-nome').value.trim();
   const sobrenome = $('cfg-sobrenome').value.trim();
   const nascimento = $('cfg-nascimento').value;
@@ -2606,29 +2706,27 @@ function updateCfg() {
   const profissao = $('cfg-profissao').value.trim();
   const salario = parseFloat($('cfg-salario').value) || 0;
   const geminiKey = $('cfg-gemini-key').value.trim();
-  
-  if (nome) {
-    currentUser.nome = nome;
-    currentUser.sobrenome = sobrenome;
-    currentUser.nascimento = nascimento;
-    currentUser.cpf = cpf;
-    currentUser.telefone = telefone;
-    currentUser.profissao = profissao;
-    currentUser.salario = salario;
-    currentUser.geminiKey = geminiKey;
-    
-    const users = loadUsers();
-    const idx = users.findIndex(u => u.email === currentUser.email);
-    if (idx !== -1) {
-      users[idx] = { ...users[idx], ...currentUser };
-      saveUsers(users);
-    }
-    $('ui-name').textContent = nome + (sobrenome ? ' ' + sobrenome : '');
-    $('dash-greeting').textContent = `Olá, ${nome.split(' ')[0]}!`;
-  }
-  localStorage.setItem('gemini_api_key_' + currentUser.email, geminiKey);
-  saveData();
-  toast('Ajustes salvos!');
+
+  if (!nome) { toast('O nome não pode estar vazio.'); return; }
+
+  // Atualiza currentUser
+  currentUser.nome = nome;
+  currentUser.sobrenome = sobrenome;
+  currentUser.nascimento = nascimento;
+  currentUser.cpf = cpf;
+  currentUser.telefone = telefone;
+  currentUser.profissao = profissao;
+  currentUser.salario = salario;
+  currentUser.geminiKey = geminiKey;
+
+  // Persiste em localStorage + Firestore
+  saveUserProfile();
+
+  // Atualiza UI imediatamente
+  $('ui-name').textContent = nome + (sobrenome ? ' ' + sobrenome : '');
+  $('dash-greeting').textContent = `Olá, ${nome.split(' ')[0]}!`;
+
+  toast('✅ Ajustes salvos e sincronizados!');
 }
 
 function exportData() {
