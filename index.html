@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -1977,6 +1977,16 @@ function renderDash() {
 }
 
 // ─── SEMANAL (Tabela Refatorada) ───
+function setWeeklyViewMode(mode) {
+  weeklyViewMode = mode;
+  // Atualiza visual dos botões de toggle
+  $('btn-view-semana').classList.toggle('active', mode === 'semana');
+  $('btn-view-mes').classList.toggle('active', mode === 'mes');
+  // Reseta a data para hoje ao trocar de modo
+  curDate = new Date();
+  renderSemanal();
+}
+
 function changeWeek(delta) {
   if (weeklyViewMode === 'semana') {
     curDate.setDate(curDate.getDate() + (delta * 7));
