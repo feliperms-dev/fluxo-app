@@ -2205,21 +2205,36 @@ function loadData(callback) {
         if (doc.exists) {
           const data = doc.data();
           const dbTransacoes = data.transacoes || [];
+          const dbLastUpdated = data.lastUpdated || 0;
+          
           const localDataStr = localStorage.getItem(`pland_data_${currentUser.email}`);
           const localData = localDataStr ? JSON.parse(localDataStr) : null;
+          const localLastUpdated = (localData && localData.lastUpdated) ? localData.lastUpdated : 0;
           
-          if (dbTransacoes.length === 0 && localData && localData.transacoes && localData.transacoes.length > 0) {
+          if (localData && localData.transacoes && localLastUpdated > dbLastUpdated) {
             appData = {
-              saldoInicial: data.saldoInicial || localData.saldoInicial || 0,
-              transacoes: localData.transacoes
+              saldoInicial: localData.saldoInicial !== undefined ? localData.saldoInicial : (data.saldoInicial || 0),
+              transacoes: localData.transacoes,
+              lastUpdated: localLastUpdated
             };
-            console.log("Restaurando transações do backup local e salvando no Firestore...");
+            console.log("Restaurando transações do backup local (mais recente) e salvando no Firestore...");
             saveData();
           } else {
-            appData = {
-              saldoInicial: data.saldoInicial || 0,
-              transacoes: dbTransacoes
-            };
+            if (dbTransacoes.length === 0 && localData && localData.transacoes && localData.transacoes.length > 0) {
+              appData = {
+                saldoInicial: data.saldoInicial || localData.saldoInicial || 0,
+                transacoes: localData.transacoes,
+                lastUpdated: localLastUpdated
+              };
+              console.log("Restaurando transações do backup local (Firestore vazio) e salvando no Firestore...");
+              saveData();
+            } else {
+              appData = {
+                saldoInicial: data.saldoInicial || 0,
+                transacoes: dbTransacoes,
+                lastUpdated: dbLastUpdated
+              };
+            }
           }
           // Restaura perfil do usuário a partir do Firestore
           profileFields.forEach(f => { if (data[f] !== undefined) currentUser[f] = data[f]; });
@@ -2238,12 +2253,13 @@ function loadData(callback) {
           if (localData && localData.transacoes && localData.transacoes.length > 0) {
             appData = {
               saldoInicial: localData.saldoInicial || 0,
-              transacoes: localData.transacoes
+              transacoes: localData.transacoes,
+              lastUpdated: localData.lastUpdated || Date.now()
             };
             console.log("Documento inexistente. Sincronizando backup local no Firestore...");
             saveData();
           } else {
-            appData = { saldoInicial: 0, transacoes: [] };
+            appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
           }
         }
         if (callback && typeof callback === 'function') callback();
@@ -2251,14 +2267,14 @@ function loadData(callback) {
       .catch(err => {
         console.error('Erro ao carregar do Firestore:', err);
         const d = localStorage.getItem(`pland_data_${currentUser.email}`);
-        appData = d ? JSON.parse(d) : { saldoInicial: 0, transacoes: [] };
+        appData = d ? JSON.parse(d) : { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
         if (callback && typeof callback === 'function') callback();
       });
   } else {
     // Modo local: carrega transacoes
     const d = localStorage.getItem(`pland_data_${currentUser.email}`);
     if (d) appData = JSON.parse(d);
-    else appData = { saldoInicial: 0, transacoes: [] };
+    else appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
     // Restaura geminiKey do localStorage local
     const localKey = localStorage.getItem('gemini_api_key_' + currentUser.email);
     if (localKey) currentUser.geminiKey = localKey;
@@ -2269,11 +2285,13 @@ function loadData(callback) {
 function saveData() {
   if (currentUser) {
     iaInsightsCached = null;
+    appData.lastUpdated = Date.now();
     localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
     if (useFirebase && currentUser.uid) {
       firebase.firestore().collection('users').doc(currentUser.uid).set({
         transacoes: appData.transacoes,
-        saldoInicial: appData.saldoInicial || 0
+        saldoInicial: appData.saldoInicial || 0,
+        lastUpdated: appData.lastUpdated
       }, { merge: true }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
     }
   }
@@ -3612,12 +3630,13 @@ function renderTotais() {
     }
   });
 
-  const monthIncome = entTotal > 0 ? entTotal : (parseFloat(currentUser.salario) || 0);
+  const hasMovements = (entTotal > 0 || saiTotal > 0 || diaTotal > 0 || ecoTotal > 0 || creTotal > 0);
+  const monthIncome = hasMovements ? (entTotal > 0 ? entTotal : (parseFloat(currentUser.salario) || 0)) : 0;
   const totalDaysInMonth = new Date(y, m + 1, 0).getDate();
   const availableForDaily = monthIncome - saiTotal - ecoTotal - creTotal;
-  const dottedD = availableForDaily > 0 ? (availableForDaily / totalDaysInMonth) : 0;
-  const custoDeVida = saiTotal + diaTotal + creTotal + dottedD;
-  const performance = monthIncome - custoDeVida - ecoTotal;
+  const dottedD = (hasMovements && availableForDaily > 0) ? (availableForDaily / totalDaysInMonth) : 0;
+  const custoDeVida = hasMovements ? (saiTotal + diaTotal + creTotal + dottedD) : 0;
+  const performance = hasMovements ? (monthIncome - custoDeVida - ecoTotal) : 0;
 
   $('totais-perf-val').textContent = fmt(performance);
   if (performance < 0) {
@@ -3987,7 +4006,7 @@ Retorne APENAS o JSON limpo, sem markdown, sem explicações.
 Dados brutos da planilha:
 ${JSON.stringify(rowsToProcess)}`;
 
-      fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent`, {
+      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -4016,10 +4035,29 @@ ${JSON.stringify(rowsToProcess)}`;
       })
       .then(result => {
         let jsonText = result.candidates[0].content.parts[0].text.trim();
-        if (jsonText.startsWith('```')) {
-          jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+        
+        // Extrator JSON robusto: isola o conteúdo do array ou objeto
+        const startIdx = jsonText.indexOf('[');
+        const endIdx = jsonText.lastIndexOf(']');
+        if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+          jsonText = jsonText.substring(startIdx, endIdx + 1);
+        } else {
+          const startObj = jsonText.indexOf('{');
+          const endObj = jsonText.lastIndexOf('}');
+          if (startObj !== -1 && endObj !== -1 && endObj > startObj) {
+            jsonText = jsonText.substring(startObj, endObj + 1);
+          }
         }
-        const list = JSON.parse(jsonText);
+        
+        let list = JSON.parse(jsonText);
+        if (!Array.isArray(list) && list && typeof list === 'object') {
+          for (const key in list) {
+            if (Array.isArray(list[key])) {
+              list = list[key];
+              break;
+            }
+          }
+        }
         
         if(Array.isArray(list)) {
           let imported = 0;
