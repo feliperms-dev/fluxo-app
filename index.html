@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="DinDimpass (by PlanD) — O Gympass das suas finanças." />
-  <title>DinDimpass (by PlanD)</title>
+  <meta name="description" content="DinDimpass — O Gympass das suas finanças." />
+  <title>DinDimpass</title>
   
   <!-- PWA Manifest & Meta Tags -->
   <link rel="manifest" href="manifest.json" />
@@ -179,7 +179,7 @@ ul{list-style:none;}
   .w-col-ent { width: 27%; }
   .w-col-sai { width: 27%; }
   .w-col-sal { width: 23%; font-size: 11px !important; }
-  .w-col-act { width: 13%; }
+  .w-col-act { width: 13%; text-align: center; }
   
   .btn-sm { padding: 6px 4px; font-size: 9px; border-radius: 4px; }
 }
@@ -321,7 +321,7 @@ ul{list-style:none;}
 .w-col-ent { width: 27%; position: relative; cursor: pointer; }
 .w-col-sai { width: 27%; position: relative; cursor: pointer; }
 .w-col-sal { width: 23%; font-weight: 700; text-align: right; }
-.w-col-act { width: 13%; text-align: right; }
+.w-col-act { width: 13%; text-align: center; }
 
 .t-day-block { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .t-day-num { font-size: 16px; font-weight: 700; text-align: center; }
@@ -641,7 +641,7 @@ ul{list-style:none;}
           </g>
         </svg>
       </div>
-      <div class="sidebar-title">DinDimpass <span style="font-size:10px; font-weight:normal; opacity:0.6;">by PlanD</span></div>
+      <div class="sidebar-title">DinDimpass</div>
       <button class="sidebar-toggle" onclick="toggleSidebar()">◀</button>
     </div>
     <nav class="sidebar-nav">
@@ -1683,6 +1683,16 @@ function logout() {
 
 // ─── DATA ENGINE ───
 function loadData(callback) {
+  // Sempre restaura do backup local primeiro para rapidez e offline
+  const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
+  if (currentUser && currentUser.email) {
+    const localProfile = localStorage.getItem('pland_profile_' + currentUser.email);
+    if (localProfile) {
+      const pData = JSON.parse(localProfile);
+      profileFields.forEach(f => { if (pData[f] !== undefined) currentUser[f] = pData[f]; });
+    }
+  }
+
   if (useFirebase && currentUser && currentUser.uid) {
     firebase.firestore().collection('users').doc(currentUser.uid).get()
       .then(doc => {
@@ -1694,11 +1704,16 @@ function loadData(callback) {
             transacoes: data.transacoes || []
           };
           // Restaura perfil do usuário a partir do Firestore
-          const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
           profileFields.forEach(f => { if (data[f] !== undefined) currentUser[f] = data[f]; });
-          // Sincroniza geminiKey no localStorage também
+          
+          // Sincroniza de volta no localStorage de backup e na chave da gemini key
+          localStorage.setItem('pland_profile_' + currentUser.email, JSON.stringify(currentUser));
           if (currentUser.geminiKey)
             localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
+            
+          // Atualiza UI se tiver mudado
+          $('ui-name').textContent = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
+          $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
         } else {
           appData = { saldoInicial: 0, transacoes: [] };
         }
@@ -1739,30 +1754,37 @@ function saveData() {
 function saveUserProfile() {
   if (!currentUser) return;
 
-  // 1. Sempre salva no localStorage (modo local e backup)
+  const profileData = {
+    nome:       currentUser.nome       || '',
+    sobrenome:  currentUser.sobrenome  || '',
+    nascimento: currentUser.nascimento || '',
+    cpf:        currentUser.cpf        || '',
+    telefone:   currentUser.telefone   || '',
+    profissao:  currentUser.profissao  || '',
+    salario:    currentUser.salario    || 0,
+    geminiKey:  currentUser.geminiKey  || '',
+    email:      currentUser.email      || ''
+  };
+
+  // 1. Sempre salva no localStorage dedicado
+  localStorage.setItem('pland_profile_' + currentUser.email, JSON.stringify(profileData));
+  
+  // 2. Mantém o backup da lista global de usuários local
   const users = loadUsers();
   const idx = users.findIndex(u => u.email === currentUser.email);
   if (idx !== -1) {
-    users[idx] = { ...users[idx], ...currentUser };
-    saveUsers(users);
+    users[idx] = { ...users[idx], ...profileData };
+  } else {
+    users.push({ ...profileData });
   }
+  saveUsers(users);
+
   // Mantém geminiKey no localStorage dedicado também
   if (currentUser.geminiKey)
     localStorage.setItem('gemini_api_key_' + currentUser.email, currentUser.geminiKey);
 
-  // 2. Se Firebase ativo, salva o perfil completo no Firestore
+  // 3. Se Firebase ativo, salva o perfil completo no Firestore
   if (useFirebase && currentUser.uid) {
-    const profileData = {
-      nome:       currentUser.nome       || '',
-      sobrenome:  currentUser.sobrenome  || '',
-      nascimento: currentUser.nascimento || '',
-      cpf:        currentUser.cpf        || '',
-      telefone:   currentUser.telefone   || '',
-      profissao:  currentUser.profissao  || '',
-      salario:    currentUser.salario    || 0,
-      geminiKey:  currentUser.geminiKey  || '',
-      email:      currentUser.email      || ''
-    };
     firebase.firestore().collection('users').doc(currentUser.uid)
       .set(profileData, { merge: true })
       .catch(err => console.error('Erro ao salvar perfil no Firestore:', err));
@@ -1936,10 +1958,20 @@ function getInstances(startDate, endDate) {
 
 // ─── UI CONTROLLERS ───
 function startApp() {
+  // Restaura backup do perfil local antes de renderizar
+  if (currentUser && currentUser.email) {
+    const localProfile = localStorage.getItem('pland_profile_' + currentUser.email);
+    if (localProfile) {
+      const pData = JSON.parse(localProfile);
+      const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
+      profileFields.forEach(f => { if (pData[f] !== undefined) currentUser[f] = pData[f]; });
+    }
+  }
+
   $('auth-wrapper').classList.add('hidden'); $('app-layout').style.display = 'flex';
-  $('ui-name').textContent = currentUser.nome + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
+  $('ui-name').textContent = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
   $('ui-email').textContent = currentUser.email;
-  $('ui-avatar').textContent = currentUser.nome.charAt(0).toUpperCase();
+  $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
   
   // Set initial and change listeners for default recurrence weekdays/days of month
   const ntxDataInput = $('ntx-data');
@@ -3163,7 +3195,7 @@ function generateIAInsights() {
     focusPrompt = 'Forneça Sugestões de Ações práticas, como opções de investimentos (Ex: Tesouro, CDB), diversificação (Ex: criptomoedas se adequado), e corte de gastos supérfluos recorrentes sem utilidade.';
   }
   
-  const prompt = `Você é a inteligência artificial financeira oficial do app DinDimpass (by PlanD).
+  const prompt = `Você é a inteligência artificial financeira oficial do app DinDimpass.
 Analise o histórico financeiro e o perfil deste usuário para gerar um resumo de desempenho de forma inteligente.
 Dados do usuário:
 - Nome: ${currentUser.nome} ${currentUser.sobrenome || ''}
