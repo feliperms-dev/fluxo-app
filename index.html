@@ -460,6 +460,26 @@ ul{list-style:none;}
 .seg-btn { flex: 1; text-align: center; padding: 6px 0; font-size: 13px; font-weight: 600; border-radius: 6px; color: var(--text-2); transition: var(--t); }
 .seg-btn.active { background: white; color: var(--text-1); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
+/* Day chips para seleção múltipla de dias da semana */
+.day-chip { display: inline-flex; align-items: center; cursor: pointer; }
+.day-chip input[type="checkbox"] { display: none; }
+.day-chip span {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  background: #E5E5EA; color: var(--text-2);
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.day-chip input:checked + span {
+  background: var(--apple-blue); color: white;
+  border-color: var(--apple-blue);
+  box-shadow: 0 2px 6px rgba(0,113,227,0.35);
+}
+.day-chip:hover span { border-color: var(--apple-blue); }
+
+
 /* Transaction List inside Modal */
 .tx-list { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
 .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #FAFAFC; border-radius: var(--r-md); border: 1px solid var(--border); }
@@ -940,89 +960,70 @@ ul{list-style:none;}
           <div class="input-group">
             <label class="input-label">Recorrência</label>
             <select id="ntx-freq" class="input-field" onchange="toggleRepeatOptions(this.value)">
-              <option value="none">Não repete</option>
-              <option value="repeat">Repetir</option>
+              <option value="none">Não repete (pontual)</option>
+              <option value="diaria">Todo dia</option>
+              <option value="semanal">Toda semana</option>
+              <option value="quinzenal">A cada 2 semanas (quinzenal)</option>
+              <option value="mensal">Todo mês (mesmo dia)</option>
+              <option value="custom">Personalizado ✨</option>
             </select>
           </div>
 
-          <!-- Opções de Recorrência Avançadas -->
-          <div id="ntx-repeat-wrapper" style="display: none; background: #FAFAFC; padding: 12px; border-radius: var(--r-md); border: 1px solid var(--border); margin-bottom: 24px;">
-            <div class="input-group" style="margin-bottom: 12px;">
-              <label class="input-label">Frequência</label>
-              <select id="ntx-freq-base" class="input-field" onchange="toggleFreqBaseOptions(this.value)">
-                <option value="diaria">Todo dia</option>
-                <option value="semanal" selected>Toda semana</option>
-                <option value="mensal">Todo mês</option>
+          <!-- Bloco Personalizado -->
+          <div id="ntx-repeat-wrapper" style="display:none; background:linear-gradient(135deg,rgba(0,113,227,0.04),rgba(52,199,89,0.04)); padding:16px; border-radius:var(--r-md); border:1px solid rgba(0,113,227,0.15); margin-bottom:24px;">
+
+            <!-- Intervalo -->
+            <div style="margin-bottom:14px;">
+              <label class="input-label">🔁 Repetir a cada</label>
+              <div class="input-row" style="gap:8px;">
+                <input type="number" id="ntx-custom-interval" class="input-field" value="1" min="1" style="flex:1; max-width:90px;" />
+                <select id="ntx-custom-unit" class="input-field" style="flex:2;" onchange="toggleCustomUnitOptions(this.value)">
+                  <option value="dias">Dia(s)</option>
+                  <option value="semanas">Semana(s)</option>
+                  <option value="meses">Mês(es)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dias da semana (multi-check) — aparece ao selecionar semanas -->
+            <div id="ntx-custom-weekdays" style="display:none; margin-bottom:14px;">
+              <label class="input-label">📅 Nos dias da semana</label>
+              <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;">
+                <label class="day-chip"><input type="checkbox" value="1" class="ntx-wd-check" /><span>Seg</span></label>
+                <label class="day-chip"><input type="checkbox" value="2" class="ntx-wd-check" /><span>Ter</span></label>
+                <label class="day-chip"><input type="checkbox" value="3" class="ntx-wd-check" /><span>Qua</span></label>
+                <label class="day-chip"><input type="checkbox" value="4" class="ntx-wd-check" /><span>Qui</span></label>
+                <label class="day-chip"><input type="checkbox" value="5" class="ntx-wd-check" /><span>Sex</span></label>
+                <label class="day-chip"><input type="checkbox" value="6" class="ntx-wd-check" /><span>Sáb</span></label>
+                <label class="day-chip"><input type="checkbox" value="0" class="ntx-wd-check" /><span>Dom</span></label>
+              </div>
+            </div>
+
+            <!-- Dias do mês (dois campos) — aparece ao selecionar meses -->
+            <div id="ntx-custom-monthdays" style="display:none; margin-bottom:14px;">
+              <label class="input-label">📆 No(s) dia(s) do mês</label>
+              <div class="input-row" style="gap:8px; margin-top:6px;">
+                <input type="number" id="ntx-monthday1" class="input-field" min="1" max="31" placeholder="Ex: 5" style="flex:1;" />
+                <span style="align-self:center; color:var(--text-3); font-size:13px;">e</span>
+                <input type="number" id="ntx-monthday2" class="input-field" min="1" max="31" placeholder="Ex: 20 (opcional)" style="flex:1;" />
+              </div>
+            </div>
+
+            <!-- Condição de término -->
+            <div style="margin-bottom:14px;">
+              <label class="input-label">🏁 Termina</label>
+              <select id="ntx-end-type" class="input-field" onchange="toggleEndCondition(this.value)" style="margin-bottom:8px;">
+                <option value="infinito">Nunca (conta fixa recorrente)</option>
+                <option value="data">Em uma data específica</option>
+                <option value="parcelas">Após N parcelas</option>
               </select>
-            </div>
-            
-            <div class="input-group" style="margin-bottom: 12px;">
-              <label class="input-label">Repetir Até (Data Final)</label>
-              <input type="date" id="ntx-data-fim" class="input-field" />
-            </div>
-
-            <!-- Opções Semanais -->
-            <div id="ntx-weekly-options" style="display: block; margin-bottom: 0;">
-              <div class="input-group" style="margin-bottom: 0;">
-                <label class="input-label">Dia da Semana</label>
-                <select id="ntx-dia-semana" class="input-field">
-                  <option value="1">Segunda-feira</option>
-                  <option value="2">Terça-feira</option>
-                  <option value="3">Quarta-feira</option>
-                  <option value="4">Quinta-feira</option>
-                  <option value="5">Sexta-feira</option>
-                  <option value="6">Sábado</option>
-                  <option value="0">Domingo</option>
-                </select>
+              <input type="date" id="ntx-data-fim" class="input-field" style="display:none;" />
+              <div id="ntx-parcelas-wrap" style="display:none; align-items:center; gap:8px;">
+                <input type="number" id="ntx-parcelas" class="input-field" min="2" max="999" placeholder="Ex: 6" style="flex:1;" />
+                <span style="font-size:13px; color:var(--text-2);">parcelas</span>
               </div>
             </div>
 
-            <!-- Opções Mensais -->
-            <div id="ntx-monthly-options" style="display: none; margin-bottom: 0;">
-              <div class="input-group" style="margin-bottom: 12px;">
-                <label class="input-label">Regra Mensal</label>
-                <select id="ntx-padrao-mes" class="input-field" onchange="toggleMonthlyPatternOptions(this.value)">
-                  <option value="dia_fixo">No mesmo dia do mês</option>
-                  <option value="dia_semana_especifico">Dia da semana específico</option>
-                </select>
-              </div>
-
-              <!-- Dia do mês fixo -->
-              <div id="ntx-monthly-day-fixed" style="display: block; margin-bottom: 0;">
-                <div class="input-group" style="margin-bottom: 0;">
-                  <label class="input-label">Dia do Mês</label>
-                  <select id="ntx-dia-mes" class="input-field"></select>
-                </div>
-              </div>
-
-              <!-- Dia da semana específico -->
-              <div id="ntx-monthly-weekday-spec" style="display: none; margin-bottom: 0;">
-                <div class="input-row">
-                  <div class="input-group" style="flex: 1; margin-bottom: 0;">
-                    <label class="input-label">Ordem</label>
-                    <select id="ntx-semana-mes" class="input-field">
-                      <option value="1">Primeira</option>
-                      <option value="2">Segunda</option>
-                      <option value="3">Terceira</option>
-                      <option value="4">Quarta</option>
-                      <option value="L">Última</option>
-                    </select>
-                  </div>
-                  <div class="input-group" style="flex: 1; margin-bottom: 0;">
-                    <label class="input-label">Dia da Semana</label>
-                    <select id="ntx-dia-semana-mes" class="input-field">
-                      <option value="1">Segunda-feira</option>
-                      <option value="2" selected>Terça-feira</option>
-                      <option value="3">Quarta-feira</option>
-                      <option value="4">Quinta-feira</option>
-                      <option value="5">Sexta-feira</option>
-                      <option value="6">Sábado</option>
-                      <option value="0">Domingo</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <button class="btn btn-primary" style="width: 100%;" onclick="saveNewTx()">Salvar Lançamento</button>
@@ -1648,79 +1649,122 @@ function getInstances(startDate, endDate) {
   const instances = [];
   const start = new Date(startDate); start.setHours(0,0,0,0);
   const end = new Date(endDate); end.setHours(23,59,59,999);
-  
+
   appData.transacoes.forEach(tx => {
-    const txDate = parseDt(tx.data);
-    
-    // Legacy support
+    const txDate = parseDt(tx.data); txDate.setHours(0,0,0,0);
+
+    // ── Pontual ──
     if (tx.frequencia === 'none') {
-      if (txDate >= start && txDate <= end) {
+      if (txDate >= start && txDate <= end)
         instances.push({...tx, instanceDate: new Date(txDate)});
-      }
-    } 
-    else if (tx.frequencia === 'semanal') {
-      let cur = new Date(txDate);
-      while(cur <= end) { 
-        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
-        cur.setDate(cur.getDate() + 7); 
-      }
+      return;
     }
-    else if (tx.frequencia === 'quinzenal') {
-      let cur = new Date(txDate);
-      while(cur <= end) { 
-        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
-        cur.setDate(cur.getDate() + 14); 
-      }
+
+    // ── Diária (legado) ──
+    if (tx.frequencia === 'diaria') {
+      let cur = new Date(Math.max(txDate, start));
+      while (cur <= end) { instances.push({...tx, instanceDate: new Date(cur)}); cur.setDate(cur.getDate()+1); }
+      return;
     }
-    else if (tx.frequencia === 'mensal') {
+
+    // ── Semanal (legado) ──
+    if (tx.frequencia === 'semanal') {
       let cur = new Date(txDate);
-      while(cur <= end) { 
-        if(cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); 
-        cur.setMonth(cur.getMonth() + 1); 
-      }
+      while (cur <= end) { if (cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setDate(cur.getDate()+7); }
+      return;
     }
-    // Advanced Recurrence Engine
-    else if (tx.frequencia === 'repeat' && tx.recurrence) {
+
+    // ── Quinzenal (legado) ──
+    if (tx.frequencia === 'quinzenal') {
+      let cur = new Date(txDate);
+      while (cur <= end) { if (cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setDate(cur.getDate()+14); }
+      return;
+    }
+
+    // ── Mensal (legado) ──
+    if (tx.frequencia === 'mensal') {
+      let cur = new Date(txDate);
+      while (cur <= end) { if (cur >= start) instances.push({...tx, instanceDate: new Date(cur)}); cur.setMonth(cur.getMonth()+1); }
+      return;
+    }
+
+    // ── Motor de Recorrência Customizada ──
+    if (tx.frequencia === 'custom' && tx.recurrence) {
       const rec = tx.recurrence;
-      const dataInicio = new Date(txDate); dataInicio.setHours(0,0,0,0);
-      const dataFim = new Date(rec.dataFim); dataFim.setHours(23,59,59,999);
-      
-      const loopStart = new Date(Math.max(start, dataInicio));
-      const loopEnd = new Date(Math.min(end, dataFim));
-      
-      if (loopStart <= loopEnd) {
-        let cur = new Date(loopStart);
-        while (cur <= loopEnd) {
-          let match = false;
-          
-          if (rec.freqBase === 'diaria') {
-            match = true;
-          } 
-          else if (rec.freqBase === 'semanal') {
-            if (cur.getDay() === rec.diaSemana) {
-              match = true;
-            }
-          } 
-          else if (rec.freqBase === 'mensal') {
-            if (rec.regraMensal === 'dia_fixo') {
-              const lastDay = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
-              const targetDay = Math.min(rec.diaMes, lastDay);
-              if (cur.getDate() === targetDay) {
-                match = true;
-              }
-            } else if (rec.regraMensal === 'dia_semana_especifico') {
-              if (isNthWeekdayOfMonth(cur, rec.semanaMes, rec.diaSemanaMes)) {
-                match = true;
-              }
-            }
-          }
-          
-          if (match) {
-            instances.push({...tx, instanceDate: new Date(cur)});
-          }
-          
-          cur.setDate(cur.getDate() + 1);
+      const dataFim = rec.dataFim ? new Date(rec.dataFim) : new Date('2099-12-31');
+      dataFim.setHours(23,59,59,999);
+      const loopEnd = new Date(Math.min(end.getTime(), dataFim.getTime()));
+
+      const unit = rec.unit || 'dias';
+      const interval = rec.interval || 1;
+      const maxParcelas = rec.parcelas || Infinity;
+      let parcelasCount = 0;
+
+      if (unit === 'dias') {
+        // A cada X dias
+        let cur = new Date(txDate);
+        while (cur <= loopEnd && parcelasCount < maxParcelas) {
+          if (cur >= start) { instances.push({...tx, instanceDate: new Date(cur)}); parcelasCount++; }
+          else if (cur >= txDate) parcelasCount++; // conta parcelas antes do range
+          cur.setDate(cur.getDate() + interval);
         }
+      } else if (unit === 'semanas') {
+        // A cada X semanas, nos dias da semana marcados
+        const weekdays = rec.weekdays && rec.weekdays.length ? rec.weekdays : [txDate.getDay()];
+        let weekStart = new Date(txDate);
+        // Alinha para a semana da data de início
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+        weekStart.setHours(0,0,0,0);
+        let cycleWeek = new Date(weekStart);
+        while (cycleWeek <= loopEnd && parcelasCount < maxParcelas) {
+          for (const wd of weekdays.sort((a,b) => a-b)) {
+            const dayOffset = (wd - 1 + 7) % 7; // offset from Monday
+            const candidate = new Date(cycleWeek); candidate.setDate(cycleWeek.getDate() + dayOffset);
+            if (candidate >= txDate && candidate >= start && candidate <= loopEnd && parcelasCount < maxParcelas) {
+              instances.push({...tx, instanceDate: new Date(candidate)}); parcelasCount++;
+            }
+          }
+          cycleWeek.setDate(cycleWeek.getDate() + interval * 7);
+        }
+      } else if (unit === 'meses') {
+        // A cada X meses, nos dias do mês definidos
+        const monthdays = rec.monthdays && rec.monthdays.length ? rec.monthdays : [txDate.getDate()];
+        let curMonth = new Date(txDate.getFullYear(), txDate.getMonth(), 1);
+        while (curMonth <= loopEnd && parcelasCount < maxParcelas) {
+          for (const md of monthdays.sort((a,b) => a-b)) {
+            const lastDay = new Date(curMonth.getFullYear(), curMonth.getMonth()+1, 0).getDate();
+            const targetDay = Math.min(md, lastDay);
+            const candidate = new Date(curMonth.getFullYear(), curMonth.getMonth(), targetDay);
+            if (candidate >= txDate && candidate >= start && candidate <= loopEnd && parcelasCount < maxParcelas) {
+              instances.push({...tx, instanceDate: new Date(candidate)}); parcelasCount++;
+            }
+          }
+          curMonth.setMonth(curMonth.getMonth() + interval);
+        }
+      }
+      return;
+    }
+
+    // ── Motor Legado "repeat" (compatibilidade) ──
+    if (tx.frequencia === 'repeat' && tx.recurrence) {
+      const rec = tx.recurrence;
+      const dataFim = new Date(rec.dataFim || '2099-12-31'); dataFim.setHours(23,59,59,999);
+      const loopEnd = new Date(Math.min(end.getTime(), dataFim.getTime()));
+      let cur = new Date(Math.max(txDate.getTime(), start.getTime()));
+      while (cur <= loopEnd) {
+        let match = false;
+        if (rec.freqBase === 'diaria') { match = true; }
+        else if (rec.freqBase === 'semanal' && cur.getDay() === rec.diaSemana) { match = true; }
+        else if (rec.freqBase === 'mensal') {
+          if (rec.regraMensal === 'dia_fixo') {
+            const lastDay = new Date(cur.getFullYear(), cur.getMonth()+1, 0).getDate();
+            if (cur.getDate() === Math.min(rec.diaMes, lastDay)) match = true;
+          } else if (rec.regraMensal === 'dia_semana_especifico') {
+            if (isNthWeekdayOfMonth(cur, rec.semanaMes, rec.diaSemanaMes)) match = true;
+          }
+        }
+        if (match) instances.push({...tx, instanceDate: new Date(cur)});
+        cur.setDate(cur.getDate() + 1);
       }
     }
   });
@@ -2464,12 +2508,32 @@ function setNewTxType(tipo) {
   $('btn-seg-entrada').classList.toggle('active', tipo === 'entrada');
 }
 
+// ─── RECORRÊNCIA — Funções de Toggle ───
+function toggleRepeatOptions(val) {
+  const wrapper = $('ntx-repeat-wrapper');
+  wrapper.style.display = val === 'custom' ? 'block' : 'none';
+}
+
+function toggleCustomUnitOptions(unit) {
+  $('ntx-custom-weekdays').style.display = unit === 'semanas' ? 'block' : 'none';
+  $('ntx-custom-monthdays').style.display = unit === 'meses' ? 'block' : 'none';
+}
+
+function toggleEndCondition(type) {
+  $('ntx-data-fim').style.display = type === 'data' ? 'block' : 'none';
+  $('ntx-parcelas-wrap').style.display = type === 'parcelas' ? 'flex' : 'none';
+}
+
+// Aliases para compatibilidade com a UI antiga (não usados mais, mas previnem erros)
+function toggleFreqBaseOptions() {}
+function toggleMonthlyPatternOptions() {}
+
 function saveNewTx() {
   const desc = $('ntx-desc').value.trim() || 'Lançamento';
   const val = parseFloat($('ntx-val').value);
   const data = $('ntx-data').value;
-  if(isNaN(val) || val <= 0 || !data) { toast('Preencha os valores.'); return; }
-  
+  if (isNaN(val) || val <= 0 || !data) { toast('Preencha os valores.'); return; }
+
   const freq = $('ntx-freq').value;
   let txObj = {
     id: uuid(),
@@ -2481,44 +2545,50 @@ function saveNewTx() {
     macro: $('ntx-cat').value,
     formaPagamento: $('ntx-pag').value
   };
-  
-  if (freq === 'repeat') {
-    const freqBase = $('ntx-freq-base').value;
-    const dataFim = $('ntx-data-fim').value || '2099-12-31';
-    
-    let diaSemana = null;
-    if (freqBase === 'semanal') {
-      diaSemana = parseInt($('ntx-dia-semana').value);
+
+  if (freq === 'custom') {
+    const unit = $('ntx-custom-unit').value;
+    const interval = parseInt($('ntx-custom-interval').value) || 1;
+    const endType = $('ntx-end-type').value;
+
+    let dataFim = null;
+    let parcelas = null;
+
+    if (endType === 'data') {
+      dataFim = $('ntx-data-fim').value || null;
+      if (!dataFim) { toast('Defina a data de término.'); return; }
+    } else if (endType === 'parcelas') {
+      parcelas = parseInt($('ntx-parcelas').value) || null;
+      if (!parcelas || parcelas < 2) { toast('Informe o número de parcelas (mínimo 2).'); return; }
     }
-    
-    let regraMensal = null;
-    let diaMes = null;
-    let semanaMes = null;
-    let diaSemanaMes = null;
-    if (freqBase === 'mensal') {
-      regraMensal = $('ntx-padrao-mes').value;
-      if (regraMensal === 'dia_fixo') {
-        diaMes = parseInt($('ntx-dia-mes').value);
-      } else {
-        semanaMes = $('ntx-semana-mes').value;
-        diaSemanaMes = parseInt($('ntx-dia-semana-mes').value);
-      }
+
+    // Dias da semana selecionados
+    let weekdays = [];
+    if (unit === 'semanas') {
+      document.querySelectorAll('.ntx-wd-check:checked').forEach(cb => weekdays.push(parseInt(cb.value)));
+      if (!weekdays.length) { toast('Selecione ao menos um dia da semana.'); return; }
     }
-    
-    txObj.recurrence = {
-      freqBase,
-      dataFim,
-      diaSemana,
-      regraMensal,
-      diaMes,
-      semanaMes,
-      diaSemanaMes
-    };
+
+    // Dias do mês
+    let monthdays = [];
+    if (unit === 'meses') {
+      const d1 = parseInt($('ntx-monthday1').value);
+      const d2 = parseInt($('ntx-monthday2').value);
+      if (!d1 || d1 < 1 || d1 > 31) { toast('Informe o dia do mês (1–31).'); return; }
+      monthdays.push(d1);
+      if (d2 >= 1 && d2 <= 31 && d2 !== d1) monthdays.push(d2);
+    }
+
+    txObj.recurrence = { unit, interval, dataFim, parcelas, weekdays, monthdays };
   }
-  
+
   appData.transacoes.push(txObj);
   saveData();
-  toast('Lançamento salvo!');
+
+  // Monta resumo do toast
+  const freqLabel = { none:'pontual', diaria:'diária', semanal:'semanal', quinzenal:'quinzenal', mensal:'mensal', custom:'personalizada' }[freq] || freq;
+  toast(`✅ Lançamento ${freqLabel} salvo!`);
+
   $('ntx-desc').value = '';
   $('ntx-val').value = '';
   $('ntx-freq').value = 'none';
