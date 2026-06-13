@@ -2204,11 +2204,23 @@ function loadData(callback) {
       .then(doc => {
         if (doc.exists) {
           const data = doc.data();
-          // Restaura transacoes
-          appData = {
-            saldoInicial: data.saldoInicial || 0,
-            transacoes: data.transacoes || []
-          };
+          const dbTransacoes = data.transacoes || [];
+          const localDataStr = localStorage.getItem(`pland_data_${currentUser.email}`);
+          const localData = localDataStr ? JSON.parse(localDataStr) : null;
+          
+          if (dbTransacoes.length === 0 && localData && localData.transacoes && localData.transacoes.length > 0) {
+            appData = {
+              saldoInicial: data.saldoInicial || localData.saldoInicial || 0,
+              transacoes: localData.transacoes
+            };
+            console.log("Restaurando transações do backup local e salvando no Firestore...");
+            saveData();
+          } else {
+            appData = {
+              saldoInicial: data.saldoInicial || 0,
+              transacoes: dbTransacoes
+            };
+          }
           // Restaura perfil do usuário a partir do Firestore
           profileFields.forEach(f => { if (data[f] !== undefined) currentUser[f] = data[f]; });
           
@@ -2221,7 +2233,18 @@ function loadData(callback) {
           $('ui-name').textContent = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
           $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
         } else {
-          appData = { saldoInicial: 0, transacoes: [] };
+          const localDataStr = localStorage.getItem(`pland_data_${currentUser.email}`);
+          const localData = localDataStr ? JSON.parse(localDataStr) : null;
+          if (localData && localData.transacoes && localData.transacoes.length > 0) {
+            appData = {
+              saldoInicial: localData.saldoInicial || 0,
+              transacoes: localData.transacoes
+            };
+            console.log("Documento inexistente. Sincronizando backup local no Firestore...");
+            saveData();
+          } else {
+            appData = { saldoInicial: 0, transacoes: [] };
+          }
         }
         if (callback && typeof callback === 'function') callback();
       })
