@@ -2025,13 +2025,17 @@ function initAuth() {
               currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
             }
             if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
-            startApp();
           })
           .catch(err => {
-            console.error('Erro ao carregar do Firestore:', err);
+            // Erro ao carregar perfil do Firestore — usa dados mínimos do Firebase Auth
+            console.warn('[DinDimpass] Perfil Firestore indisponível, usando auth básico:', err.message || err);
             currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
             if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
-            startApp();
+          })
+          .finally(() => {
+            // startApp() é chamado AQUI, fora do .then()/.catch(), para não ser
+            // afetado por erros do Firestore nem ter seus próprios erros capturados
+            if (currentUser) startApp();
           });
       } else {
         $('auth-wrapper').classList.remove('hidden');
@@ -2134,15 +2138,22 @@ function handleLoginSubmit() {
           currentUser = { email, nome: email.split('@')[0], uid: firebase.auth().currentUser.uid };
         }
         if (currentUser.email) currentUser.email = currentUser.email.toLowerCase().trim();
-        toast(`Bem-vindo, ${currentUser.nome}! 🎉`);
-        startApp();
+        toast(`Bem-vindo, ${currentUser.nome || currentUser.email.split('@')[0]}! 🎉`);
       })
       .catch(err => {
-        toast('E-mail ou senha incorretos: ' + err.message);
-        btn.disabled = false; btn.textContent = oldText;
+        // Só captura erros de autenticação/Firestore, não erros do startApp()
+        if (!currentUser) {
+          toast('E-mail ou senha incorretos: ' + err.message);
+          btn.disabled = false; btn.textContent = oldText;
+          return;
+        }
+        // Se currentUser existe, o erro foi em outra coisa — tenta carregar mesmo assim
+        console.warn('[DinDimpass] Erro não-auth no login:', err.message || err);
       })
       .finally(() => {
         btn.disabled = false; btn.textContent = oldText;
+        // startApp() chamado aqui para isolar erros do startApp() dos erros de auth
+        if (currentUser) startApp();
       });
   } else {
     const users = loadUsers();
@@ -2567,44 +2578,68 @@ function getInstances(startDate, endDate) {
 
 // ─── UI CONTROLLERS ───
 function startApp() {
-  // Restaura backup do perfil local antes de renderizar
-  if (currentUser && currentUser.email) {
-    const localProfile = localStorage.getItem('pland_profile_' + getEmailKey());
-    if (localProfile) {
-      const pData = JSON.parse(localProfile);
-      const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
-      profileFields.forEach(f => { if (pData[f] !== undefined) currentUser[f] = pData[f]; });
-    }
-  }
-
-  $('auth-wrapper').classList.add('hidden'); $('app-layout').style.display = 'flex';
-  $('ui-name').textContent = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
-  $('ui-email').textContent = currentUser.email;
-  $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
-  
-  // Set initial and change listeners for default recurrence weekdays/days of month
-  const ntxDataInput = $('ntx-data');
-  if (ntxDataInput) {
-    ntxDataInput.addEventListener('change', () => {
-      const selectedVal = ntxDataInput.value;
-      if (selectedVal) {
-        const d = parseDt(selectedVal);
-        $('ntx-dia-semana').value = d.getDay().toString();
-        $('ntx-dia-mes').value = d.getDate().toString();
-      }
+  // GARANTIA: loadData() SEMPRE será chamado, mesmo que ocorra erro no setup da UI
+  const runLoadData = () => {
+    loadData(() => {
+      curDate = new Date();
+      const ntxData = $('ntx-data');
+      if (ntxData) ntxData.value = dtKey(curDate);
+      updateStreak();
+      navTo('dash');
     });
-    // Trigger initial set for today
-    const d = new Date();
-    $('ntx-dia-semana').value = d.getDay().toString();
-    $('ntx-dia-mes').value = d.getDate().toString();
+  };
+
+  try {
+    // Restaura backup do perfil local antes de renderizar
+    if (currentUser && currentUser.email) {
+      try {
+        const localProfile = localStorage.getItem('pland_profile_' + getEmailKey());
+        if (localProfile) {
+          const pData = JSON.parse(localProfile);
+          const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
+          profileFields.forEach(f => { if (pData[f] !== undefined) currentUser[f] = pData[f]; });
+        }
+      } catch(e) { console.warn('[DinDimpass] Erro ao restaurar perfil local:', e); }
+    }
+
+    $('auth-wrapper').classList.add('hidden');
+    $('app-layout').style.display = 'flex';
+
+    const displayName = (currentUser.nome || currentUser.email.split('@')[0]) + (currentUser.sobrenome ? ' ' + currentUser.sobrenome : '');
+    if ($('ui-name')) $('ui-name').textContent = displayName;
+    if ($('ui-email')) $('ui-email').textContent = currentUser.email;
+    if ($('ui-avatar')) $('ui-avatar').textContent = (currentUser.nome || currentUser.email).charAt(0).toUpperCase();
+
+    // Set initial and change listeners for default recurrence weekdays/days of month
+    const ntxDataInput = $('ntx-data');
+    if (ntxDataInput) {
+      ntxDataInput.addEventListener('change', () => {
+        const selectedVal = ntxDataInput.value;
+        if (selectedVal) {
+          try {
+            const d = parseDt(selectedVal);
+            const elDiaSemana = $('ntx-dia-semana');
+            const elDiaMes = $('ntx-dia-mes');
+            if (elDiaSemana) elDiaSemana.value = d.getDay().toString();
+            if (elDiaMes) elDiaMes.value = d.getDate().toString();
+          } catch(e) { console.warn('[DinDimpass] Erro ao setar dia padrão:', e); }
+        }
+      });
+      // Trigger initial set for today
+      try {
+        const d = new Date();
+        const elDiaSemana = $('ntx-dia-semana');
+        const elDiaMes = $('ntx-dia-mes');
+        if (elDiaSemana) elDiaSemana.value = d.getDay().toString();
+        if (elDiaMes) elDiaMes.value = d.getDate().toString();
+      } catch(e) { console.warn('[DinDimpass] Erro ao inicializar campos de dia:', e); }
+    }
+  } catch(e) {
+    console.error('[DinDimpass] Erro no setup da UI em startApp():', e);
+  } finally {
+    // loadData() SEMPRE executado independente de erros acima
+    runLoadData();
   }
-  
-  loadData(() => {
-    curDate = new Date(); 
-    $('ntx-data').value = dtKey(curDate); 
-    updateStreak();
-    navTo('dash');
-  });
 }
 
 function navTo(page) {
