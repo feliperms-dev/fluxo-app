@@ -565,28 +565,26 @@ ul{list-style:none;}
   background: var(--card-bg);
   border-radius: var(--r-md);
   border: 1.5px solid var(--border);
-  overflow: hidden;
   box-shadow: var(--shadow-sm);
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  max-height: 520px;
 }
 .horizon-col-header {
-  background: #1C1C1E;
-  color: white;
+  background: #F2F2F7;
+  color: var(--text-2);
   padding: 10px;
   text-align: center;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.05em;
+  border-bottom: 1.5px solid var(--border);
 }
 .horizon-col-header.active {
-  background: var(--apple-blue);
+  background: #1C1C1E;
+  color: white;
 }
 .horizon-day-list {
-  overflow-y: auto;
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -2013,6 +2011,7 @@ function initAuth() {
             if (doc.exists) {
               currentUser = doc.data();
               currentUser.uid = uid;
+              if (!currentUser.email) currentUser.email = user.email;
             } else {
               currentUser = { email: user.email, nome: user.email.split('@')[0], uid };
             }
@@ -2119,6 +2118,7 @@ function handleLoginSubmit() {
         if (doc.exists) {
           currentUser = doc.data();
           currentUser.uid = firebase.auth().currentUser.uid;
+          if (!currentUser.email) currentUser.email = email;
         } else {
           currentUser = { email, nome: email.split('@')[0], uid: firebase.auth().currentUser.uid };
         }
@@ -2189,6 +2189,9 @@ function logout() {
 
 // ─── DATA ENGINE ───
 function loadData(callback) {
+  if (currentUser && !currentUser.email && useFirebase && firebase.auth().currentUser) {
+    currentUser.email = firebase.auth().currentUser.email;
+  }
   // Sempre restaura do backup local primeiro para rapidez e offline
   const profileFields = ['nome','sobrenome','nascimento','cpf','telefone','profissao','salario','geminiKey'];
   if (currentUser && currentUser.email) {
@@ -2284,6 +2287,9 @@ function loadData(callback) {
 
 function saveData() {
   if (currentUser) {
+    if (!currentUser.email && useFirebase && firebase.auth().currentUser) {
+      currentUser.email = firebase.auth().currentUser.email;
+    }
     iaInsightsCached = null;
     appData.lastUpdated = Date.now();
     localStorage.setItem(`pland_data_${currentUser.email}`, JSON.stringify(appData));
@@ -2291,7 +2297,8 @@ function saveData() {
       firebase.firestore().collection('users').doc(currentUser.uid).set({
         transacoes: appData.transacoes,
         saldoInicial: appData.saldoInicial || 0,
-        lastUpdated: appData.lastUpdated
+        lastUpdated: appData.lastUpdated,
+        email: currentUser.email || ''
       }, { merge: true }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
     }
   }
@@ -3697,31 +3704,31 @@ function renderTotais() {
 }
 
 // ─── HORIZONTE DE SALDOS ───
+// ─── HORIZONTE DE SALDOS ───
 function renderHorizonte() {
   const container = $('horizon-columns-wrapper');
   container.innerHTML = '';
 
   const m1 = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
-  const m2 = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 1);
-  const m3 = new Date(curDate.getFullYear(), curDate.getMonth() + 2, 1);
+  const m12 = new Date(curDate.getFullYear(), curDate.getMonth() + 11, 1);
+  const endOf12Months = new Date(m12.getFullYear(), m12.getMonth() + 1, 0, 23, 59, 59, 999);
   
-  const months = [m1, m2, m3];
+  // Otimização: Busca todas as instâncias dos 12 meses de uma única vez
+  const all12MonthInsts = getInstances(m1, endOf12Months);
+
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    months.push(new Date(curDate.getFullYear(), curDate.getMonth() + i, 1));
+  }
   
   const prevEnd = new Date(m1.getFullYear(), m1.getMonth(), 0, 23, 59, 59, 999);
   const pastInsts = getInstances(new Date(2000, 0, 1), prevEnd);
-  let te = 0, ts = 0, td = 0, tec = 0;
+  let te = 0, ts = 0;
   pastInsts.forEach(x => {
-    const isCredit = x.formaPagamento === 'Crédito';
-    if (!isCredit) {
-      if (x.tipo === 'entrada') te += x.valor;
-      else if (x.tipo === 'saida') ts += x.valor;
-      else if (x.tipo === 'diario') td += x.valor;
-      else if (x.tipo === 'economia') tec += x.valor;
-    } else {
-      ts += x.valor;
-    }
+    if (x.tipo === 'entrada') te += x.valor;
+    else ts += x.valor;
   });
-  let runningBalance = appData.saldoInicial + te - ts - td - tec;
+  let runningBalance = (appData.saldoInicial || 0) + te - ts;
 
   function fmtHorizonValue(val) {
     if (val === 0) return '0';
@@ -3740,25 +3747,9 @@ function renderHorizonte() {
     const monthNamesAbbr = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const labelText = `${monthNamesAbbr[m]}/${String(y).slice(-2)}`;
     
-    const start = new Date(y, m, 1);
     const end = new Date(y, m + 1, 0);
-    const mInsts = getInstances(start, end);
-    let mEnt = 0, mSai = 0, mEco = 0, mCre = 0;
-    mInsts.forEach(i => {
-      const isCredit = i.formaPagamento === 'Crédito';
-      if (isCredit) mCre += i.valor;
-      else {
-        if (i.tipo === 'entrada') mEnt += i.valor;
-        else if (i.tipo === 'saida') mSai += i.valor;
-        else if (i.tipo === 'diario') mSai += i.valor;
-        else if (i.tipo === 'economia') mEco += i.valor;
-      }
-    });
-    const mIncome = mEnt > 0 ? mEnt : (parseFloat(currentUser.salario) || 0);
     const daysInMonth = end.getDate();
-    const mAvailable = mIncome - mSai - mEco - mCre;
-    const dottedD = mAvailable > 0 ? (mAvailable / daysInMonth) : 0;
-
+    
     const isActive = idx === 0 ? 'active' : '';
     let columnHTML = `
       <div class="horizon-col">
@@ -3769,10 +3760,9 @@ function renderHorizonte() {
     for (let day = 1; day <= daysInMonth; day++) {
       const curDayDate = new Date(y, m, day);
       curDayDate.setHours(0,0,0,0);
+      const dayKey = dtKey(curDayDate);
       
-      const dayStart = new Date(y, m, day, 0, 0, 0, 0);
-      const dayEnd = new Date(y, m, day, 23, 59, 59, 999);
-      const dayInsts = getInstances(dayStart, dayEnd);
+      const dayInsts = all12MonthInsts.filter(x => dtKey(x.instanceDate) === dayKey);
       
       let dayEnt = 0;
       let dayOut = 0;
@@ -3782,11 +3772,6 @@ function renderHorizonte() {
       });
 
       runningBalance += dayEnt - dayOut;
-      
-      const todayZero = new Date(); todayZero.setHours(0,0,0,0);
-      if (curDayDate >= todayZero) {
-        runningBalance -= dottedD;
-      }
 
       let colorClass = 'val-yellow';
       if (runningBalance >= 1000) colorClass = 'val-green';
