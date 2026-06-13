@@ -526,6 +526,229 @@ ul{list-style:none;}
 .voice-text { font-size: 28px; font-weight: 700; color: var(--text-1); text-align: center; max-width: 600px; padding: 20px; }
 .voice-sub { font-size: 16px; color: var(--text-3); margin-top: 12px; }
 
+/* ─── TIPOS DE LANÇAMENTOS ─── */
+.tx-type-card {
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  padding: 12px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.tx-type-card:hover {
+  border-color: var(--text-3);
+}
+.tx-type-card.active {
+  background: #F2F2F7;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+.tx-type-card.active.saida { border-color: var(--apple-red); }
+.tx-type-card.active.entrada { border-color: var(--apple-green); }
+.tx-type-card.active.diario { border-color: #FF2D55; }
+.tx-type-card.active.economia { border-color: #4CD964; }
+
+/* ─── HORIZONTE DE SALDOS ─── */
+.horizon-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 16px 4px;
+  background: var(--bg-1);
+  scroll-snap-type: x mandatory;
+}
+.horizon-col {
+  flex: 0 0 280px;
+  background: var(--card-bg);
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  max-height: 520px;
+}
+.horizon-col-header {
+  background: #1C1C1E;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+.horizon-col-header.active {
+  background: var(--apple-blue);
+}
+.horizon-day-list {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.horizon-day-row {
+  display: flex;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 13px;
+  align-items: stretch;
+}
+.horizon-day-row:last-child {
+  border-bottom: none;
+}
+.horizon-day-num {
+  width: 34px;
+  background: #F2F2F7;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-right: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+.horizon-day-val {
+  flex: 1;
+  padding: 8px 12px;
+  text-align: right;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: background-color 0.2s ease;
+}
+.horizon-day-val.val-green {
+  background-color: rgba(52, 199, 89, 0.18);
+  color: #1d7531;
+}
+.horizon-day-val.val-yellow {
+  background-color: rgba(255, 149, 0, 0.15);
+  color: #b36b00;
+}
+.horizon-day-val.val-red {
+  background-color: rgba(255, 59, 48, 0.15);
+  color: #c72e26;
+}
+
+/* ─── TOTAIS E CÁLCULOS DO MÊS ─── */
+.total-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+.total-card-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.total-card-icons {
+  font-size: 12px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+.total-card-value {
+  font-size: 20px;
+  font-weight: 800;
+}
+.total-card-desc {
+  font-size: 12px;
+  font-weight: 600;
+}
+.totais-row-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #FAFAFC;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* ─── CONQUISTAS (BADGES) ─── */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.badge-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.badge-card.locked {
+  filter: grayscale(1) opacity(0.45);
+}
+.badge-card.unlocked {
+  border-color: rgba(52, 199, 89, 0.4);
+  background: linear-gradient(135deg, var(--card-bg), rgba(52, 199, 89, 0.04));
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.1);
+  transform: translateY(-2px);
+}
+.badge-icon {
+  font-size: 34px;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #F2F2F7;
+  transition: all 0.3s ease;
+}
+.badge-card.unlocked .badge-icon {
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.15), rgba(0, 113, 227, 0.15));
+  transform: scale(1.05);
+}
+.badge-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+.badge-desc {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.3;
+}
+.badge-status {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.badge-card.locked .badge-status {
+  background: #E5E5EA;
+  color: var(--text-3);
+}
+.badge-card.unlocked .badge-status {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--apple-green);
+}
+
 </style>
 </head>
 <body>
@@ -678,6 +901,18 @@ ul{list-style:none;}
         </div>
         <div class="nav-label">Mensal</div>
       </div>
+      <div class="nav-item" data-page="totais" onclick="navTo('totais')">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="3" y1="15" x2="21" y2="15"></line>
+          </svg>
+        </div>
+        <div class="nav-label">Totais</div>
+      </div>
       <div class="nav-item" data-page="anual" onclick="navTo('anual')">
         <div class="nav-icon">
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -689,6 +924,15 @@ ul{list-style:none;}
           </svg>
         </div>
         <div class="nav-label">Visão Anual</div>
+      </div>
+      <div class="nav-item" data-page="frequencia" onclick="navTo('frequencia')">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="6"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+          </svg>
+        </div>
+        <div class="nav-label">Frequência & Conquistas</div>
       </div>
       <div class="nav-item" data-page="lancamentos" onclick="navTo('lancamentos')">
         <div class="nav-icon">
@@ -832,6 +1076,12 @@ ul{list-style:none;}
           <button class="btn btn-secondary btn-icon" onclick="changeWeek(1)">▶</button>
         </div>
 
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+          <button class="btn btn-secondary" onclick="navTo('horizonte')" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px;">
+            <span>🌅 Horizonte de Saldos</span>
+          </button>
+        </div>
+
         <div class="table-wrapper">
           <table class="w-table">
             <thead>
@@ -889,8 +1139,23 @@ ul{list-style:none;}
         <div class="page-header">
           <h1 class="page-title">Visão Anual 365</h1>
         </div>
-        <div class="week-nav" style="justify-content: center;">
+        <div class="week-nav" style="justify-content: center; gap: 12px; align-items: center;">
           <div class="week-nav-title" id="year-label">2026</div>
+          <select id="annual-month-filter" class="input-field" style="width: 140px; height: 36px; padding: 0 8px; margin: 0; font-size: 14px;" onchange="renderAnual()">
+            <option value="all">Ano Inteiro</option>
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7">Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+          </select>
         </div>
         <div class="card card-pad">
           <div style="height: 300px;"><canvas id="chart-annual"></canvas></div>
@@ -919,6 +1184,177 @@ ul{list-style:none;}
         </div>
       </div>
 
+      <!-- ── TOTAIS ── -->
+      <div id="page-totais" class="page">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <h1 class="page-title" style="margin-bottom: 0;">Cálculos do mês</h1>
+            </div>
+          </div>
+        </div>
+        
+        <div class="week-nav">
+          <button class="btn btn-secondary btn-icon" onclick="changeMonth(-1); renderTotais();">◀</button>
+          <!-- Calendar Icon + Month Label -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="border: 2px solid var(--text-1); border-radius: 6px; width: 28px; height: 28px; display: flex; flex-direction: column; overflow: hidden; align-items: center; justify-content: center; font-family: monospace;">
+              <div style="background: var(--text-1); color: var(--card-bg); font-size: 8px; width: 100%; text-align: center; font-weight: bold;">DIA</div>
+              <div style="font-size: 13px; font-weight: bold; line-height: 1;" id="totais-calendar-day">27</div>
+            </div>
+            <div class="week-nav-title" id="totais-month-label">Fev/26</div>
+          </div>
+          <button class="btn btn-secondary btn-icon" onclick="changeMonth(1); renderTotais();">▶</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+          <!-- Card Performance -->
+          <div class="total-card">
+            <div class="total-card-header">Performance</div>
+            <div class="total-card-icons">
+              <span style="color:var(--apple-green);">↙</span> - 
+              <span style="color:var(--apple-red);">↗</span> - 
+              <span style="color:#FF2D55;">D</span> - 
+              <span style="color:#4CD964;">E</span> - 
+              <span style="color:#8E8E93; border: 1px solid var(--text-3); border-radius: 50%; width: 12px; height: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; line-height: 1;">C</span> - 
+              <span style="border: 1px dashed #FF2D55; border-radius: 50%; width: 12px; height: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; line-height: 1; color:#FF2D55;">D</span>
+            </div>
+            <div class="total-card-value" id="totais-perf-val" style="color: var(--apple-red);">R$ -566,67</div>
+            <div class="total-card-desc" id="totais-perf-desc" style="color: var(--apple-red);">Faltou dinheiro</div>
+          </div>
+
+          <!-- Card Economizado -->
+          <div class="total-card">
+            <div class="total-card-header">Economizado</div>
+            <div class="total-card-icons">
+              <span style="color:#4CD964; font-weight: bold;">E</span> 
+              <span style="display: inline-block; width: 40px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 0 2px; position: relative; top: -1px;"><span id="totais-econ-bar" style="display: block; height: 100%; width: 0%; background: #4CD964;"></span></span>
+              <span style="color:var(--apple-green);">↙</span>
+            </div>
+            <div class="total-card-value" id="totais-econ-val">0%</div>
+            <div class="total-card-desc" id="totais-econ-desc" style="color: var(--text-3);">Nada guardado</div>
+          </div>
+
+          <!-- Card Custo de vida -->
+          <div class="total-card">
+            <div class="total-card-header">Custo de vida</div>
+            <div class="total-card-icons">
+              <span style="color:var(--apple-red);">↗</span> + 
+              <span style="color:#FF2D55;">D</span> + 
+              <span style="color:#8E8E93; border: 1px solid var(--text-3); border-radius: 50%; width: 12px; height: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; line-height: 1;">C</span> + 
+              <span style="border: 1px dashed #FF2D55; border-radius: 50%; width: 12px; height: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; line-height: 1; color:#FF2D55;">D</span>
+            </div>
+            <div class="total-card-value" id="totais-custo-val">R$ 566,67</div>
+            <div class="total-card-desc" id="totais-custo-desc" style="color: var(--apple-red);">Acima da renda</div>
+          </div>
+
+          <!-- Card Diário médio -->
+          <div class="total-card">
+            <div class="total-card-header">Diário médio</div>
+            <div class="total-card-icons">
+              <span style="color:#FF2D55;">D</span> / <span id="totais-diario-days-label">27</span>
+            </div>
+            <div class="total-card-value" id="totais-diario-val">R$ 0,00</div>
+            <div class="total-card-desc" style="color: var(--text-3); display: flex; align-items: center; gap: 4px; font-weight: normal;">
+              <span style="border: 1px dashed #FF2D55; border-radius: 50%; width: 12px; height: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; line-height: 1; color:#FF2D55;">D</span> 
+              <span>Meta: <strong id="totais-diario-meta">R$ 46,67</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-top: 20px; margin-bottom: 20px;">
+          <h3 style="margin-bottom: 16px; font-size: 15px;">Movimentações do mês</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="totais-row-item">
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="color: var(--apple-green); font-size: 18px;">↙</span> Entradas</span>
+              <span id="totais-row-ent" style="color: var(--apple-green);">R$ 0,00</span>
+            </div>
+            <div class="totais-row-item">
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="color: var(--apple-red); font-size: 18px;">↗</span> Saídas</span>
+              <span id="totais-row-sai" style="color: var(--apple-red);">R$ 0,00</span>
+            </div>
+            <div class="totais-row-item">
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #FF2D55; font-size: 16px; font-weight: bold; border: 1.5px solid #FF2D55; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">D</span> Diários</span>
+              <span id="totais-row-dia" style="color: #FF2D55;">R$ 0,00</span>
+            </div>
+            <div class="totais-row-item">
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #4CD964; font-size: 16px; font-weight: bold; border: 1.5px solid #4CD964; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">E</span> Economias</span>
+              <span id="totais-row-eco" style="color: #4CD964;">R$ 0,00</span>
+            </div>
+            <div class="totais-row-item">
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #8E8E93; font-size: 13px; font-weight: bold; border: 1.5px solid #8E8E93; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">C</span> Crédito</span>
+              <span id="totais-row-cre" style="color: #8E8E93;">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FREQUÊNCIA & CONQUISTAS ── -->
+      <div id="page-frequencia" class="page">
+        <div class="page-header">
+          <h1 class="page-title">Frequência & Conquistas</h1>
+          <p class="page-subtitle">Sua consistência financeira e distintivos desbloqueados.</p>
+        </div>
+
+        <!-- Status Ofensiva Card -->
+        <div class="card card-pad" style="margin-bottom: 16px;">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📊 Status da Ofensiva Atual</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span id="freq-rank" style="font-weight: 700; font-size: 16px; color: var(--text-1);">Sedentário Financeiro 💤</span>
+            <span id="freq-score" style="font-weight: 700; font-size: 15px; color: var(--apple-blue);">0/7 dias</span>
+          </div>
+          <div style="width: 100%; height: 12px; background: #E5E5EA; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
+            <div id="freq-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34C759, #0071E3); border-radius: 6px; transition: width 0.5s ease;"></div>
+          </div>
+          <p id="freq-phrase" style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Você ainda não registrou transações esta semana. Que tal começar a anotar suas despesas hoje?</p>
+        </div>
+
+        <!-- Área de Testes (Simulador) -->
+        <div class="card card-pad" style="margin-bottom: 16px; border: 1.5px dashed var(--apple-blue); background: rgba(0, 113, 227, 0.02);">
+          <h3 style="margin-bottom: 8px; color: var(--apple-blue);">🧪 Área de Testes (Simulador de Ofensivas)</h3>
+          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 12px;">Simule qualquer número de dias de ofensiva para ver os distintivos de conquista se atualizarem dinamicamente.</p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(7)">7 dias (1 sem)</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(30)">30 dias (~1 mês)</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(90)">90 dias (~3 meses)</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(365)">365 dias (1 ano)</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(3650)">3650 dias (10 anos)</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="simulateStreak(7300)">7300 dias (20 anos)</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="number" id="sim-streak-input" class="input-field" style="width: 140px; margin: 0; height: 36px; font-size: 14px;" placeholder="Dias personalizados" />
+            <button class="btn btn-primary" style="height: 36px; padding: 0 16px; margin: 0; font-size: 14px;" onclick="simulateStreak(parseInt($('sim-streak-input').value) || 0)">Aplicar</button>
+            <button class="btn" style="height: 36px; padding: 0 16px; margin: 0; font-size: 14px; background: var(--border); color: var(--text-1);" onclick="clearStreakSimulation()">Limpar Teste</button>
+          </div>
+          <div id="sim-streak-indicator" style="display: none; margin-top: 10px; font-size: 13px; font-weight: bold; color: var(--apple-orange);">⚠️ Modo de simulação ativado: <span id="sim-streak-val">0</span> dias de ofensiva.</div>
+        </div>
+
+        <!-- Galeria de Badges -->
+        <div class="card card-pad" style="margin-bottom: 24px;">
+          <h3 style="margin-bottom: 12px;">🏆 Seus Distintivos de Conquista</h3>
+          <div id="badges-container" class="badge-grid">
+            <!-- Badges renderizados via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HORIZONTE DE SALDOS ── -->
+      <div id="page-horizonte" class="page">
+        <div class="page-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn btn-secondary btn-icon" onclick="navTo('semanal')" style="padding: 0; width: 36px; height: 36px; border-radius: 50%;">←</button>
+            <h1 class="page-title" style="margin-bottom: 0;">Horizonte de saldos</h1>
+          </div>
+          <button class="btn btn-secondary btn-icon" onclick="navTo('lancamentos')" style="padding: 0; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; font-weight: bold;">+</button>
+        </div>
+        
+        <div class="card card-pad">
+          <div class="horizon-container" id="horizon-columns-wrapper">
+            <!-- Gerado via JS: 3 colunas de meses de saldo diário -->
+          </div>
+        </div>
+      </div>
+
       <!-- ── LANÇAMENTOS ── -->
       <div id="page-lancamentos" class="page">
         <div class="page-header">
@@ -926,9 +1362,36 @@ ul{list-style:none;}
           <p class="page-subtitle">Crie fluxos de entradas ou saídas pontuais ou recorrentes.</p>
         </div>
         <div class="card card-pad" style="max-width: 500px; margin: 0 auto;">
-          <div class="segment" style="margin-bottom: 24px;">
-            <div class="seg-btn active" id="btn-seg-saida" onclick="setNewTxType('saida')">Saída</div>
-            <div class="seg-btn" id="btn-seg-entrada" onclick="setNewTxType('entrada')">Entrada</div>
+          <label class="input-label" style="margin-bottom: 8px; display: block;">Tipo de Lançamento</label>
+          <div class="tx-type-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+            <div class="tx-type-card active saida" id="type-card-saida" onclick="setNewTxType('saida')">
+              <div style="background: var(--apple-red); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↗</div>
+              <div style="overflow: hidden;">
+                <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Saída</div>
+                <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Fixo, boletos</div>
+              </div>
+            </div>
+            <div class="tx-type-card entrada" id="type-card-entrada" onclick="setNewTxType('entrada')">
+              <div style="background: var(--apple-green); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">↙</div>
+              <div style="overflow: hidden;">
+                <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Entrada</div>
+                <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Salário, vales</div>
+              </div>
+            </div>
+            <div class="tx-type-card diario" id="type-card-diario" onclick="setNewTxType('diario')">
+              <div style="background: #FF2D55; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 13px;">D</div>
+              <div style="overflow: hidden;">
+                <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Diário</div>
+                <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Variáveis, compras</div>
+              </div>
+            </div>
+            <div class="tx-type-card economia" id="type-card-economia" onclick="setNewTxType('economia')">
+              <div style="background: #4CD964; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 13px;">E</div>
+              <div style="overflow: hidden;">
+                <div style="font-weight: 700; font-size: 13px; line-height: 1.2;">Economia</div>
+                <div style="font-size: 9px; color: var(--text-3); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Reserva, invest.</div>
+              </div>
+            </div>
           </div>
 
           <div class="input-group">
@@ -1041,6 +1504,12 @@ ul{list-style:none;}
           </div>
 
           <button class="btn btn-primary" style="width: 100%;" onclick="saveNewTx()">Salvar Lançamento</button>
+        </div>
+
+        <div class="card card-pad" style="max-width: 500px; margin: 24px auto 0; border: 1.5px solid rgba(255, 59, 48, 0.2); background: rgba(255, 59, 48, 0.02); text-align: center;">
+          <h3 style="color: var(--apple-red); margin-bottom: 6px; font-size: 15px;">⚠️ Área de Perigo</h3>
+          <p style="font-size: 12px; color: var(--text-2); margin-bottom: 16px;">Apague lançamentos do banco de dados de forma geral ou de períodos específicos.</p>
+          <button class="btn" style="background: var(--apple-red); color: white; width: 100%; font-weight: bold;" onclick="openModal('modal-reset')">Resetar Lançamentos</button>
         </div>
       </div>
 
@@ -1417,6 +1886,43 @@ ul{list-style:none;}
     </div>
     
     <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="saveVoiceTx()">Salvar Lançamento</button>
+  </div>
+</div>
+
+<!-- Reset Modal -->
+<div class="overlay" id="modal-reset">
+  <div class="modal" style="max-width: 400px;">
+    <div class="m-header">
+      <div class="m-title" style="color: var(--apple-red); font-weight: bold;">⚠️ Confirmar Reset</div>
+      <div class="m-close" onclick="closeModal('modal-reset')">✕</div>
+    </div>
+    <p style="font-size: 14px; color: var(--text-2); margin-bottom: 16px;">Selecione o escopo da exclusão. Esta ação é definitiva e não poderá ser desfeita!</p>
+    
+    <div class="input-group">
+      <label class="input-label">Escopo da Limpeza</label>
+      <select id="reset-scope" class="input-field" onchange="toggleResetDateInputs(this.value)">
+        <option value="geral">Geral (Apagar TODOS os lançamentos)</option>
+        <option value="mes">De um Mês específico...</option>
+        <option value="semana">De uma Semana específica...</option>
+      </select>
+    </div>
+
+    <!-- Date selector for Month (hidden by default) -->
+    <div class="input-group" id="reset-month-wrapper" style="display: none;">
+      <label class="input-label">Selecione o Mês</label>
+      <input type="month" id="reset-month-input" class="input-field" />
+    </div>
+
+    <!-- Date selector for Week (hidden by default) -->
+    <div class="input-group" id="reset-week-wrapper" style="display: none;">
+      <label class="input-label">Escolha um dia dentro da Semana</label>
+      <input type="date" id="reset-week-input" class="input-field" />
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('modal-reset')">Cancelar</button>
+      <button class="btn btn-danger" style="flex: 1; background: var(--apple-red); color: white;" onclick="confirmReset()">Confirmar Reset</button>
+    </div>
   </div>
 </div>
 
@@ -2007,7 +2513,7 @@ function navTo(page) {
   // Control dynamic visibility of the voice FAB
   const mic = $('fab-mic');
   if (mic) {
-    if (['semanal', 'mensal', 'anual', 'config'].includes(page)) {
+    if (['semanal', 'mensal', 'anual', 'config', 'totais', 'frequencia', 'horizonte'].includes(page)) {
       mic.style.display = 'none';
     } else {
       mic.style.display = 'flex';
@@ -2018,6 +2524,9 @@ function navTo(page) {
   if (page === 'semanal') renderSemanal();
   if (page === 'mensal') renderMensal();
   if (page === 'anual') renderAnual();
+  if (page === 'totais') renderTotais();
+  if (page === 'frequencia') renderFrequencia();
+  if (page === 'horizonte') renderHorizonte();
   if (page === 'config') { 
     $('cfg-nome').value = currentUser.nome || ''; 
     $('cfg-sobrenome').value = currentUser.sobrenome || '';
@@ -2617,16 +3126,11 @@ function renderMensal() {
   const insts = getInstances(new Date(y, m, 1), new Date(y, m+1, 0));
   
   let ent = 0, sai = 0;
-  const entradas = [];
-  const saidas = [];
-  
   insts.forEach(i => { 
     if(i.tipo === 'entrada') {
       ent += i.valor;
-      entradas.push(i);
     } else {
       sai += i.valor;
-      saidas.push(i);
     }
   });
   
@@ -2636,79 +3140,39 @@ function renderMensal() {
   const list = $('month-tx-list'); list.innerHTML = '';
   if(insts.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center;">Sem lançamentos no mês.</div>'; return; }
   
-  // Sort descending by date
-  entradas.sort((a,b) => b.instanceDate - a.instanceDate);
-  saidas.sort((a,b) => b.instanceDate - a.instanceDate);
+  // Sort descending by date (day of month)
+  insts.sort((a,b) => b.instanceDate - a.instanceDate);
   
-  // Build Entradas section
-  let entradasHTML = '';
-  if (entradas.length === 0) {
-    entradasHTML = '<div style="padding:12px; text-align:center; color:var(--text-3); font-size: 14px;">Sem entradas no mês.</div>';
-  } else {
-    entradas.forEach(i => {
-      entradasHTML += `
-        <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
-          <div class="tx-info">
-            <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
-            <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
-          </div>
-          <div class="tx-val" style="color: var(--apple-green)">${fmt(i.valor)}</div>
-        </div>
-      `;
-    });
-  }
-  
-  // Build Saidas section
-  let saidasHTML = '';
-  if (saidas.length === 0) {
-    saidasHTML = '<div style="padding:12px; text-align:center; color:var(--text-3); font-size: 14px;">Sem saídas no mês.</div>';
-  } else {
-    saidas.forEach(i => {
-      saidasHTML += `
-        <div class="tx-item" style="cursor: pointer;" onclick="openEditTxModal('${i.id}')">
-          <div class="tx-info">
-            <div class="tx-desc">${i.desc} <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px;">Dia ${i.instanceDate.getDate()}</span></div>
-            <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
-          </div>
-          <div class="tx-val" style="color: var(--apple-red)">${fmt(i.valor)}</div>
-        </div>
-      `;
-    });
-  }
-  
-  list.innerHTML = `
-    <!-- Seção Entradas -->
-    <div style="margin-bottom: 16px;">
-      <div onclick="toggleMonthlySection('entradas')" style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px; background:#FAFAFC; border:1px solid var(--border); border-radius:var(--r-md); cursor:pointer; font-weight:600; margin-bottom: 8px; user-select:none;">
-        <span style="display:flex; align-items:center; gap:8px;">
-          <span style="transform: rotate(${monthlySections.entradas ? '90' : '0'}deg); transition: transform 0.2s; display:inline-block; font-size: 10px;">▶</span>
-          ↙ Entradas
-        </span>
-        <span class="txt-green" style="font-weight: 700;">${fmt(ent)}</span>
-      </div>
-      <div style="display: ${monthlySections.entradas ? 'flex' : 'none'}; flex-direction:column; gap:8px; padding-left: 4px;">
-        ${entradasHTML}
-      </div>
-    </div>
+  insts.forEach(i => {
+    const valColor = i.tipo === 'entrada' ? 'var(--apple-green)' : 'var(--apple-red)';
+    const valSign = i.tipo === 'entrada' ? '+' : '-';
     
-    <!-- Seção Saídas -->
-    <div style="margin-bottom: 16px;">
-      <div onclick="toggleMonthlySection('saidas')" style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px; background:#FAFAFC; border:1px solid var(--border); border-radius:var(--r-md); cursor:pointer; font-weight:600; margin-bottom: 8px; user-select:none;">
-        <span style="display:flex; align-items:center; gap:8px;">
-          <span style="transform: rotate(${monthlySections.saidas ? '90' : '0'}deg); transition: transform 0.2s; display:inline-block; font-size: 10px;">▶</span>
-          ↗ Saídas
-        </span>
-        <span class="txt-red" style="font-weight: 700;">${fmt(sai)}</span>
+    // Icon circle indicator based on type
+    let typeBadge = '↗';
+    let badgeBg = 'var(--apple-red)';
+    if (i.tipo === 'entrada') { typeBadge = '↙'; badgeBg = 'var(--apple-green)'; }
+    else if (i.tipo === 'diario') { typeBadge = 'D'; badgeBg = '#FF2D55'; }
+    else if (i.tipo === 'economia') { typeBadge = 'E'; badgeBg = '#4CD964'; }
+    
+    list.innerHTML += `
+      <div class="tx-item" style="cursor: pointer; display: flex; align-items: center; gap: 12px;" onclick="openEditTxModal('${i.id}')">
+        <div style="background: ${badgeBg}; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 11px; flex-shrink: 0;">${typeBadge}</div>
+        <div class="tx-info" style="flex: 1; overflow: hidden;">
+          <div class="tx-desc" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between;">
+            <span>${i.desc}</span>
+            <span style="font-size:11px; color:var(--text-3); font-weight:normal; margin-left: 8px; flex-shrink: 0;">Dia ${i.instanceDate.getDate()}</span>
+          </div>
+          <div class="tx-meta">${i.macro} • ${i.formaPagamento}</div>
+        </div>
+        <div class="tx-val" style="color: ${valColor}; flex-shrink: 0; font-weight: 800;">${valSign} ${fmt(i.valor)}</div>
       </div>
-      <div style="display: ${monthlySections.saidas ? 'flex' : 'none'}; flex-direction:column; gap:8px; padding-left: 4px;">
-        ${saidasHTML}
-      </div>
-    </div>
-  `;
+    `;
+  });
 }
 
 function renderAnual() {
   const y = curDate.getFullYear(); $('year-label').textContent = y;
+  const filterVal = $('annual-month-filter') ? $('annual-month-filter').value : 'all';
   
   // 1. Calcular totais anuais e agrupamento por macrocategoria
   const yearStart = new Date(y, 0, 1);
@@ -2719,7 +3183,21 @@ function renderAnual() {
   let yearSaidas = 0;
   const categoryTotals = {};
   
-  yearInsts.forEach(inst => {
+  let filteredInsts = yearInsts;
+  if (filterVal !== 'all') {
+    const filterMonth = parseInt(filterVal);
+    filteredInsts = yearInsts.filter(inst => inst.instanceDate.getMonth() === filterMonth);
+    // Atualiza labels dos cards informativos
+    document.querySelectorAll('#page-anual .stat-label')[0].textContent = 'Receitas no Mês';
+    document.querySelectorAll('#page-anual .stat-label')[1].textContent = 'Despesas no Mês';
+    document.querySelectorAll('#page-anual .stat-label')[2].textContent = 'Saldo Líquido no Mês';
+  } else {
+    document.querySelectorAll('#page-anual .stat-label')[0].textContent = 'Receitas Anuais';
+    document.querySelectorAll('#page-anual .stat-label')[1].textContent = 'Despesas Anuais';
+    document.querySelectorAll('#page-anual .stat-label')[2].textContent = 'Saldo Líquido Anual';
+  }
+  
+  filteredInsts.forEach(inst => {
     if (inst.tipo === 'entrada') {
       yearEntradas += inst.valor;
     } else {
@@ -2744,7 +3222,7 @@ function renderAnual() {
   catList.innerHTML = '';
   
   if (sortedCategories.length === 0) {
-    catList.innerHTML = '<div style="text-align:center; color:var(--text-3); font-size:14px; padding:20px;">Sem saídas registradas neste ano.</div>';
+    catList.innerHTML = `<div style="text-align:center; color:var(--text-3); font-size:14px; padding:20px;">Sem saídas registradas ${filterVal !== 'all' ? 'neste mês' : 'neste ano'}.</div>`;
   } else {
     sortedCategories.forEach(item => {
       const pct = yearSaidas > 0 ? (item.total / yearSaidas) * 100 : 0;
@@ -2779,14 +3257,26 @@ function renderAnual() {
     });
   }
 
-  // 3. Gráfico de Saldo Histórico Anual
+  // 3. Gráfico de Saldo Histórico Anual (destaca o mês selecionado se houver)
   const labels = []; const data = []; const colors = [];
   for(let m=0; m<12; m++) {
     const pastInsts = getInstances(new Date(2000,0,1), new Date(y, m+1, 0));
-    let te=0, ts=0; pastInsts.forEach(x=>{if(x.tipo==='entrada') te+=x.valor; else ts+=x.valor;});
+    let te=0, ts=0; pastInsts.forEach(x=>{
+      const isCredit = x.formaPagamento === 'Crédito';
+      if (!isCredit) {
+        if(x.tipo==='entrada') te+=x.valor; 
+        else ts+=x.valor;
+      } else {
+        ts += x.valor;
+      }
+    });
     const s = appData.saldoInicial + te - ts;
     labels.push(new Date(y, m, 1).toLocaleDateString('pt-BR', {month:'short'})); data.push(s);
-    colors.push(s >= 0 ? 'rgba(52, 199, 89, 0.7)' : 'rgba(255, 59, 48, 0.7)');
+    
+    // Destaca o mês filtrado esmaecendo os outros
+    const isFiltered = filterVal !== 'all' && parseInt(filterVal) === m;
+    const opacity = (filterVal === 'all' || isFiltered) ? '0.7' : '0.15';
+    colors.push(s >= 0 ? `rgba(52, 199, 89, ${opacity})` : `rgba(255, 59, 48, ${opacity})`);
   }
   const ctx = $('chart-annual').getContext('2d');
   if(chartAnnual) chartAnnual.destroy();
@@ -2820,8 +3310,444 @@ function renderAnual() {
 // ─── LANÇAMENTO ───
 function setNewTxType(tipo) {
   curNewTxType = tipo;
-  $('btn-seg-saida').classList.toggle('active', tipo === 'saida');
-  $('btn-seg-entrada').classList.toggle('active', tipo === 'entrada');
+  document.querySelectorAll('.tx-type-grid .tx-type-card').forEach(card => card.classList.remove('active'));
+  $(`type-card-${tipo}`).classList.add('active');
+}
+
+function toggleResetDateInputs(scope) {
+  $('reset-month-wrapper').style.display = scope === 'mes' ? 'block' : 'none';
+  $('reset-week-wrapper').style.display = scope === 'semana' ? 'block' : 'none';
+}
+
+function confirmReset() {
+  const scope = $('reset-scope').value;
+  if (scope === 'geral') {
+    if (!confirm('Tem certeza absoluta que deseja resetar TODOS os lançamentos? Esta ação não pode ser desfeita.')) return;
+    appData.transacoes = [];
+    saveData();
+    closeModal('modal-reset');
+    toast('✅ Todos os lançamentos foram resetados!');
+    navTo('dash');
+    return;
+  }
+  
+  if (scope === 'mes') {
+    const monthVal = $('reset-month-input').value; // Formato: YYYY-MM
+    if (!monthVal) { toast('Por favor, escolha um mês.'); return; }
+    const [y, m] = monthVal.split('-').map(Number);
+    const targetMonth = m - 1; // 0-indexed
+    const targetYear = y;
+    
+    if (!confirm(`Tem certeza que deseja apagar os lançamentos do mês de ${monthVal}?`)) return;
+    
+    // Intervalo do mês
+    const start = new Date(targetYear, targetMonth, 1);
+    const end = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999);
+    
+    appData.transacoes = appData.transacoes.filter(tx => {
+      const txDate = parseDt(tx.data);
+      if (tx.frequencia === 'none') {
+        return !(txDate >= start && txDate <= end);
+      } else {
+        if (txDate >= start && txDate <= end) {
+          return false;
+        } else if (txDate < start) {
+          const dataFimDate = new Date(targetYear, targetMonth, 0); // último dia do mês anterior
+          if (!tx.recurrence) tx.recurrence = {};
+          tx.recurrence.dataFim = dtKey(dataFimDate);
+          return true;
+        }
+        return true;
+      }
+    });
+    
+    saveData();
+    closeModal('modal-reset');
+    toast(`✅ Lançamentos do mês ${monthVal} resetados!`);
+    navTo('dash');
+    return;
+  }
+  
+  if (scope === 'semana') {
+    const dateVal = $('reset-week-input').value; // Formato: YYYY-MM-DD
+    if (!dateVal) { toast('Por favor, escolha um dia para a semana.'); return; }
+    
+    const d = parseDt(dateVal);
+    const curDay = d.getDay();
+    const diffToMon = d.getDate() - curDay + (curDay === 0 ? -6 : 1);
+    const mon = new Date(d.getFullYear(), d.getMonth(), diffToMon);
+    mon.setHours(0,0,0,0);
+    const sun = new Date(mon);
+    sun.setDate(sun.getDate() + 6);
+    sun.setHours(23,59,59,999);
+    
+    const weekLabel = `${mon.toLocaleDateString('pt-BR', {day:'2-digit', month:'short'})} - ${sun.toLocaleDateString('pt-BR', {day:'2-digit', month:'short'})}`;
+    if (!confirm(`Tem certeza que deseja apagar os lançamentos da semana de ${weekLabel}?`)) return;
+    
+    appData.transacoes = appData.transacoes.filter(tx => {
+      const txDate = parseDt(tx.data);
+      if (tx.frequencia === 'none') {
+        return !(txDate >= mon && txDate <= sun);
+      } else {
+        if (txDate >= mon && txDate <= sun) {
+          return false;
+        } else if (txDate < mon) {
+          const dataFimDate = new Date(mon);
+          dataFimDate.setDate(dataFimDate.getDate() - 1);
+          if (!tx.recurrence) tx.recurrence = {};
+          tx.recurrence.dataFim = dtKey(dataFimDate);
+          return true;
+        }
+        return true;
+      }
+    });
+    
+    saveData();
+    closeModal('modal-reset');
+    toast(`✅ Lançamentos da semana de ${weekLabel} resetados!`);
+    navTo('dash');
+    return;
+  }
+}
+
+// ─── STREAKS E CONQUISTAS ───
+let simulatedStreakCount = null;
+
+const CONQUISTAS = [
+  { id: 'sem_1', name: 'Bronze Semanal 🥉', req: '1 semana ativa (7 dias)', days: 7, icon: '🥉' },
+  { id: 'sem_2', name: 'Prata Semanal 🥈', req: '2 semanas ativas (14 dias)', days: 14, icon: '🥈' },
+  { id: 'sem_4', name: 'Ouro Semanal 🥇', req: '4 semanas ativas (28 dias)', days: 28, icon: '🥇' },
+  { id: 'sem_8', name: 'Diamante Semanal 💎', req: '8 semanas ativas (56 dias)', days: 56, icon: '💎' },
+  { id: 'mes_3', name: 'Bronze Mensal 🥉', req: '3 meses ativos (90 dias)', days: 90, icon: '🥉' },
+  { id: 'mes_6', name: 'Prata Mensal 🥈', req: '6 meses ativos (180 dias)', days: 180, icon: '🥈' },
+  { id: 'mes_9', name: 'Ouro Mensal 🥇', req: '9 meses ativos (270 dias)', days: 270, icon: '🥇' },
+  { id: 'mes_12', name: 'Titã do Ano 🏆', req: '1 ano ativo (365 dias)', days: 365, icon: '🏆' },
+  { id: 'ano_2', name: 'Bronze Anual 🌟', req: '2 anos ativos (730 dias)', days: 730, icon: '🌟' },
+  { id: 'ano_3', name: 'Prata Anual ✨', req: '3 anos ativos (1095 dias)', days: 1095, icon: '✨' },
+  { id: 'ano_5', name: 'Ouro Anual 👑', req: '5 anos ativos (1825 dias)', days: 1825, icon: '👑' },
+  { id: 'ano_8', name: 'Mestre do Tempo ⏳', req: '8 anos ativos (2920 dias)', days: 2920, icon: '⏳' },
+  { id: 'dec_1', name: 'Guardião da Década 🐉', req: '10 anos ativos (3650 dias)', days: 3650, icon: '🐉' },
+  { id: 'dec_1.5', name: 'Mestre Centenário 🏛️', req: '15 anos ativos (5475 dias)', days: 5475, icon: '🏛️' },
+  { id: 'dec_2', name: 'Lenda de 2 Décadas 🌌', req: '20 anos ativos (7300 dias)', days: 7300, icon: '🌌' },
+  { id: 'dec_5', name: 'Oráculo Eterno 🛸', req: '50 anos ativos (18250 dias)', days: 18250, icon: '🛸' }
+];
+
+function updateStreak() {
+  if (!currentUser || !currentUser.email) return;
+  const email = currentUser.email;
+  const todayKey = dtKey(new Date());
+  
+  const lastAccess = localStorage.getItem(`pland_last_access_${email}`);
+  let streak = parseInt(localStorage.getItem(`pland_streak_count_${email}`)) || 0;
+  
+  if (lastAccess) {
+    if (lastAccess === todayKey) {
+      if (streak === 0) streak = 1;
+    } else {
+      const lastDate = parseDt(lastAccess);
+      const todayDate = new Date();
+      todayDate.setHours(0,0,0,0);
+      lastDate.setHours(0,0,0,0);
+      
+      const diffTime = Math.abs(todayDate - lastDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        streak += 1;
+      } else if (diffDays > 1) {
+        streak = 1;
+      }
+    }
+  } else {
+    streak = 1;
+  }
+  
+  localStorage.setItem(`pland_last_access_${email}`, todayKey);
+  localStorage.setItem(`pland_streak_count_${email}`, streak.toString());
+  
+  appData.streakCount = streak;
+  
+  const sidebarStreak = $('sidebar-streak-count');
+  if (sidebarStreak) sidebarStreak.textContent = streak;
+  const dashStreak = $('dash-streak-count');
+  if (dashStreak) dashStreak.textContent = streak;
+}
+
+function renderFrequencia() {
+  const activeStreak = simulatedStreakCount !== null ? simulatedStreakCount : (appData.streakCount || 1);
+  
+  const today = new Date();
+  const curDay = today.getDay();
+  const diffToMon = today.getDate() - curDay + (curDay === 0 ? -6 : 1);
+  const mon = new Date(today.getFullYear(), today.getMonth(), diffToMon);
+  mon.setHours(0,0,0,0);
+  const sun = new Date(mon);
+  sun.setDate(sun.getDate() + 6);
+  sun.setHours(23,59,59,999);
+
+  const weekInsts = getInstances(mon, sun);
+  const uniqueDays = new Set();
+  weekInsts.forEach(inst => {
+    uniqueDays.add(dtKey(inst.instanceDate));
+  });
+  const daysCount = uniqueDays.size;
+
+  let rank = '';
+  let phrase = '';
+  if (daysCount <= 1) {
+    rank = 'Sedentário Financeiro 💤';
+    phrase = 'Você ainda não registrou quase nada esta semana. Lembre-se: consistência é a chave para o sucesso financeiro! 💤';
+  } else if (daysCount <= 3) {
+    rank = 'Caminhada Consciente 🚶‍♂️';
+    phrase = 'Bom começo! Você está criando o hábito de registrar seus gastos. Continue assim para dominar suas finanças! 🚶‍♂️';
+  } else if (daysCount <= 5) {
+    rank = 'Atleta da Poupança 🏃‍♂️';
+    phrase = 'Consistência incrível! Você está no controle quase diário das suas finanças. Continue focado! 🏃‍♂️';
+  } else {
+    rank = 'Monstro da Gestão 🏋️‍♂️';
+    phrase = 'Nível Monstro! Você registra tudo e tem controle total do seu fluxo financeiro. Estilo Gym Rat das finanças! 🏋️‍♂️';
+  }
+
+  $('freq-rank').textContent = rank;
+  $('freq-score').textContent = `${daysCount}/7 dias`;
+  $('freq-progress').style.width = `${(daysCount / 7) * 100}%`;
+  $('freq-phrase').textContent = phrase;
+  
+  const container = $('badges-container');
+  container.innerHTML = '';
+  
+  CONQUISTAS.forEach(badge => {
+    const isUnlocked = activeStreak >= badge.days;
+    const statusText = isUnlocked ? 'Desbloqueado' : 'Bloqueado';
+    const cardClass = isUnlocked ? 'badge-card unlocked' : 'badge-card locked';
+    
+    container.innerHTML += `
+      <div class="${cardClass}" title="${badge.req}">
+        <div class="badge-icon">${badge.icon}</div>
+        <div class="badge-title">${badge.name}</div>
+        <div class="badge-desc">${badge.req}</div>
+        <div class="badge-status">${statusText}</div>
+      </div>
+    `;
+  });
+
+  if (simulatedStreakCount !== null) {
+    $('sim-streak-indicator').style.display = 'block';
+    $('sim-streak-val').textContent = simulatedStreakCount;
+  } else {
+    $('sim-streak-indicator').style.display = 'none';
+  }
+}
+
+function simulateStreak(days) {
+  simulatedStreakCount = days;
+  renderFrequencia();
+  toast(`🧪 Simulando ofensiva de ${days} dias!`);
+}
+
+function clearStreakSimulation() {
+  simulatedStreakCount = null;
+  renderFrequencia();
+  toast('🧹 Simulação limpa. Ofensiva real restaurada.');
+}
+
+// ─── TOTAIS DO MÊS ───
+function renderTotais() {
+  const y = curDate.getFullYear(); const m = curDate.getMonth();
+  const monthNamesAbbr = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  $('totais-month-label').textContent = `${monthNamesAbbr[m]}/${String(y).slice(-2)}`;
+  
+  const today = new Date();
+  let calendarDay = today.getDate();
+  if (today.getFullYear() !== y || today.getMonth() !== m) {
+    calendarDay = new Date(y, m + 1, 0).getDate();
+  }
+  $('totais-calendar-day').textContent = calendarDay;
+  $('totais-diario-days-label').textContent = calendarDay;
+
+  const start = new Date(y, m, 1);
+  const end = new Date(y, m + 1, 0);
+  const insts = getInstances(start, end);
+
+  let entTotal = 0;
+  let saiTotal = 0;
+  let diaTotal = 0;
+  let ecoTotal = 0;
+  let creTotal = 0;
+
+  insts.forEach(i => {
+    const isCredit = i.formaPagamento === 'Crédito';
+    if (isCredit) {
+      creTotal += i.valor;
+    } else {
+      if (i.tipo === 'entrada') entTotal += i.valor;
+      else if (i.tipo === 'saida') saiTotal += i.valor;
+      else if (i.tipo === 'diario') diaTotal += i.valor;
+      else if (i.tipo === 'economia') ecoTotal += i.valor;
+    }
+  });
+
+  const monthIncome = entTotal > 0 ? entTotal : (parseFloat(currentUser.salario) || 0);
+  const totalDaysInMonth = new Date(y, m + 1, 0).getDate();
+  const availableForDaily = monthIncome - saiTotal - ecoTotal - creTotal;
+  const dottedD = availableForDaily > 0 ? (availableForDaily / totalDaysInMonth) : 0;
+  const custoDeVida = saiTotal + diaTotal + creTotal + dottedD;
+  const performance = monthIncome - custoDeVida - ecoTotal;
+
+  $('totais-perf-val').textContent = fmt(performance);
+  if (performance < 0) {
+    $('totais-perf-val').style.color = 'var(--apple-red)';
+    $('totais-perf-desc').textContent = 'Faltou dinheiro';
+    $('totais-perf-desc').style.color = 'var(--apple-red)';
+  } else if (performance > 0) {
+    $('totais-perf-val').style.color = 'var(--apple-green)';
+    $('totais-perf-desc').textContent = 'Sobrou dinheiro';
+    $('totais-perf-desc').style.color = 'var(--apple-green)';
+  } else {
+    $('totais-perf-val').style.color = 'var(--text-1)';
+    $('totais-perf-desc').textContent = 'Equilibrado';
+    $('totais-perf-desc').style.color = 'var(--text-3)';
+  }
+
+  const econPct = monthIncome > 0 ? Math.round((ecoTotal / monthIncome) * 100) : 0;
+  $('totais-econ-val').textContent = `${econPct}%`;
+  $('totais-econ-bar').style.width = `${Math.min(econPct, 100)}%`;
+  let econDesc = 'Nada guardado';
+  if (econPct > 0 && econPct < 10) econDesc = 'Guardando um pouco';
+  else if (econPct >= 10 && econPct < 20) econDesc = 'Bom ritmo de poupança!';
+  else if (econPct >= 20) econDesc = 'Excelente poupador! 🚀';
+  $('totais-econ-desc').textContent = econDesc;
+
+  $('totais-custo-val').textContent = fmt(custoDeVida);
+  if (custoDeVida > monthIncome) {
+    $('totais-custo-desc').textContent = 'Acima da renda';
+    $('totais-custo-desc').style.color = 'var(--apple-red)';
+  } else {
+    $('totais-custo-desc').textContent = 'Dentro do planejado';
+    $('totais-custo-desc').style.color = 'var(--apple-green)';
+  }
+
+  const diaMedio = diaTotal / calendarDay;
+  $('totais-diario-val').textContent = fmt(diaMedio);
+  $('totais-diario-meta').textContent = fmt(dottedD);
+
+  $('totais-row-ent').textContent = fmt(entTotal);
+  $('totais-row-sai').textContent = fmt(saiTotal);
+  $('totais-row-dia').textContent = fmt(diaTotal);
+  $('totais-row-eco').textContent = fmt(ecoTotal);
+  $('totais-row-cre').textContent = fmt(creTotal);
+}
+
+// ─── HORIZONTE DE SALDOS ───
+function renderHorizonte() {
+  const container = $('horizon-columns-wrapper');
+  container.innerHTML = '';
+
+  const m1 = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
+  const m2 = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 1);
+  const m3 = new Date(curDate.getFullYear(), curDate.getMonth() + 2, 1);
+  
+  const months = [m1, m2, m3];
+  
+  const prevEnd = new Date(m1.getFullYear(), m1.getMonth(), 0, 23, 59, 59, 999);
+  const pastInsts = getInstances(new Date(2000, 0, 1), prevEnd);
+  let te = 0, ts = 0, td = 0, tec = 0;
+  pastInsts.forEach(x => {
+    const isCredit = x.formaPagamento === 'Crédito';
+    if (!isCredit) {
+      if (x.tipo === 'entrada') te += x.valor;
+      else if (x.tipo === 'saida') ts += x.valor;
+      else if (x.tipo === 'diario') td += x.valor;
+      else if (x.tipo === 'economia') tec += x.valor;
+    } else {
+      ts += x.valor;
+    }
+  });
+  let runningBalance = appData.saldoInicial + te - ts - td - tec;
+
+  function fmtHorizonValue(val) {
+    if (val === 0) return '0';
+    const absVal = Math.abs(val);
+    if (absVal >= 1000) {
+      const kVal = val / 1000;
+      return kVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + 'K';
+    }
+    if (Number.isInteger(val)) return val.toString();
+    return val.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  months.forEach((monthDate, idx) => {
+    const y = monthDate.getFullYear();
+    const m = monthDate.getMonth();
+    const monthNamesAbbr = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const labelText = `${monthNamesAbbr[m]}/${String(y).slice(-2)}`;
+    
+    const start = new Date(y, m, 1);
+    const end = new Date(y, m + 1, 0);
+    const mInsts = getInstances(start, end);
+    let mEnt = 0, mSai = 0, mEco = 0, mCre = 0;
+    mInsts.forEach(i => {
+      const isCredit = i.formaPagamento === 'Crédito';
+      if (isCredit) mCre += i.valor;
+      else {
+        if (i.tipo === 'entrada') mEnt += i.valor;
+        else if (i.tipo === 'saida') mSai += i.valor;
+        else if (i.tipo === 'economia') mEco += i.valor;
+      }
+    });
+    const mIncome = mEnt > 0 ? mEnt : (parseFloat(currentUser.salario) || 0);
+    const daysInMonth = end.getDate();
+    const mAvailable = mIncome - mSai - mEco - mCre;
+    const dottedD = mAvailable > 0 ? (mAvailable / daysInMonth) : 0;
+
+    const isActive = idx === 0 ? 'active' : '';
+    let columnHTML = `
+      <div class="horizon-col">
+        <div class="horizon-col-header ${isActive}">${labelText}</div>
+        <div class="horizon-day-list">
+    `;
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const curDayDate = new Date(y, m, day);
+      curDayDate.setHours(0,0,0,0);
+      
+      const dayStart = new Date(y, m, day, 0, 0, 0, 0);
+      const dayEnd = new Date(y, m, day, 23, 59, 59, 999);
+      const dayInsts = getInstances(dayStart, dayEnd);
+      
+      let dayEnt = 0;
+      let dayOut = 0;
+      dayInsts.forEach(x => {
+        if (x.tipo === 'entrada') dayEnt += x.valor;
+        else dayOut += x.valor;
+      });
+
+      runningBalance += dayEnt - dayOut;
+      
+      const todayZero = new Date(); todayZero.setHours(0,0,0,0);
+      if (curDayDate >= todayZero) {
+        runningBalance -= dottedD;
+      }
+
+      let colorClass = 'val-yellow';
+      if (runningBalance >= 1000) colorClass = 'val-green';
+      else if (runningBalance < 0) colorClass = 'val-red';
+
+      columnHTML += `
+        <div class="horizon-day-row">
+          <div class="horizon-day-num">${day}</div>
+          <div class="horizon-day-val ${colorClass}">${fmtHorizonValue(runningBalance)}</div>
+        </div>
+      `;
+    }
+
+    columnHTML += `
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML += columnHTML;
+  });
 }
 
 // ─── RECORRÊNCIA — Funções de Toggle ───
@@ -3010,17 +3936,25 @@ function processCSV() {
       const prompt = `Você é a inteligência financeira do app DinDimpass.
 Analise os seguintes dados brutos extraídos de uma planilha financeira (CSV/Excel).
 Seus objetivos:
-1. Identificar cada transação (data, descrição, valor).
-2. Se a data de uma transação for incompleta ou for apenas o nome de um mês (ex: "Janeiro", "Fevereiro"), infira a data correta assumindo o dia 1 daquele mês no ano atual (2026). Se não houver data alguma, use a data de hoje: "${dtKey(new Date())}".
-3. Determinar se é 'entrada' ou 'saida'. Fique atento a sinais negativos nos valores (ex: -50,00 indica 'saida').
-4. Categorizar cada transação nas categorias: Moradia, Alimentação, Transporte, Saúde, Lazer, Educação, Salário, Outros.
-5. Retorne a resposta estritamente como um array JSON de objetos, onde cada objeto tem o seguinte formato exato:
+1. Identificar se a planilha representa uma lista simples de transações ou uma matriz/grade de orçamento mensal.
+2. Se a planilha for uma grade de orçamento mensal:
+   - As linhas contêm categorias/descrições (como Condominio, Parcela Larissa Ex, Luz, Internet, Entradas total Salario, etc.) e as colunas representam os meses (como Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro) com os respectivos valores.
+   - Há também colunas 'Dia' (ex: "Todo dia 10", "Todo dia 5", "Mesmo dia do salario", "Ultimo dia util de cada mês") e 'Frequência' (ex: "Sem data pra acabar", "Apenas uma vez", "até Outubro de 2026").
+   - Ignore linhas de totais consolidados como 'Saidas total' ou 'Saldo'.
+   - A linha 'Entradas total Salario' (ou similar contendo Salário) deve ser processada como tipo 'entrada' e categoria 'Salário'.
+   - Outras linhas (ex: 'Condominio', 'Luz') são despesas do tipo 'saida' (ou 'diario' se for variável).
+   - Para cada mês com valor maior que 0, crie uma transação individual. A data deve ser formada combinando o ano atual (2026), o mês correspondente da coluna (ex: Julho -> 07, Agosto -> 08, etc.) e o dia do mês extraído da coluna 'Dia' (ex: 'Todo dia 10' -> dia 10, 'Todo dia 5' -> dia 5, 'Mesmo dia do salario' -> dia 28/30/31 dependendo do mês, 'Ultimo dia util' -> último dia do mês).
+   - As categorias (macro) para cada item devem ser atribuídas de forma inteligente (ex: 'Condominio' -> 'Moradia', 'Luz'/'Internet'/'Vivo' -> 'Moradia', 'Transporte Metro'/'Gasolina' -> 'Transporte', 'Fiel Torcedor'/'Barbeiro'/'Jogo' -> 'Lazer', 'Acordo Nubank'/'Larissa' -> 'Outros').
+3. Se a planilha for uma lista tradicional de transações (uma transação por linha):
+   - Mapeie cada linha para uma transação. Se a data for incompleta ou apenas o mês, assuma o dia 1 daquele mês no ano atual (2026).
+4. Retorne a resposta estritamente como um array JSON de objetos no formato exato:
 {
   "data": "YYYY-MM-DD",
-  "desc": "descrição limpa da transação",
+  "desc": "descrição limpa da transação (ex: Condominio, Luz)",
   "valor": número positivo (float),
-  "tipo": "entrada" ou "saida",
-  "macro": "Moradia" | "Alimentação" | "Transporte" | "Saúde" | "Lazer" | "Educação" | "Salário" | "Outros"
+  "tipo": "entrada" | "saida" | "diario" | "economia",
+  "macro": "Moradia" | "Alimentação" | "Transporte" | "Saúde" | "Lazer" | "Educação" | "Salário" | "Outros",
+  "formaPagamento": "Pix" | "Crédito" | "Débito" | "Dinheiro"
 }
 
 Retorne APENAS o JSON limpo, sem markdown, sem explicações.
@@ -3068,13 +4002,14 @@ ${JSON.stringify(rowsToProcess)}`;
             const valor = Math.abs(parseFloat(item.valor));
             if(isNaN(valor) || valor === 0) return;
             
-            const tipo = item.tipo === 'entrada' ? 'entrada' : 'saida';
+            const tipo = ['entrada', 'saida', 'diario', 'economia'].includes(item.tipo) ? item.tipo : 'saida';
             const data = item.data || dtKey(new Date());
-            const desc = (item.desc || 'Transação') + ' (Gemini IA)';
+            const desc = item.desc || 'Transação';
             const macro = item.macro || 'Outros';
+            const formaPagamento = item.formaPagamento || 'Pix';
             
             appData.transacoes.push({
-              id: uuid(), tipo, valor, desc, data, frequencia: 'none', macro, formaPagamento: 'Outros'
+              id: uuid(), tipo, valor, desc, data, frequencia: 'none', macro, formaPagamento
             });
             imported++;
           });
