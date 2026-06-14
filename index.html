@@ -747,6 +747,290 @@ ul{list-style:none;}
   color: var(--apple-green);
 }
 
+/* ═══════════════════════════════════════════════════
+   TEMAS PREMIUM (LOJA)
+   ═══════════════════════════════════════════════════ */
+body.theme-cyberpunk {
+  --bg:           #0b0c10;
+  --bg-blur:      rgba(31, 40, 51, 0.85);
+  --bg-card:      #1f2833;
+  --bg-card-hover:#2c3539;
+  --border:       rgba(102, 252, 241, 0.15);
+  --border-focus: rgba(102, 252, 241, 0.5);
+  --text-1:       #c5c6c7;
+  --text-2:       #66fcf1;
+  --text-3:       #45f3ff;
+  --apple-blue:   #66fcf1;
+  --apple-blue-h: #45f2e6;
+  --apple-red:    #ff007f;
+  --apple-green:  #39ff14;
+  --apple-orange: #ffb703;
+}
+body.theme-ouro {
+  --bg:           #111111;
+  --bg-blur:      rgba(28, 25, 23, 0.85);
+  --bg-card:      #1c1917;
+  --bg-card-hover:#292524;
+  --border:       rgba(234, 179, 8, 0.2);
+  --border-focus: rgba(234, 179, 8, 0.6);
+  --text-1:       #facc15;
+  --text-2:       #eab308;
+  --text-3:       #ca8a04;
+  --apple-blue:   #eab308;
+  --apple-blue-h: #ca8a04;
+  --apple-red:    #ef4444;
+  --apple-green:  #22c55e;
+  --apple-orange: #f59e0b;
+}
+body.theme-duolingo {
+  --bg:           #f7f7f7;
+  --bg-blur:      rgba(255, 255, 255, 0.8);
+  --bg-card:      #ffffff;
+  --bg-card-hover:#e5e5e5;
+  --border:       #e5e5e5;
+  --border-focus: #58cc02;
+  --text-1:       #3c3c3c;
+  --text-2:       #58cc02;
+  --text-3:       #afafaf;
+  --apple-blue:   #58cc02;
+  --apple-blue-h: #46a302;
+  --apple-red:    #ff4b4b;
+  --apple-green:  #58cc02;
+  --apple-orange: #ff9600;
+}
+
+/* ═══════════════════════════════════════════════════
+   POKÉMON STYLE METALLIC & HOLOGRAPHIC BADGES
+   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   POKÉMON STYLE METALLIC & HOLOGRAPHIC BADGES
+   ═══════════════════════════════════════════════════ */
+.badge-wrapper-outer {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.3)) drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  perspective: 1000px;
+  margin: 0 auto;
+}
+.badge-wrapper-outer:hover {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.badge-border-mask {
+  position: absolute;
+  width: 86px;
+  height: 86px;
+  background: linear-gradient(135deg, #ffe066 0%, #facc15 50%, #d97706 100%);
+  z-index: 1;
+}
+
+.pokemon-badge {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  overflow: hidden;
+  transition: filter 0.3s ease;
+  background-size: 200% 200%;
+}
+
+.pokemon-badge::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -150%; width: 250%; height: 250%;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.45) 45%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.45) 55%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: rotate(25deg);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Animação de brilho metálico contínuo lento ao passar o mouse */
+.badge-wrapper-outer:hover .pokemon-badge::after {
+  animation: shine-effect 1.8s infinite linear;
+}
+
+@keyframes shine-effect {
+  0% { left: -150%; }
+  100% { left: 150%; }
+}
+
+.pokemon-badge .badge-emoji {
+  font-size: 32px;
+  z-index: 4;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+  user-select: none;
+  transform: translateZ(10px);
+}
+
+/* Grayscale para trancar as insígnias */
+.badge-wrapper-outer.locked {
+  filter: grayscale(1) opacity(0.35);
+}
+.badge-wrapper-outer.locked .badge-border-mask {
+  background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 50%, #7f8c8d 100%);
+}
+.badge-wrapper-outer.locked .pokemon-badge {
+  background: linear-gradient(135deg, #7f8c8d 0%, #bdc3c7 100%) !important;
+}
+
+/* Clip Paths Individuais de Pokémon */
+
+/* 1. Carteira - Boulder Badge (Octógono) */
+.b_carteira {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  -webkit-clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+.badge-border-mask.b_carteira {
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%); /* Borda de Platina/Aço */
+}
+.pokemon-badge.b_carteira {
+  background: linear-gradient(135deg, #4b5563 0%, #9ca3af 25%, #f3f4f6 50%, #4b5563 75%, #1f2937 100%);
+}
+
+/* 2. Moeda - Cascade Badge (Gota/Moeda Cascata) */
+.b_moeda {
+  clip-path: polygon(50% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+  -webkit-clip-path: polygon(50% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+}
+.badge-border-mask.b_moeda {
+  background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 50%, #db2777 100%); /* Borda de Cobre Rosé */
+}
+.pokemon-badge.b_moeda {
+  background: linear-gradient(135deg, #b87333 0%, #cd7f32 30%, #ffffff 50%, #b87333 70%, #8b4513 100%);
+}
+
+/* 3. Nota - Thunder Badge (Estrela de Trovão) */
+.b_nota {
+  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+  -webkit-clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+}
+.badge-border-mask.b_nota {
+  background: linear-gradient(135deg, #fef08a 0%, #facc15 50%, #ca8a04 100%); /* Borda Dourada Fogo */
+}
+.pokemon-badge.b_nota {
+  background: linear-gradient(135deg, #16a085 0%, #2ecc71 30%, #ffffff 50%, #16a085 70%, #064e3b 100%);
+}
+
+/* 4. Poupança - Rainbow Badge (Hexágono Flor / Prisma) */
+.b_poupanca {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  -webkit-clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+.badge-border-mask.b_poupanca {
+  background: linear-gradient(135deg, #fbcfe8 0%, #c084fc 50%, #818cf8 100%);
+}
+.pokemon-badge.b_poupanca {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 25%, #c084fc 50%, #60a5fa 75%, #34d399 100%);
+  animation: holo-shimmer-fast 6s infinite alternate linear;
+}
+
+/* 5. Reserva - Soul Badge (Escudo Protetor) */
+.b_reserva {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 100%, 0% 50%);
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+.badge-border-mask.b_reserva {
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+}
+.pokemon-badge.b_reserva {
+  background: linear-gradient(135deg, #708090 0%, #c0c0c0 30%, #ffffff 50%, #708090 70%, #778899 100%);
+}
+
+/* 6. Investimento - Marsh Badge (Pentágono Safira) */
+.b_investimento {
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  -webkit-clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.badge-border-mask.b_investimento {
+  background: linear-gradient(135deg, #93c5fd 0%, #3b82f6 50%, #1d4ed8 100%);
+}
+.pokemon-badge.b_investimento {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 30%, #3b82f6 60%, #93c5fd 85%, #1e3a8a 100%);
+}
+
+/* 7. Duelo - Volcano Badge (Chama Incandescente) */
+.b_duelo {
+  clip-path: polygon(50% 0%, 85% 35%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 15% 35%);
+  -webkit-clip-path: polygon(50% 0%, 85% 35%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 15% 35%);
+}
+.badge-border-mask.b_duelo {
+  background: linear-gradient(135deg, #fecaca 0%, #ef4444 50%, #b91c1c 100%);
+}
+.pokemon-badge.b_duelo {
+  background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 30%, #f87171 60%, #f59e0b 85%, #7f1d1d 100%);
+}
+
+/* 8. Riqueza - Earth Badge (Diamante Dourado Holográfico) */
+.b_riqueza {
+  clip-path: polygon(50% 0%, 100% 30%, 80% 90%, 50% 100%, 20% 90%, 0% 30%);
+  -webkit-clip-path: polygon(50% 0%, 100% 30%, 80% 90%, 50% 100%, 20% 90%, 0% 30%);
+}
+.badge-border-mask.b_riqueza {
+  background: linear-gradient(135deg, #ffe066 0%, #facc15 50%, #d97706 100%);
+}
+.pokemon-badge.b_riqueza {
+  background: linear-gradient(135deg, #eab308 0%, #fef08a 25%, #60a5fa 50%, #c084fc 75%, #eab308 100%);
+  animation: holo-shimmer 8s infinite linear;
+}
+
+@keyframes holo-shimmer {
+  0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+  100% { background-position: 100% 50%; filter: hue-rotate(360deg); }
+}
+@keyframes holo-shimmer-fast {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(180deg); }
+}
+
+/* ═══════════════════════════════════════════════════
+   TUTORIAL TOUR RÁPIDO & STORIES CARD
+   ═══════════════════════════════════════════════════ */
+.tour-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999;
+  display: none; pointer-events: all; opacity: 0; transition: opacity 0.3s ease;
+}
+.tour-overlay.active { display: block; opacity: 1; }
+.tour-tooltip {
+  position: absolute; background: white; color: var(--text-1); padding: 16px;
+  border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.35); z-index: 10000;
+  max-width: 280px; display: flex; flex-direction: column; gap: 10px; font-size: 14px;
+  border: 2px solid var(--apple-blue); transition: all 0.3s ease;
+}
+.tour-tooltip::before {
+  content: ''; position: absolute; border: 8px solid transparent;
+}
+.tour-tooltip.arrow-top::before { border-bottom-color: white; top: -16px; left: 20px; }
+.tour-tooltip.arrow-bottom::before { border-top-color: white; bottom: -16px; left: 20px; }
+.tour-tooltip.arrow-left::before { border-right-color: white; left: -16px; top: 20px; }
+.tour-tooltip.arrow-right::before { border-left-color: white; right: -16px; top: 20px; }
+
+.share-stories-card {
+  width: 300px; height: 533px; background: linear-gradient(135deg, #111111 0%, #222222 100%);
+  border-radius: 20px; border: 4px solid #facc15; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  padding: 24px 16px; position: relative; overflow: hidden; color: white;
+}
+.share-stories-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
@@ -1031,50 +1315,65 @@ ul{list-style:none;}
             <div style="font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Merrecas</div>
           </div>
         </div>
-        <!-- Ofensiva DinDimpass Card -->
-        <div class="card card-pad" style="margin-top: 16px;">
-          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-            <!-- Dinheiro humanizado: corpo+braços+pernas+asas+fogo -->
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-              <!-- Fogo atrás -->
-              <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
-              <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
-              <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
-              <!-- Corpo (nota de dinheiro) -->
-              <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
-              <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
-              <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
-              <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
-              <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
-              <!-- Cabeça (rosto feliz) -->
-              <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
-              <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
-              <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
-              <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
-              <!-- Asas -->
-              <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
-              <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
-              <!-- Braço esquerdo levantado -->
-              <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <!-- Braço direito levantado -->
-              <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <!-- Perna esquerda -->
-              <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <!-- Perna direita -->
-              <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <!-- Foguinho pequeno acima -->
-              <text x="26" y="7" font-size="8">🔥</text>
-            </svg>
-            Ofensiva DinDimpass
-          </h3>
+        <!-- Ofensiva DinDimpass Gamificada Card -->
+        <div class="card card-pad" style="margin-top: 16px; background: linear-gradient(135deg, var(--bg-card), rgba(0, 113, 227, 0.03)); border: 1.5px solid var(--border);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <h3 style="margin-bottom: 0; display: flex; align-items: center; gap: 10px; font-size: 16px;">
+              <!-- Dinheiro humanizado: corpo+braços+pernas+asas+fogo -->
+              <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
+                <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
+                <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
+                <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
+                <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
+                <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
+                <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+                <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+                <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
+                <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
+                <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
+                <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+                <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
+                <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
+                <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <text x="26" y="7" font-size="8">🔥</text>
+              </svg>
+              <span>Ofensiva DinDimpass 2.0</span>
+            </h3>
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px;">
+              <span style="color: var(--apple-orange); background: rgba(255, 149, 0, 0.1); padding: 4px 8px; border-radius: 8px;">🪙 <span id="dash-dindins">0</span> DinDins</span>
+              <button class="btn btn-secondary btn-sm" onclick="navTo('config'); setTimeout(() => { $('shop-section').scrollIntoView({behavior: 'smooth'}); }, 150);" style="padding: 6px 10px; font-size: 11px;">Loja 🛒</button>
+            </div>
+          </div>
+
+          <!-- XP & Nível -->
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+            <span>Nível <span id="dash-level">1</span> — <span id="dash-level-title">Bronze</span></span>
+            <span style="color: var(--text-3);"><span id="dash-xp">0</span> / <span id="dash-xp-next">100</span> XP</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: #E5E5EA; border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+            <div id="dash-xp-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8a2be2, #00c9ff); border-radius: 4px; transition: width 0.5s ease;"></div>
+          </div>
+
+          <!-- Ofensiva (Consistência Semanal) -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <span id="gamification-rank" style="font-weight: 700; font-size: 16px; color: var(--text-1);">Sedentário Financeiro 💤</span>
-            <span id="gamification-score" style="font-weight: 700; font-size: 15px; color: var(--apple-blue);">0/7 dias</span>
+            <span id="gamification-rank" style="font-weight: 700; font-size: 14px; color: var(--text-1);">Sedentário Financeiro 💤</span>
+            <span id="gamification-score" style="font-weight: 700; font-size: 14px; color: var(--apple-blue);">0/7 dias</span>
           </div>
           <div style="width: 100%; height: 12px; background: #E5E5EA; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
             <div id="gamification-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34C759, #0071E3); border-radius: 6px; transition: width 0.5s ease;"></div>
           </div>
-          <p id="gamification-phrase" style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Você ainda não registrou transações esta semana. Que tal começar a anotar suas despesas hoje?</p>
+          <p id="gamification-phrase" style="font-size: 13px; color: var(--text-2); line-height: 1.4; margin-bottom: 16px;">Você ainda não registrou transações esta semana. Que tal começar a anotar suas despesas hoje?</p>
+
+          <!-- Botões de Gamificação Rápida -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-outline btn-sm" onclick="openCreateDuelModal()" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px;">⚔️ Novo Duelo</button>
+            <button class="btn btn-outline btn-sm" onclick="navTo('frequencia')" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px;">🏅 Galeria de Badges</button>
+            <button class="btn btn-outline btn-sm" onclick="openShareCardModal()" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px;">📸 Stories do Instagram</button>
+          </div>
         </div>
 
         <div class="card card-pad" style="margin-top: 16px;">
@@ -1739,6 +2038,71 @@ ul{list-style:none;}
             <button class="btn btn-danger" style="width: 100%;" onclick="logout()">Encerrar Sessão</button>
           </div>
         </div>
+
+        <!-- Loja DinDimpass -->
+        <div id="shop-section" class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(255, 149, 0, 0.25); background: linear-gradient(135deg, var(--bg-card), rgba(255, 149, 0, 0.02));">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">🛒 Loja DinDimpass</h3>
+          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Gaste seus DinDins acumulados por consistência em vantagens e personalizações premium!</p>
+          
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            Seu saldo: <span style="color: var(--apple-orange);">🪙 <span id="shop-dindins-count">0</span> DinDins</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Item 1: Streak Freeze -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(0,0,0,0.02); border-radius: var(--r-md); border: 1px solid var(--border);">
+              <div>
+                <div style="font-weight: 700; font-size: 14px;">Gelador de Ofensiva (Streak Freeze) 🧊</div>
+                <div style="font-size: 12px; color: var(--text-2); margin-top: 2px;">Protege sua ofensiva caso você passe 1 dia sem registrar lançamentos.</div>
+                <div style="font-size: 11px; color: var(--apple-blue); margin-top: 4px; font-weight: bold;">Possuídos: <span id="shop-streak-freezes">0</span></div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="buyItem('streak_freeze', 100)" style="white-space: nowrap; background: #0071E3;">100 🪙</button>
+            </div>
+
+            <!-- Item 2: Temas de cores -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(0,0,0,0.02); border-radius: var(--r-md); border: 1px solid var(--border);">
+              <div>
+                <div style="font-weight: 700; font-size: 14px;">Temas Premium 🎨</div>
+                <div style="font-size: 12px; color: var(--text-2); margin-top: 2px;">Mude o estilo visual das suas finanças!</div>
+                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;" id="themes-activation-area">
+                  <!-- Injetado via JS -->
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="buyItem('themes', 300)" id="btn-buy-themes" style="white-space: nowrap; background: #0071E3;">300 🪙</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duelos Ativos -->
+        <div class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(225, 29, 72, 0.2); background: linear-gradient(135deg, var(--bg-card), rgba(225, 29, 72, 0.02));">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">⚔️ Central de Duelos</h3>
+          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Participe de disputas locais de ofensiva contra bots ou outros perfis cadastrados!</p>
+          
+          <div id="duels-list-container" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Injetado via JS -->
+          </div>
+          <button class="btn btn-primary" onclick="openCreateDuelModal()" style="width: 100%; margin-top: 12px; background: #e11d48; border-color: #e11d48;">Criar Novo Duelo ⚔️</button>
+        </div>
+
+        <!-- Central de Aprendizado -->
+        <div class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(52, 199, 89, 0.2); background: linear-gradient(135deg, var(--bg-card), rgba(52, 199, 89, 0.02));">
+          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📚 Central de Aprendizado</h3>
+          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Aprenda melhores práticas e gerencie seus tutoriais interativos.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-secondary" onclick="startQuickTour(true)" style="width: 100%; justify-content: flex-start; text-align: left; gap: 10px;">
+              <span>📖</span> Reiniciar Tour Rápido e Objetivo
+            </button>
+            <div style="background: rgba(0,0,0,0.02); border-radius: var(--r-md); padding: 12px; border: 1px solid var(--border);">
+              <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px;">💡 Boas Práticas Financeiras</div>
+              <ul style="font-size: 12px; color: var(--text-2); padding-left: 16px; display: flex; flex-direction: column; gap: 6px;">
+                <li><strong>Regra 50/30/20:</strong> Destine 50% da renda para necessidades, 30% para desejos e 20% para poupar/investir.</li>
+                <li><strong>Reserva Primeiro:</strong> Forme uma reserva de 6 meses de custo de vida antes de investir em ativos de maior risco.</li>
+                <li><strong>Consistência Diária:</strong> Registrar pequenos gastos diários evita o vazamento invisível de capital.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -2038,6 +2402,149 @@ ul{list-style:none;}
 </div>
 
 <div class="toast" id="toast">Sucesso!</div>
+
+<!-- Modal de Onboarding -->
+<div class="overlay" id="modal-onboarding">
+  <div class="modal" style="max-width: 450px;">
+    <div class="m-header">
+      <div class="m-title">🌱 Configuração Inicial</div>
+    </div>
+    
+    <!-- Etapa 1 -->
+    <div id="onboard-step-1">
+      <p style="font-size: 14px; color: var(--text-2); margin-bottom: 20px; line-height: 1.5;">Seja bem-vindo ao DinDimpass! Vamos configurar seus dados financeiros básicos para personalizar o app. É rápido e opcional.</p>
+      
+      <div class="input-group">
+        <label class="input-label">Sua Profissão</label>
+        <input type="text" id="onboard-profissao" class="input-field" placeholder="Ex: Desenvolvedor, Autônomo..." />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Salário Mensal Estimado (R$)</label>
+        <input type="number" id="onboard-salario" class="input-field" placeholder="Ex: 3500" />
+      </div>
+      
+      <div style="margin-top: 24px; display: flex; gap: 10px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="skipOnboarding()">Pular Tudo</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="nextOnboardStep(2)">Avançar ➔</button>
+      </div>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div id="onboard-step-2" style="display: none;">
+      <p style="font-size: 14px; color: var(--text-2); margin-bottom: 20px; line-height: 1.5;">Agora configure suas metas financeiras automatizadas:</p>
+      
+      <div class="input-group">
+        <label class="input-label">Reserva de Emergência Recomendada</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 13px; align-items: center;">
+          <span>Sugerir com base em</span>
+          <input type="number" id="onboard-reserva-meses" class="input-field" style="width: 50px; height: 26px; padding: 0 4px; text-align: center; margin: 0 4px;" value="6" />
+          <span>meses de custo</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <input type="number" id="onboard-meta-reserva" class="input-field" placeholder="Ex: 18000" />
+          <button class="btn btn-secondary btn-sm" onclick="suggestOnboardReserva()" style="white-space: nowrap;">Sugerir 🤖</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Orçamento Diário de Gastos (R$)</label>
+        <input type="number" id="onboard-orcamento-diario" class="input-field" placeholder="Ex: 50" />
+        <span style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Valor máximo orçado para gastos variáveis diários.</span>
+      </div>
+
+      <div style="margin-top: 24px; display: flex; gap: 10px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextOnboardStep(1)">◀ Voltar</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="saveOnboarding()">Concluir 🎉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Criar Duelo -->
+<div class="overlay" id="modal-duelo-criar">
+  <div class="modal" style="max-width: 420px;">
+    <div class="m-header">
+      <div class="m-title">⚔️ Criar Novo Duelo</div>
+      <div class="m-close" onclick="closeModal('modal-duelo-criar')">✕</div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Selecione oponentes e a duração do duelo de ofensiva financeira.</p>
+    
+    <div class="input-group">
+      <label class="input-label">Nome do Duelo</label>
+      <input type="text" id="duel-title" class="input-field" placeholder="Ex: Desafio dos Poupadores" />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Duração</label>
+      <select id="duel-duration" class="input-field">
+        <option value="7">7 Dias (Curto)</option>
+        <option value="30">30 Dias (Clássico)</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Selecionar Oponentes</label>
+      <div id="duel-opponents-list" style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--r-md); padding: 8px; display: flex; flex-direction: column; gap: 8px;">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width: 100%; margin-top: 12px; background: #e11d48; border-color: #e11d48;" onclick="createDuel()">Iniciar Duelo ⚔️</button>
+  </div>
+</div>
+
+<!-- Modal Compartilhar Stories -->
+<div class="overlay" id="modal-share-stories">
+  <div class="modal" style="max-width: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div class="m-header" style="width: 100%;">
+      <div class="m-title">📸 Compartilhar Conquistas</div>
+      <div class="m-close" onclick="closeModal('modal-share-stories')">✕</div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px; text-align: center;">Gere um card premium vertical holográfico em proporção 9:16 para postar no seu Instagram!</p>
+    
+    <!-- Seletor de Insígnia para Destaque -->
+    <div class="input-group" style="width: 100%; margin-bottom: 16px;">
+      <label class="input-label">Escolha a Insígnia de Destaque</label>
+      <select id="share-badge-select" class="input-field" onchange="updateShareStoriesCardView(this.value)">
+        <!-- Populado via JS com insígnias desbloqueadas -->
+      </select>
+    </div>
+
+    <!-- Visualização do Card Stories -->
+    <div id="stories-card-preview" class="share-stories-card">
+      <div class="title" style="font-size: 18px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #ffd700; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">DinDimpass</div>
+      
+      <!-- Estrutura premium de insígnias Pokémon -->
+      <div id="stories-badge-wrapper" class="badge-wrapper-outer" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); transform: scale(1.15); margin-bottom: 16px;">
+        <div id="stories-badge-mask" class="badge-border-mask b_riqueza"></div>
+        <div id="stories-badge-display" class="pokemon-badge b_riqueza">
+          <span id="stories-badge-emoji" class="badge-emoji">🏆</span>
+        </div>
+      </div>
+
+      <div class="user-info-box">
+        <div class="user-name" id="stories-user-name">Usuário</div>
+        <div style="font-size: 13px; color: #ffd700; font-weight: 800; margin-top: 4px; text-transform: uppercase;" id="stories-badge-title">Insígnia da Riqueza</div>
+        <div class="user-streak" id="stories-user-streak">🔥 1 Dias de Ofensiva</div>
+      </div>
+      <div class="footer" style="font-size: 12px; opacity: 0.7; z-index: 2;">dindimpass.web.app</div>
+    </div>
+
+    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="downloadStoriesCard()">📸 Baixar para Instagram</button>
+  </div>
+</div>
+
+<!-- Tour Overlay e Tooltips -->
+<div class="tour-overlay" id="tour-overlay" onclick="nextTourStep()">
+  <div class="tour-tooltip" id="tour-tooltip" onclick="event.stopPropagation()">
+    <div style="font-weight: 800; font-size: 15px; color: var(--apple-blue);" id="tour-step-title">Passo 1</div>
+    <div style="font-size: 13px; line-height: 1.4; color: var(--text-2);" id="tour-step-desc">Descrição do passo</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+      <button class="btn btn-sm" style="padding: 4px 8px; font-size: 11px; background: #e5e5ea; color: var(--text-1);" onclick="endTour()">Pular</button>
+      <button class="btn btn-primary btn-sm" style="padding: 4px 10px; font-size: 11px;" id="btn-tour-next" onclick="nextTourStep()">Avançar ➔</button>
+    </div>
+  </div>
+</div>
 
 
 <!-- ═══════════════════════════════════════════════════
@@ -2739,6 +3246,7 @@ function startApp() {
       const ntxData = $('ntx-data');
       if (ntxData) ntxData.value = dtKey(curDate);
       updateStreak();
+      initGamificationState();
       navTo('dash');
     });
   };
@@ -3365,6 +3873,8 @@ function saveInlineInput(dateStr, tipo, input) {
     id: uuid(), tipo, valor: val, desc: 'Lançamento Rápido', data: dateStr, frequencia: 'none', macro: 'Outros', formaPagamento: 'Dinheiro'
   });
   saveData();
+  addXP(10);
+  addDinDins(2);
   toast('Adicionado: ' + fmt(val));
   renderSemanal();
 }
@@ -3462,6 +3972,8 @@ function saveMdTx() {
 
   appData.transacoes.push(txObj);
   saveData();
+  addXP(15);
+  addDinDins(3);
 
   // Limpa o formulário do modal
   $('md-val').value = '';
@@ -3995,15 +4507,22 @@ function renderFrequencia() {
   const container = $('badges-container');
   container.innerHTML = '';
   
-  CONQUISTAS.forEach(badge => {
-    const isUnlocked = activeStreak >= badge.days;
-    const statusText = isUnlocked ? 'Desbloqueado' : 'Bloqueado';
+  const unlockedBadges = checkUnlockedBadges();
+  
+  POKEMON_INSIGNIAS.forEach(badge => {
+    const isUnlocked = unlockedBadges.includes(badge.id);
+    const statusText = isUnlocked ? 'Desbloqueada' : 'Bloqueada';
     const cardClass = isUnlocked ? 'badge-card unlocked' : 'badge-card locked';
     
     container.innerHTML += `
       <div class="${cardClass}" title="${badge.req}">
-        <div class="badge-icon">${badge.icon}</div>
-        <div class="badge-title">${badge.name}</div>
+        <div class="badge-wrapper-outer ${isUnlocked ? '' : 'locked'}">
+          <div class="badge-border-mask ${badge.id}"></div>
+          <div class="pokemon-badge ${badge.id}">
+            <span class="badge-emoji">${badge.emoji}</span>
+          </div>
+        </div>
+        <div class="badge-title" style="margin-top: 12px;">${badge.name}</div>
         <div class="badge-desc">${badge.req}</div>
         <div class="badge-status">${statusText}</div>
       </div>
@@ -4288,6 +4807,8 @@ function saveNewTx() {
 
   appData.transacoes.push(txObj);
   saveData();
+  addXP(20);
+  addDinDins(5);
 
   // Monta resumo do toast
   const freqLabel = { none:'pontual', diaria:'diária', semanal:'semanal', quinzenal:'quinzenal', mensal:'mensal', custom:'personalizada' }[freq] || freq;
@@ -4568,6 +5089,8 @@ if (SpeechRecognition) {
       const tx = { id: uuid(), data: dtKey(new Date()), tipo, valor, desc: transcript, macro, frequencia: 'none' };
       appData.transacoes.push(tx);
       saveData();
+      addXP(20);
+      addDinDins(5);
       renderDash();
       toast(`Registrado via voz: ${tipo} de ${fmt(valor)}`);
     } else {
@@ -4676,9 +5199,756 @@ Objetivos da sua análise:
   });
 }
 
+// ─── GAMIFICAÇÃO 2.0 & LOJA ENGINE ───
+function initGamificationState() {
+  if (!currentUser) return;
+  if (currentUser.xp === undefined) currentUser.xp = 0;
+  if (currentUser.dindins === undefined) currentUser.dindins = 0;
+  if (currentUser.streakFreezes === undefined) currentUser.streakFreezes = 0;
+  if (currentUser.unlockedThemes === undefined) currentUser.unlockedThemes = ['classico'];
+  if (currentUser.activeTheme === undefined) currentUser.activeTheme = 'classico';
+  if (currentUser.duels === undefined) currentUser.duels = [];
+  if (currentUser.onboardingCompleted === undefined) currentUser.onboardingCompleted = false;
+  
+  applyTheme(currentUser.activeTheme);
+  renderShop();
+  renderDuels();
+  checkOnboarding();
+  updateStreakFreezesAuto();
+  renderGamificationUI();
+}
+
+function updateStreakFreezesAuto() {
+  const email = currentUser.email;
+  const todayKey = dtKey(new Date());
+  const lastAccess = localStorage.getItem(`pland_last_access_${email}`);
+  if (lastAccess) {
+    const lastDate = parseDt(lastAccess);
+    const todayDate = new Date();
+    todayDate.setHours(0,0,0,0);
+    lastDate.setHours(0,0,0,0);
+    const diffTime = Math.abs(todayDate - lastDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 1 && currentUser.streakFreezes > 0) {
+      const freezesToUse = Math.min(diffDays - 1, currentUser.streakFreezes);
+      currentUser.streakFreezes -= freezesToUse;
+      let streak = parseInt(localStorage.getItem(`pland_streak_count_${email}`)) || 0;
+      localStorage.setItem(`pland_streak_count_${email}`, streak.toString());
+      localStorage.setItem(`pland_last_access_${email}`, todayKey);
+      saveUserProfile();
+      toast(`❄️ Seu Gelador de Ofensiva protegeu sua sequência! (${freezesToUse} usados)`);
+    }
+  }
+}
+
+function addXP(amount) {
+  if (!currentUser) return;
+  currentUser.xp = (currentUser.xp || 0) + amount;
+  const oldLevel = getLevel(currentUser.xp - amount);
+  const newLevel = getLevel(currentUser.xp);
+  
+  if (newLevel > oldLevel) {
+    currentUser.dindins = (currentUser.dindins || 0) + 100;
+    toast(`🎉 PARABÉNS! Você subiu para o Nível ${newLevel}! +100 DinDins 🪙`);
+  } else {
+    toast(`+${amount} XP ganho! 💪`);
+  }
+  saveUserProfile();
+  renderGamificationUI();
+}
+
+function addDinDins(amount) {
+  if (!currentUser) return;
+  currentUser.dindins = (currentUser.dindins || 0) + amount;
+  saveUserProfile();
+  renderGamificationUI();
+}
+
+function getLevel(xp) {
+  return Math.floor(xp / 100) + 1;
+}
+
+function getLevelTitle(level) {
+  if (level <= 2) return 'Bronze';
+  if (level <= 5) return 'Prata';
+  if (level <= 10) return 'Ouro';
+  if (level <= 20) return 'Platina';
+  return 'Diamante';
+}
+
+function renderGamificationUI() {
+  if (!currentUser) return;
+  const level = getLevel(currentUser.xp || 0);
+  const xpInCurrentLevel = (currentUser.xp || 0) % 100;
+  
+  if ($('dash-level')) $('dash-level').textContent = level;
+  if ($('dash-level-title')) $('dash-level-title').textContent = getLevelTitle(level);
+  if ($('dash-xp')) $('dash-xp').textContent = xpInCurrentLevel;
+  if ($('dash-xp-progress')) $('dash-xp-progress').style.width = `${xpInCurrentLevel}%`;
+  if ($('dash-dindins')) $('dash-dindins').textContent = currentUser.dindins || 0;
+  if ($('shop-dindins-count')) $('shop-dindins-count').textContent = currentUser.dindins || 0;
+  if ($('shop-streak-freezes')) $('shop-streak-freezes').textContent = currentUser.streakFreezes || 0;
+}
+
+// ─── LOJA ───
+const THEME_NAMES = {
+  classico: 'Padrão Apple',
+  cyberpunk: 'Cyberpunk Neon',
+  ouro: 'Ouro Luxury',
+  duolingo: 'Verde Duolingo'
+};
+
+function applyTheme(theme) {
+  document.body.className = '';
+  if (theme !== 'classico') {
+    document.body.classList.add(`theme-${theme}`);
+  }
+}
+
+function renderShop() {
+  const container = $('themes-activation-area');
+  if (!container) return;
+  
+  const unlocked = currentUser.unlockedThemes || ['classico'];
+  const active = currentUser.activeTheme || 'classico';
+  
+  let html = '';
+  ['classico', 'cyberpunk', 'ouro', 'duolingo'].forEach(t => {
+    const isUnlocked = unlocked.includes(t);
+    const isActive = active === t;
+    
+    if (isUnlocked) {
+      if (isActive) {
+        html += `<span class="badge b-green" style="cursor:default; font-size:11px; margin-right:4px;">${THEME_NAMES[t]} (Ativo)</span>`;
+      } else {
+        html += `<button class="btn btn-secondary btn-sm" onclick="activateTheme('${t}')" style="padding:4px 8px; font-size:11px; margin-right:4px; margin-bottom:4px;">Ativar ${THEME_NAMES[t]}</button>`;
+      }
+    } else {
+      html += `<span class="badge b-gray" style="font-size:11px; opacity:0.7; margin-right:4px; margin-bottom:4px;">🔒 ${THEME_NAMES[t]}</span>`;
+    }
+  });
+  container.innerHTML = html;
+  
+  const btnBuyThemes = $('btn-buy-themes');
+  if (btnBuyThemes) {
+    const allUnlocked = unlocked.length >= 4;
+    btnBuyThemes.disabled = allUnlocked;
+    if (allUnlocked) btnBuyThemes.textContent = 'Adquiridos';
+  }
+}
+
+function buyItem(itemType, price) {
+  if (!currentUser) return;
+  if ((currentUser.dindins || 0) < price) {
+    toast('🪙 DinDins insuficientes para comprar este item.');
+    return;
+  }
+  
+  if (itemType === 'streak_freeze') {
+    currentUser.dindins -= price;
+    currentUser.streakFreezes = (currentUser.streakFreezes || 0) + 1;
+    toast('🧊 Gelador de Ofensiva adquirido! Proteção ativada.');
+  } else if (itemType === 'themes') {
+    const allThemes = ['cyberpunk', 'ouro', 'duolingo'];
+    const locked = allThemes.filter(t => !(currentUser.unlockedThemes || []).includes(t));
+    if (locked.length === 0) {
+      toast('Todos os temas já foram desbloqueados!');
+      return;
+    }
+    const chosen = locked[Math.floor(Math.random() * locked.length)];
+    currentUser.dindins -= price;
+    if (!currentUser.unlockedThemes) currentUser.unlockedThemes = ['classico'];
+    currentUser.unlockedThemes.push(chosen);
+    toast(`🎨 Tema "${THEME_NAMES[chosen]}" desbloqueado na Loja!`);
+  }
+  
+  saveUserProfile();
+  renderShop();
+  renderGamificationUI();
+}
+
+function activateTheme(theme) {
+  if (!currentUser || !(currentUser.unlockedThemes || []).includes(theme)) return;
+  currentUser.activeTheme = theme;
+  applyTheme(theme);
+  saveUserProfile();
+  renderShop();
+  toast(`🎨 Tema ${THEME_NAMES[theme]} aplicado!`);
+}
+
+// ─── DUELOS ───
+const BOTS = [
+  { name: 'Mestre da Poupança 🦉', streak: 6, winRate: 0.8 },
+  { name: 'Duobot das Moedas 🤖', streak: 4, winRate: 0.6 },
+  { name: 'PoupaBot Ninja 🥷', streak: 8, winRate: 0.9 },
+  { name: 'Investidor Iniciante 👶', streak: 2, winRate: 0.4 }
+];
+
+function openCreateDuelModal() {
+  const container = $('duel-opponents-list');
+  if (!container) return;
+  
+  let html = '<strong>Robôs Simuladores:</strong>';
+  BOTS.forEach((bot, idx) => {
+    html += `
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; margin-top:4px;">
+        <input type="checkbox" name="duel_opp" value="bot_${idx}" style="accent-color:var(--apple-red);" checked />
+        <span>${bot.name} (Streak Atual: ${bot.streak} dias)</span>
+      </label>
+    `;
+  });
+  
+  const users = loadUsers().filter(u => u.email !== currentUser.email);
+  if (users.length > 0) {
+    html += '<strong style="margin-top:8px; display:block;">Outros Usuários no Dispositivo:</strong>';
+    users.forEach(u => {
+      html += `
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; margin-top:4px;">
+          <input type="checkbox" name="duel_opp" value="user_${u.email}" style="accent-color:var(--apple-red);" />
+          <span>${u.nome} (E-mail: ${u.email})</span>
+        </label>
+      `;
+    });
+  }
+  
+  container.innerHTML = html;
+  openModal('modal-duelo-criar');
+}
+
+function createDuel() {
+  const title = $('duel-title').value.trim() || 'Duelo Financeiro';
+  const duration = parseInt($('duel-duration').value) || 7;
+  const checkboxes = document.querySelectorAll('input[name="duel_opp"]:checked');
+  
+  if (checkboxes.length === 0) {
+    toast('Selecione pelo menos um oponente!');
+    return;
+  }
+  
+  const opponents = [];
+  checkboxes.forEach(cb => {
+    opponents.push(cb.value);
+  });
+  
+  const newDuel = {
+    id: uuid(),
+    title,
+    duration,
+    startDate: dtKey(new Date()),
+    opponents,
+    active: true,
+    results: {}
+  };
+  
+  if (!currentUser.duels) currentUser.duels = [];
+  currentUser.duels.push(newDuel);
+  saveUserProfile();
+  closeModal('modal-duelo-criar');
+  
+  addXP(30);
+  addDinDins(10);
+  
+  toast('⚔️ Duelo criado com sucesso! Mostre sua ofensiva!');
+  renderDuels();
+}
+
+function simulateBotStreakProgress(bot, daysPassed) {
+  let botStreak = bot.streak;
+  for(let i=0; i<daysPassed; i++) {
+    if(Math.random() < bot.winRate) {
+      botStreak++;
+    } else {
+      botStreak = 0;
+    }
+  }
+  return botStreak;
+}
+
+function renderDuels() {
+  const container = $('duels-list-container');
+  if (!container) return;
+  
+  const duels = currentUser.duels || [];
+  if (duels.length === 0) {
+    container.innerHTML = '<div style="text-align:center; color:var(--text-3); font-size:13px; padding:12px;">Nenhum duelo ativo. Crie um desafio acima!</div>';
+    return;
+  }
+  
+  let html = '';
+  duels.forEach(duel => {
+    const start = parseDt(duel.startDate);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diffTime = Math.abs(today - start);
+    const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const isFinished = daysPassed >= duel.duration;
+    const userStreak = appData.streakCount || 1;
+    
+    const leaderboard = [
+      { name: currentUser.nome.split(' ')[0] + ' (Você)', streak: userStreak, isUser: true }
+    ];
+    
+    duel.opponents.forEach(opp => {
+      if (opp.startsWith('bot_')) {
+        const botIdx = parseInt(opp.split('_')[1]);
+        const bot = BOTS[botIdx];
+        const botSimulatedStreak = simulateBotStreakProgress(bot, daysPassed);
+        leaderboard.push({ name: bot.name, streak: botSimulatedStreak, isUser: false });
+      } else if (opp.startsWith('user_')) {
+        const oppEmail = opp.split('_')[1];
+        const oppUser = loadUsers().find(u => u.email === oppEmail);
+        const oppStreak = parseInt(localStorage.getItem(`pland_streak_count_${oppEmail}`)) || 1;
+        leaderboard.push({ name: (oppUser ? oppUser.nome : 'Jogador'), streak: oppStreak, isUser: false });
+      }
+    });
+    
+    leaderboard.sort((a,b) => b.streak - a.streak);
+    const winner = leaderboard[0];
+    const statusText = isFinished ? `🏆 Vencedor: ${winner.name}` : `⏳ Faltam ${duel.duration - daysPassed} dias`;
+    
+    html += `
+      <div style="padding:12px; background:rgba(0,0,0,0.02); border-radius:var(--r-md); border:1px solid var(--border); margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:14px;">⚔️ ${duel.title}</strong>
+          <span class="badge ${isFinished ? 'b-green' : 'b-blue'}" style="font-size:10px;">${statusText}</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-2); display:flex; flex-direction:column; gap:4px;">
+          ${leaderboard.map((player, rank) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:2px 0; ${player.isUser ? 'font-weight:bold; color:var(--apple-blue);' : ''}">
+              <span>${rank + 1}º ${player.name}</span>
+              <span>🔥 ${player.streak} dias</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// ─── INSÍGNIAS REAIS COM DESIGN PREMIUM POKÉMON ───
+const POKEMON_INSIGNIAS = [
+  { id: 'b_carteira', name: 'Insígnia da Carteira 💼', req: 'Estilo Pedra Cinza Metálico. Primeira transação registrada.', desc: 'Entrada na liga das finanças!', key: 'carteira', emoji: '💼' },
+  { id: 'b_moeda', name: 'Insígnia da Moeda 🪙', req: 'Estilo Cascata/Bronze Cobre. Ofensiva de 7 dias.', desc: 'Consistência de bronze polido!', key: 'moeda', emoji: '🪙' },
+  { id: 'b_nota', name: 'Insígnia da Nota 💵', req: 'Estilo Trovão/Esmeralda Metálico. Entrada e saída na mesma semana.', desc: 'Fluxo verde elétrico!', key: 'nota', emoji: '💵' },
+  { id: 'b_poupanca', name: 'Insígnia da Poupança 🐷', req: 'Estilo Arco-Íris/Rosa Metalizado. Primeira economia guardada.', desc: 'Poupador holográfico!', key: 'poupanca', emoji: '🐷' },
+  { id: 'b_reserva', name: 'Insígnia da Reserva 🛡️', req: 'Estilo Alma/Prata Escovado. Configurar meta de reserva.', desc: 'Escudo de aço financeiro!', key: 'reserva', emoji: '🛡' },
+  { id: 'b_investimento', name: 'Insígnia do Investimento 📈', req: 'Estilo Pântano/Azul Safira. Fechar o mês com saldo positivo.', desc: 'Mestre da Safira!', key: 'investimento', emoji: '📈' },
+  { id: 'b_duelo', name: 'Insígnia do Duelo ⚔️', req: 'Estilo Vulcão/Rubi Fogo. Criar ou vencer seu primeiro duelo.', desc: 'Guerreiro de Rubi!', key: 'duelo', emoji: '⚔️' },
+  { id: 'b_riqueza', name: 'Insígnia da Riqueza 💎', req: 'Estilo Terra/Diamante Dourado. Atingir 100% da Reserva de Emergência.', desc: 'Mestre da liga DinDimpass!', key: 'riqueza', emoji: '💎' }
+];
+
+function checkUnlockedBadges() {
+  const unlocked = [];
+  const transacoes = appData.transacoes || [];
+  
+  if (transacoes.length > 0) unlocked.push('b_carteira');
+  
+  const activeStreak = simulatedStreakCount !== null ? simulatedStreakCount : (appData.streakCount || 1);
+  if (activeStreak >= 7) unlocked.push('b_moeda');
+  
+  let hasIn = false; let hasOut = false;
+  transacoes.forEach(t => {
+    if (t.tipo === 'entrada') hasIn = true;
+    if (t.tipo === 'saida' || t.tipo === 'diario') hasOut = true;
+  });
+  if (hasIn && hasOut) unlocked.push('b_nota');
+  
+  const hasEco = transacoes.some(t => t.tipo === 'economia');
+  if (hasEco) unlocked.push('b_poupanca');
+  
+  if (currentUser.metaReserva && currentUser.metaReserva > 0) unlocked.push('b_reserva');
+  
+  const y = curDate.getFullYear(); const m = curDate.getMonth();
+  const start = new Date(y, m, 1); const end = new Date(y, m+1, 0);
+  const insts = getInstances(start, end);
+  let ent=0, sai=0;
+  insts.forEach(i => { if(i.tipo==='entrada') ent+=i.valor; else sai+=i.valor; });
+  if (ent - sai > 0) unlocked.push('b_investimento');
+  
+  if (currentUser.duels && currentUser.duels.length > 0) unlocked.push('b_duelo');
+  
+  const allInsts = getInstances(new Date(2000, 0, 1), new Date(2099, 11, 31));
+  const totalReserva = allInsts
+    .filter(i => i.tipo === 'economia' && i.macro === 'Reserva de Emergência')
+    .reduce((sum, i) => sum + i.valor, 0);
+  if (currentUser.metaReserva > 0 && totalReserva >= currentUser.metaReserva) unlocked.push('b_riqueza');
+  
+  return unlocked;
+}
+
+// ─── STORIES CARD (CANVAS OFFLINE RENDERER) ───
+function openShareCardModal() {
+  const select = $('share-badge-select');
+  if (!select) return;
+  
+  const unlocked = checkUnlockedBadges();
+  if (unlocked.length === 0) {
+    toast('Você precisa desbloquear pelo menos 1 insígnia para compartilhar!');
+    return;
+  }
+  
+  select.innerHTML = POKEMON_INSIGNIAS
+    .filter(b => unlocked.includes(b.id))
+    .map(b => `<option value="${b.id}">${b.name.replace(/[^a-zA-Z0-9\s]/g, '')}</option>`)
+    .join('');
+    
+  updateShareStoriesCardView(select.value);
+  openModal('modal-share-stories');
+}
+
+function updateShareStoriesCardView(badgeId) {
+  const badge = POKEMON_INSIGNIAS.find(b => b.id === badgeId);
+  if (!badge) return;
+  
+  const mask = $('stories-badge-mask');
+  const display = $('stories-badge-display');
+  const emoji = $('stories-badge-emoji');
+  
+  if (mask) mask.className = `badge-border-mask ${badgeId}`;
+  if (display) display.className = `pokemon-badge ${badgeId}`;
+  if (emoji) emoji.textContent = badge.emoji;
+  
+  $('stories-user-name').textContent = currentUser.nome || 'Jogador';
+  $('stories-badge-title').textContent = badge.name;
+  
+  const streak = appData.streakCount || 1;
+  $('stories-user-streak').textContent = `🔥 ${streak} Dias de Ofensiva`;
+}
+
+function drawBadgePath(ctx, cx, cy, r, badgeId) {
+  ctx.beginPath();
+  let points = [];
+  if (badgeId === 'b_carteira') { // Octógono
+    points = [[30, 0], [70, 0], [100, 30], [100, 70], [70, 100], [30, 100], [0, 70], [0, 30]];
+  } else if (badgeId === 'b_moeda') { // Gota
+    points = [[50, 0], [100, 50], [80, 100], [20, 100], [0, 50]];
+  } else if (badgeId === 'b_nota') { // Estrela (Thunder)
+    points = [[50, 0], [65, 35], [100, 50], [65, 65], [50, 100], [35, 65], [0, 50], [35, 35]];
+  } else if (badgeId === 'b_poupanca') { // Hexágono (Rainbow)
+    points = [[50, 0], [93, 25], [93, 75], [50, 100], [7, 75], [7, 25]];
+  } else if (badgeId === 'b_reserva') { // Escudo (Soul)
+    points = [[0, 0], [100, 0], [100, 50], [50, 100], [0, 50]];
+  } else if (badgeId === 'b_investimento') { // Pentágono Safira (Marsh)
+    points = [[50, 0], [100, 38], [82, 100], [18, 100], [0, 38]];
+  } else if (badgeId === 'b_duelo') { // Chama (Volcano)
+    points = [[50, 0], [85, 35], [100, 70], [70, 100], [30, 100], [0, 70], [15, 35]];
+  } else if (badgeId === 'b_riqueza') { // Diamante (Earth)
+    points = [[50, 0], [100, 30], [80, 90], [50, 100], [20, 90], [0, 30]];
+  } else {
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    return;
+  }
+  
+  const size = r * 2;
+  const startX = cx - r;
+  const startY = cy - r;
+  
+  points.forEach((p, idx) => {
+    const px = startX + (p[0] / 100) * size;
+    const py = startY + (p[1] / 100) * size;
+    if (idx === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  });
+  ctx.closePath();
+}
+
+function downloadStoriesCard() {
+  const badgeId = $('share-badge-select').value;
+  const badge = POKEMON_INSIGNIAS.find(b => b.id === badgeId);
+  if (!badge) return;
+  
+  const canvas = document.createElement('canvas');
+  canvas.width = 720;
+  canvas.height = 1280;
+  const ctx = canvas.getContext('2d');
+  
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, 1280);
+  bgGrad.addColorStop(0, '#111827');
+  bgGrad.addColorStop(1, '#030712');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 720, 1280);
+  
+  const holoGrad = ctx.createLinearGradient(0, 0, 720, 1280);
+  holoGrad.addColorStop(0, 'rgba(255, 0, 128, 0.05)');
+  holoGrad.addColorStop(0.5, 'rgba(0, 255, 255, 0.08)');
+  holoGrad.addColorStop(1, 'rgba(255, 255, 0, 0.05)');
+  ctx.fillStyle = holoGrad;
+  ctx.fillRect(0, 0, 720, 1280);
+  
+  ctx.lineWidth = 16;
+  ctx.strokeStyle = '#facc15';
+  ctx.strokeRect(20, 20, 680, 1240);
+  
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = '#ffffff';
+  ctx.strokeRect(32, 32, 656, 1216);
+
+  ctx.font = 'bold 36px sans-serif';
+  ctx.fillStyle = '#facc15';
+  ctx.textAlign = 'center';
+  ctx.fillText('CLASSIFICADO', 360, 120);
+  
+  ctx.font = '24px sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('JORNADA DINDIMPASS', 360, 170);
+
+  const cx = 360;
+  const cy = 480;
+  const r = 160;
+  
+  // Desenha sombra da insígnia
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 12;
+
+  // Borda metálica da insígnia
+  const borderGrad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+  if (badgeId === 'b_carteira') {
+    borderGrad.addColorStop(0, '#e2e8f0'); borderGrad.addColorStop(0.5, '#94a3b8'); borderGrad.addColorStop(1, '#475569');
+  } else if (badgeId === 'b_moeda') {
+    borderGrad.addColorStop(0, '#fbcfe8'); borderGrad.addColorStop(0.5, '#f472b6'); borderGrad.addColorStop(1, '#db2777');
+  } else if (badgeId === 'b_nota') {
+    borderGrad.addColorStop(0, '#fef08a'); borderGrad.addColorStop(0.5, '#facc15'); borderGrad.addColorStop(1, '#ca8a04');
+  } else if (badgeId === 'b_poupanca') {
+    borderGrad.addColorStop(0, '#fbcfe8'); borderGrad.addColorStop(0.5, '#c084fc'); borderGrad.addColorStop(1, '#818cf8');
+  } else if (badgeId === 'b_reserva') {
+    borderGrad.addColorStop(0, '#e2e8f0'); borderGrad.addColorStop(0.5, '#94a3b8'); borderGrad.addColorStop(1, '#475569');
+  } else if (badgeId === 'b_investimento') {
+    borderGrad.addColorStop(0, '#93c5fd'); borderGrad.addColorStop(0.5, '#3b82f6'); borderGrad.addColorStop(1, '#1d4ed8');
+  } else if (badgeId === 'b_duelo') {
+    borderGrad.addColorStop(0, '#fecaca'); borderGrad.addColorStop(0.5, '#ef4444'); borderGrad.addColorStop(1, '#b91c1c');
+  } else { // b_riqueza
+    borderGrad.addColorStop(0, '#ffe066'); borderGrad.addColorStop(0.5, '#facc15'); borderGrad.addColorStop(1, '#d97706');
+  }
+  
+  drawBadgePath(ctx, cx, cy, r + 8, badgeId);
+  ctx.fillStyle = borderGrad;
+  ctx.fill();
+  
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // Preenchimento metálico interno da insígnia
+  const badgeGrad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+  if (badgeId === 'b_carteira') {
+    badgeGrad.addColorStop(0, '#4b5563'); badgeGrad.addColorStop(0.25, '#9ca3af'); badgeGrad.addColorStop(0.5, '#f3f4f6'); badgeGrad.addColorStop(0.75, '#4b5563'); badgeGrad.addColorStop(1, '#1f2937');
+  } else if (badgeId === 'b_moeda') {
+    badgeGrad.addColorStop(0, '#b87333'); badgeGrad.addColorStop(0.3, '#cd7f32'); badgeGrad.addColorStop(0.5, '#ffffff'); badgeGrad.addColorStop(0.7, '#b87333'); badgeGrad.addColorStop(1, '#8b4513');
+  } else if (badgeId === 'b_nota') {
+    badgeGrad.addColorStop(0, '#16a085'); badgeGrad.addColorStop(0.3, '#2ecc71'); badgeGrad.addColorStop(0.5, '#ffffff'); badgeGrad.addColorStop(0.7, '#16a085'); badgeGrad.addColorStop(1, '#064e3b');
+  } else if (badgeId === 'b_poupanca') {
+    badgeGrad.addColorStop(0, '#ec4899'); badgeGrad.addColorStop(0.25, '#f472b6'); badgeGrad.addColorStop(0.5, '#c084fc'); badgeGrad.addColorStop(0.75, '#60a5fa'); badgeGrad.addColorStop(1, '#34d399');
+  } else if (badgeId === 'b_reserva') {
+    badgeGrad.addColorStop(0, '#708090'); badgeGrad.addColorStop(0.3, '#c0c0c0'); badgeGrad.addColorStop(0.5, '#ffffff'); badgeGrad.addColorStop(0.7, '#708090'); badgeGrad.addColorStop(1, '#778899');
+  } else if (badgeId === 'b_investimento') {
+    badgeGrad.addColorStop(0, '#0f172a'); badgeGrad.addColorStop(0.3, '#1e3a8a'); badgeGrad.addColorStop(0.6, '#3b82f6'); badgeGrad.addColorStop(0.85, '#93c5fd'); badgeGrad.addColorStop(1, '#1e3a8a');
+  } else if (badgeId === 'b_duelo') {
+    badgeGrad.addColorStop(0, '#7f1d1d'); badgeGrad.addColorStop(0.3, '#b91c1c'); badgeGrad.addColorStop(0.6, '#f87171'); badgeGrad.addColorStop(0.85, '#f59e0b'); badgeGrad.addColorStop(1, '#7f1d1d');
+  } else { // b_riqueza
+    badgeGrad.addColorStop(0, '#eab308'); badgeGrad.addColorStop(0.25, '#fef08a'); badgeGrad.addColorStop(0.5, '#60a5fa'); badgeGrad.addColorStop(0.75, '#c084fc'); badgeGrad.addColorStop(1, '#eab308');
+  }
+  
+  drawBadgePath(ctx, cx, cy, r, badgeId);
+  ctx.fillStyle = badgeGrad;
+  ctx.fill();
+
+  // Reflexo diagonal recortado
+  ctx.save();
+  drawBadgePath(ctx, cx, cy, r, badgeId);
+  ctx.clip();
+  const shineGrad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+  shineGrad.addColorStop(0, 'rgba(255,255,255,0)');
+  shineGrad.addColorStop(0.4, 'rgba(255,255,255,0)');
+  shineGrad.addColorStop(0.5, 'rgba(255,255,255,0.45)');
+  shineGrad.addColorStop(0.6, 'rgba(255,255,255,0)');
+  shineGrad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = shineGrad;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+  ctx.restore();
+  
+  ctx.font = '140px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(badge.emoji, cx, cy);
+
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = 'bold 44px sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(currentUser.nome || 'Jogador', 360, 780);
+  
+  ctx.font = 'bold 32px sans-serif';
+  ctx.fillStyle = '#facc15';
+  ctx.fillText(badge.name.toUpperCase(), 360, 840);
+  
+  const streak = appData.streakCount || 1;
+  ctx.font = 'bold 36px sans-serif';
+  ctx.fillStyle = '#ffa500';
+  ctx.fillText(`🔥 ${streak} Dias de Ofensiva`, 360, 920);
+
+  ctx.font = '24px sans-serif';
+  ctx.fillStyle = '#6b7280';
+  ctx.fillText('dindimpass.web.app', 360, 1150);
+  
+  const dataUrl = canvas.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = `dindimpass_stories_${badgeId}.png`;
+  a.click();
+  toast('📸 Card Stories baixado com sucesso!');
+}
+
+// ─── TOUR RÁPIDO DE 3 PASSOS ───
+let tourStep = 0;
+const TOUR_STEPS = [
+  { element: 'page-dash', title: 'Dashboard', desc: 'Acompanhe seu Saldo, Ofensiva, XP e Nível, além dos conselhos automáticos da IA.', arrow: 'arrow-top' },
+  { element: 'page-semanal', title: 'Registro Semanal/Mensal', desc: 'Anote receitas e despesas diretamente na tabela de cada dia com um clique rápido.', arrow: 'arrow-top' },
+  { element: 'page-config', title: 'Metas, Duelos e Loja', desc: 'Compre molduras, temas premium e geladores com moedas na Loja, além de gerenciar duelos!', arrow: 'arrow-top' }
+];
+
+function startQuickTour(forced = false) {
+  if (!currentUser) return;
+  const tourCompleted = localStorage.getItem(`pland_tour_completed_${currentUser.email}`);
+  if (tourCompleted && !forced) return;
+  
+  tourStep = 0;
+  $('tour-overlay').classList.add('active');
+  showTourStep();
+}
+
+function showTourStep() {
+  const step = TOUR_STEPS[tourStep];
+  navTo(step.element.replace('page-', ''));
+  
+  const tooltip = $('tour-tooltip');
+  $('tour-step-title').textContent = `${tourStep + 1}/3 - ${step.title}`;
+  $('tour-step-desc').textContent = step.desc;
+  
+  tooltip.style.left = '50%';
+  tooltip.style.top = '40%';
+  tooltip.style.transform = 'translate(-50%, -50%)';
+  tooltip.className = 'tour-tooltip';
+  
+  const btnNext = $('btn-tour-next');
+  if (btnNext) {
+    btnNext.textContent = tourStep === 2 ? 'Concluir 🎉' : 'Avançar ➔';
+  }
+}
+
+function nextTourStep() {
+  tourStep++;
+  if (tourStep >= TOUR_STEPS.length) {
+    endTour();
+  } else {
+    showTourStep();
+  }
+}
+
+function endTour() {
+  $('tour-overlay').classList.remove('active');
+  if (currentUser) {
+    localStorage.setItem(`pland_tour_completed_${currentUser.email}`, 'true');
+  }
+  toast('🎉 Tour concluído! Bons registros!');
+}
+
+// ─── ONBOARDING RÁPIDO ───
+function checkOnboarding() {
+  if (!currentUser) return;
+  const key = `pland_onboarding_completed_${currentUser.email}`;
+  const onboardingCompleted = localStorage.getItem(key);
+  
+  if (!onboardingCompleted) {
+    openModal('modal-onboarding');
+  }
+}
+
+function nextOnboardStep(step) {
+  $('onboard-step-1').style.display = step === 1 ? 'block' : 'none';
+  $('onboard-step-2').style.display = step === 2 ? 'block' : 'none';
+}
+
+function suggestOnboardReserva() {
+  const mesesSug = parseInt($('onboard-reserva-meses').value) || 6;
+  const salario = parseFloat($('onboard-salario').value) || 3000;
+  const sugestao = Math.round((salario * 0.7) * mesesSug / 100) * 100;
+  $('onboard-meta-reserva').value = sugestao;
+  toast(`🤖 Reserva sugerida de ${fmt(sugestao)}`);
+}
+
+function saveOnboarding() {
+  const profissao = $('onboard-profissao').value.trim();
+  const salario = parseFloat($('onboard-salario').value) || 0;
+  const metaReserva = parseFloat($('onboard-meta-reserva').value) || 0;
+  const orcamentoDiario = parseFloat($('onboard-orcamento-diario').value) || 0;
+  const reservaMeses = parseInt($('onboard-reserva-meses').value) || 6;
+  
+  currentUser.profissao = profissao;
+  currentUser.salario = salario;
+  currentUser.metaReserva = metaReserva;
+  currentUser.orcamentoDiario = orcamentoDiario;
+  currentUser.reservaMeses = reservaMeses;
+  currentUser.onboardingCompleted = true;
+  
+  saveUserProfile();
+  closeModal('modal-onboarding');
+  
+  localStorage.setItem(`pland_onboarding_completed_${currentUser.email}`, 'true');
+  toast('🌱 Configurações iniciais salvas!');
+  startQuickTour();
+}
+
+function skipOnboarding() {
+  closeModal('modal-onboarding');
+  if (currentUser) {
+    localStorage.setItem(`pland_onboarding_completed_${currentUser.email}`, 'true');
+  }
+  startQuickTour();
+}
+
+// ─── AUTO-UPDATE (VERIFICADOR DE APK) ───
+const APP_VERSION = '2.0.0';
+
+function checkForUpdates() {
+  console.log(`[DinDimpass] Verificando atualizações. Versão atual: ${APP_VERSION}`);
+  fetch('version.json')
+    .then(res => {
+      if(res.ok) return res.json();
+      throw new Error();
+    })
+    .then(data => {
+      if (data && data.version && isNewerVersion(data.version, APP_VERSION)) {
+        displayUpdateAlert(data.version, data.downloadUrl);
+      }
+    })
+    .catch(() => {});
+}
+
+function isNewerVersion(vNew, vOld) {
+  const newParts = vNew.split('.').map(Number);
+  const oldParts = vOld.split('.').map(Number);
+  for(let i=0; i<3; i++) {
+    if(newParts[i] > oldParts[i]) return true;
+    if(newParts[i] < oldParts[i]) return false;
+  }
+  return false;
+}
+
+function displayUpdateAlert(newVersion, downloadUrl) {
+  const confirmUpdate = confirm(`Nova versão ${newVersion} disponível! Deseja baixar a atualização gratuita? Seus dados serão mantidos.`);
+  if (confirmUpdate) {
+    window.open(downloadUrl || 'https://github.com/usuario/dindimpass/releases', '_blank');
+  }
+}
+
 // Init
 initAuth();
-
+checkForUpdates();
 </script>
 </body>
 </html>
