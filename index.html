@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="icon-512.png" />
   
   <!-- Favicon gerado dinamicamente via SVG -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230071E3%22/><g transform=%22translate(29, 38) rotate(-15)%22><path d=%22M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z%22 fill=%22%23E5E5EA%22/><path d=%22M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z%22 fill=%22%23E5E5EA%22/><rect x=%220%22 y=%220%22 width=%2242%22 height=%2224%22 rx=%223%22 fill=%22%2334C759%22 stroke=%22white%22 stroke-width=%221.5%22/><circle cx=%2221%22 cy=%2212%22 r=%226%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.5%22/><text x=%2221%22 y=%2216%22 font-family=%22Arial%22 font-size=%2211%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22>$</text></g></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230071E3%22/><g transform=%22translate(14, 14) scale(2)%22><ellipse cx=%2218%22 cy=%2232%22 rx=%225%22 ry=%223%22 fill=%22%23FF9500%22 opacity=%220.3%22/><path d=%22M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z%22 fill=%22%23FF9500%22/><path d=%22M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z%22 fill=%22%23FF3B30%22/><rect x=%229%22 y=%2212%22 width=%2218%22 height=%2213%22 rx=%223%22 fill=%22%2334C759%22 stroke=%22%232DB44A%22 stroke-width=%221%22/><circle cx=%2218%22 cy=%2218.5%22 r=%223.5%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.5%22/><text x=%2218%22 y=%2221%22 font-family=%22Arial%22 font-size=%225%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22>$</text><circle cx=%2211.5%22 cy=%2218.5%22 r=%221.5%22 fill=%22white%22 opacity=%220.6%22/><circle cx=%2224.5%22 cy=%2218.5%22 r=%221.5%22 fill=%22white%22 opacity=%220.6%22/><circle cx=%2218%22 cy=%229%22 r=%225%22 fill=%22%23FFD60A%22/><circle cx=%2216.2%22 cy=%228%22 r=%220.8%22 fill=%22%23333%22/><circle cx=%2219.8%22 cy=%228%22 r=%220.8%22 fill=%22%23333%22/><path d=%22M16 10.5 Q18 12 20 10.5%22 stroke=%22%23333%22 stroke-width=%220.8%22 stroke-linecap=%22round%22 fill=%22none%22/><path d=%22M9 14 Q4 11 5 16 Q7 15 9 17 Z%22 fill=%22%2364D2FF%22 opacity=%220.9%22/><path d=%22M27 14 Q32 11 31 16 Q29 15 27 17 Z%22 fill=%22%2364D2FF%22 opacity=%220.9%22/><path d=%22M9 16 Q5 13 4 10%22 stroke=%22%232DB44A%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 fill=%22none%22/><path d=%22M27 16 Q31 13 32 10%22 stroke=%22%232DB44A%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 fill=%22none%22/><path d=%22M15 25 Q13 28 12 31%22 stroke=%22%232DB44A%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 fill=%22none%22/><path d=%22M21 25 Q23 28 24 31%22 stroke=%22%232DB44A%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 fill=%22none%22/><text x=%2226%22 y=%227%22 font-size=%228%22>🔥</text></g></svg>" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -152,7 +152,23 @@ ul{list-style:none;}
   
   /* Restrict layout width to prevent parent window scrolling */
   .main-content { max-width: 100vw; overflow-x: hidden; }
-  .page-container { padding: 12px 8px; max-width: 100vw; overflow-x: hidden; }
+  .page-container { padding: 12px 8px 120px 8px !important; max-width: 100vw; overflow-x: hidden; }
+  
+  /* Ajuste da grid de Tipo de Lançamento em Entradas e Saídas */
+  .tx-type-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+  .tx-type-card {
+    padding: 8px 4px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 4px !important;
+  }
+  .tx-type-card div:last-child div:last-child {
+    display: none !important;
+  }
   
   /* Stack input-row vertically on mobile, except in modals */
   .input-row { flex-direction: column; gap: 16px; }
@@ -160,18 +176,36 @@ ul{list-style:none;}
   .modal .input-group { margin-bottom: 8px; }
   .modal .input-field { padding: 8px 12px; font-size: 14px; }
   
+  /* Overlay scrollable and Modal fix on mobile to prevent height collapse */
+  .overlay {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    padding: 24px 12px !important;
+  }
+  .modal {
+    max-height: none !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: auto 0 !important;
+    transform: scale(0.95) translateY(10px) !important;
+  }
+  .overlay.active .modal {
+    transform: scale(1) translateY(0) !important;
+  }
+  
   /* Set table to fit exactly 100% of the screen (One Page) */
   .w-table { min-width: 100%; table-layout: fixed; width: 100%; }
   .w-table th, .w-table td { padding: 8px 6px; font-size: 12px; }
+  .w-table th { top: var(--header-h) !important; }
   
   /* Day column */
   .t-day-block { gap: 4px; justify-content: center; }
   .t-day-num { font-size: 14px; width: auto; font-weight: 700; }
   
   /* Value blocks */
-  .t-val-block { padding: 4px 6px; min-height: 36px; border-radius: 6px; }
+  .t-val-block { padding: 4px 2px !important; min-height: 36px; border-radius: 6px; justify-content: center !important; }
   .t-val-icon-circle { display: none !important; }
-  .t-val-text { font-size: 12px; }
+  .t-val-text { font-size: 11px !important; white-space: nowrap !important; }
   .t-input { height: 36px; font-size: 12px; border-radius: 6px; padding: 0 4px; }
   
   /* Columns widths */
@@ -311,7 +345,7 @@ ul{list-style:none;}
 
 .table-wrapper { background: var(--bg-card); border-radius: var(--r-lg); border: 1px solid var(--border); overflow-x: hidden; }
 .w-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
-.w-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
+.w-table th { position: sticky; top: 0; z-index: 10; padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); background: #FAFAFC; }
 .w-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .w-table tr:last-child td { border-bottom: none; }
 .w-table tr:hover td { background: var(--bg-card-hover); }
@@ -992,9 +1026,256 @@ body.theme-duolingo {
   0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
   100% { background-position: 100% 50%; filter: hue-rotate(360deg); }
 }
+}
 @keyframes holo-shimmer-fast {
   0% { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(180deg); }
+}
+
+/* ─── INSÍGNIAS DESIGN INTERNO (CSS PURO) ─── */
+.badge-artwork {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+/* 1. Carteira - Pedra Cinza Metálico */
+.pk-wallet {
+  width: 28px;
+  height: 20px;
+  background: linear-gradient(135deg, #7f8c8d, #34495e);
+  border: 1.5px solid #2c3e50;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-wallet-strap {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 6px;
+  height: 10px;
+  background: #2c3e50;
+  border-left: 1px solid #1a252f;
+}
+.pk-wallet-buckle {
+  position: absolute;
+  top: 4px;
+  left: 2px;
+  width: 3px;
+  height: 3px;
+  background: #f1c40f;
+  border-radius: 50%;
+}
+
+/* 2. Moeda - Bronze Cobre */
+.pk-coin {
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 30% 30%, #d35400, #b87333);
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-coin-inner {
+  width: 18px;
+  height: 18px;
+  border: 1px dashed rgba(255,255,255,0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 1;
+}
+
+/* 3. Nota - Verde Esmeralda Asas */
+.pk-bill-wings {
+  position: relative;
+  width: 42px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pk-bill {
+  width: 24px;
+  height: 14px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  border: 1.5px solid #fff;
+  border-radius: 2px;
+  z-index: 2;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 8px;
+  line-height: 1;
+}
+.pk-wing-l, .pk-wing-r {
+  position: absolute;
+  width: 13px;
+  height: 9px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #bdc3c7;
+  border-radius: 50% 50% 0 50%;
+  top: 4px;
+}
+.pk-wing-l {
+  left: 0;
+  transform: rotate(-25deg);
+}
+.pk-wing-r {
+  right: 0;
+  transform: scaleX(-1) rotate(-25deg);
+}
+
+/* 4. Poupança - Rosa Metalizado */
+.pk-pig {
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 35% 35%, #ff9ff3, #f368e0);
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-pig-ear-l, .pk-pig-ear-r {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: #f368e0;
+  border: 1px solid #fff;
+  top: -2px;
+  border-radius: 2px;
+}
+.pk-pig-ear-l { left: 3px; transform: rotate(-15deg); }
+.pk-pig-ear-r { right: 3px; transform: rotate(15deg); }
+.pk-pig-snout {
+  width: 10px;
+  height: 7px;
+  background: #ff9ff3;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  position: absolute;
+  bottom: 6px;
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+}
+.pk-pig-snout::before, .pk-pig-snout::after {
+  content: '';
+  width: 1.5px;
+  height: 1.5px;
+  background: #2c3e50;
+  border-radius: 50%;
+}
+
+/* 5. Reserva - Aço Escudo */
+.pk-shield {
+  width: 26px;
+  height: 28px;
+  background: linear-gradient(135deg, #d2dae2, #485460);
+  border: 1.5px solid #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-shield-inner {
+  width: 14px;
+  height: 16px;
+  background: #1e272e;
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #54a0ff;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+/* 6. Investimento - Safira */
+.pk-sapphire {
+  width: 26px;
+  height: 28px;
+  background: linear-gradient(135deg, #54a0ff, #2e86de);
+  border: 1.5px solid #fff;
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 30%, 80% 100%, 20% 100%, 0% 30%);
+  -webkit-clip-path: polygon(50% 0%, 100% 30%, 80% 100%, 20% 100%, 0% 30%);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-sapphire::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: rgba(255,255,255,0.25);
+  clip-path: polygon(50% 0%, 100% 30%, 80% 100%, 20% 100%, 0% 30%);
+  -webkit-clip-path: polygon(50% 0%, 100% 30%, 80% 100%, 20% 100%, 0% 30%);
+}
+
+/* 7. Duelo - Fogo Rubi */
+.pk-flame {
+  width: 24px;
+  height: 28px;
+  background: linear-gradient(0deg, #ff9f43, #ee5253, #ff2a2a);
+  border: 1.5px solid #fff;
+  border-radius: 50% 50% 25% 25%;
+  transform: rotate(-10deg);
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.pk-flame::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  background: #fecb2f;
+  border-radius: 50% 50% 25% 25%;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 8. Riqueza - Dourado Diamante */
+.pk-diamond {
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e, #ffeaa7);
+  border: 1.5px solid #fff;
+  transform: rotate(45deg);
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pk-diamond-inner {
+  width: 12px;
+  height: 12px;
+  background: #ffeaa7;
+  border: 1px solid #d39e00;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1045,12 +1326,26 @@ body.theme-duolingo {
     <div class="auth-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
         <rect width="100" height="100" rx="22" fill="#0071E3"/>
-        <g transform="translate(29, 38) rotate(-15)">
-          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
-          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
-          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
-          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
-          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        <g transform="translate(14, 14) scale(2)">
+          <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
+          <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
+          <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
+          <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
+          <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
+          <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
+          <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
+          <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
+          <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+          <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <text x="26" y="7" font-size="8">🔥</text>
         </g>
       </svg>
     </div>
@@ -1077,12 +1372,26 @@ body.theme-duolingo {
     <div class="auth-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
         <rect width="100" height="100" rx="22" fill="#0071E3"/>
-        <g transform="translate(29, 38) rotate(-15)">
-          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
-          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
-          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
-          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
-          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        <g transform="translate(14, 14) scale(2)">
+          <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
+          <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
+          <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
+          <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
+          <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
+          <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
+          <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
+          <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
+          <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+          <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <text x="26" y="7" font-size="8">🔥</text>
         </g>
       </svg>
     </div>
@@ -1103,12 +1412,26 @@ body.theme-duolingo {
     <div class="auth-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
         <rect width="100" height="100" rx="22" fill="#0071E3"/>
-        <g transform="translate(29, 38) rotate(-15)">
-          <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
-          <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
-          <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
-          <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
-          <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+        <g transform="translate(14, 14) scale(2)">
+          <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
+          <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
+          <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
+          <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
+          <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
+          <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
+          <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
+          <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
+          <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+          <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
+          <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <text x="26" y="7" font-size="8">🔥</text>
         </g>
       </svg>
     </div>
@@ -1137,12 +1460,26 @@ body.theme-duolingo {
       <div class="sidebar-logo-icon" style="background: none; border-radius: 0; width: 32px; height: 32px;">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
           <rect width="100" height="100" rx="22" fill="#0071E3"/>
-          <g transform="translate(29, 38) rotate(-15)">
-            <path d="M -15 8 C -25 -2, -28 -15, -13 -12 C -3 -10, 0 10, -15 8 Z" fill="#E5E5EA"/>
-            <path d="M 57 8 C 67 -2, 70 -15, 55 -12 C 45 -10, 42 10, 57 8 Z" fill="#E5E5EA"/>
-            <rect x="0" y="0" width="42" height="24" rx="3" fill="#34C759" stroke="white" stroke-width="1.5"/>
-            <circle cx="21" cy="12" r="6" fill="none" stroke="white" stroke-width="1.5"/>
-            <text x="21" y="16" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">$</text>
+          <g transform="translate(14, 14) scale(2)">
+            <ellipse cx="18" cy="32" rx="5" ry="3" fill="#FF9500" opacity="0.3"/>
+            <path d="M16 30 Q14 26 16 23 Q17 26 18 24 Q19 28 21 25 Q22 28 20 30 Z" fill="#FF9500"/>
+            <path d="M16.5 30 Q15 27 17 25 Q17.5 27 18 26 Q18.5 28 20 26 Q20.5 28 19.5 30 Z" fill="#FF3B30"/>
+            <rect x="9" y="12" width="18" height="13" rx="3" fill="#34C759" stroke="#2DB44A" stroke-width="1"/>
+            <circle cx="18" cy="18.5" r="3.5" fill="none" stroke="white" stroke-width="1.5"/>
+            <text x="18" y="21" font-family="Arial" font-size="5" font-weight="bold" fill="white" text-anchor="middle">$</text>
+            <circle cx="11.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+            <circle cx="24.5" cy="18.5" r="1.5" fill="white" opacity="0.6"/>
+            <circle cx="18" cy="9" r="5" fill="#FFD60A"/>
+            <circle cx="16.2" cy="8" r="0.8" fill="#333"/>
+            <circle cx="19.8" cy="8" r="0.8" fill="#333"/>
+            <path d="M16 10.5 Q18 12 20 10.5" stroke="#333" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+            <path d="M9 14 Q4 11 5 16 Q7 15 9 17 Z" fill="#64D2FF" opacity="0.9"/>
+            <path d="M27 14 Q32 11 31 16 Q29 15 27 17 Z" fill="#64D2FF" opacity="0.9"/>
+            <path d="M9 16 Q5 13 4 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M27 16 Q31 13 32 10" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M15 25 Q13 28 12 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M21 25 Q23 28 24 31" stroke="#2DB44A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <text x="26" y="7" font-size="8">🔥</text>
           </g>
         </svg>
       </div>
@@ -4519,7 +4856,7 @@ function renderFrequencia() {
         <div class="badge-wrapper-outer ${isUnlocked ? '' : 'locked'}">
           <div class="badge-border-mask ${badge.id}"></div>
           <div class="pokemon-badge ${badge.id}">
-            <span class="badge-emoji">${badge.emoji}</span>
+            ${getBadgeArtworkHTML(badge.id)}
           </div>
         </div>
         <div class="badge-title" style="margin-top: 12px;">${badge.name}</div>
@@ -5527,6 +5864,34 @@ function renderDuels() {
   container.innerHTML = html;
 }
 
+function getBadgeArtworkHTML(badgeId) {
+  if (badgeId === 'b_carteira') {
+    return `<div class="badge-artwork"><div class="pk-wallet"><div class="pk-wallet-strap"></div><div class="pk-wallet-buckle"></div></div></div>`;
+  }
+  if (badgeId === 'b_moeda') {
+    return `<div class="badge-artwork"><div class="pk-coin"><div class="pk-coin-inner">🪙</div></div></div>`;
+  }
+  if (badgeId === 'b_nota') {
+    return `<div class="badge-artwork"><div class="pk-bill-wings"><div class="pk-wing-l"></div><div class="pk-bill">$$</div><div class="pk-wing-r"></div></div></div>`;
+  }
+  if (badgeId === 'b_poupanca') {
+    return `<div class="badge-artwork"><div class="pk-pig"><div class="pk-pig-ear-l"></div><div class="pk-pig-ear-r"></div><div class="pk-pig-snout"></div></div></div>`;
+  }
+  if (badgeId === 'b_reserva') {
+    return `<div class="badge-artwork"><div class="pk-shield"><div class="pk-shield-inner">🛡️</div></div></div>`;
+  }
+  if (badgeId === 'b_investimento') {
+    return `<div class="badge-artwork"><div class="pk-sapphire"></div></div>`;
+  }
+  if (badgeId === 'b_duelo') {
+    return `<div class="badge-artwork"><div class="pk-flame"></div></div>`;
+  }
+  if (badgeId === 'b_riqueza') {
+    return `<div class="badge-artwork"><div class="pk-diamond"><div class="pk-diamond-inner"></div></div></div>`;
+  }
+  return '';
+}
+
 // ─── INSÍGNIAS REAIS COM DESIGN PREMIUM POKÉMON ───
 const POKEMON_INSIGNIAS = [
   { id: 'b_carteira', name: 'Insígnia da Carteira 💼', req: 'Estilo Pedra Cinza Metálico. Primeira transação registrada.', desc: 'Entrada na liga das finanças!', key: 'carteira', emoji: '💼' },
@@ -5608,7 +5973,7 @@ function updateShareStoriesCardView(badgeId) {
   
   if (mask) mask.className = `badge-border-mask ${badgeId}`;
   if (display) display.className = `pokemon-badge ${badgeId}`;
-  if (emoji) emoji.textContent = badge.emoji;
+  if (emoji) emoji.innerHTML = getBadgeArtworkHTML(badgeId);
   
   $('stories-user-name').textContent = currentUser.nome || 'Jogador';
   $('stories-badge-title').textContent = badge.name;
@@ -5653,6 +6018,258 @@ function drawBadgePath(ctx, cx, cy, r, badgeId) {
     else ctx.lineTo(px, py);
   });
   ctx.closePath();
+}
+
+function drawBadgeArtworkCanvas(ctx, cx, cy, badgeId) {
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 4;
+
+  if (badgeId === 'b_carteira') {
+    const grad = ctx.createLinearGradient(cx - 50, cy - 35, cx + 50, cy + 35);
+    grad.addColorStop(0, '#7f8c8d');
+    grad.addColorStop(1, '#34495e');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(cx - 50, cy - 35, 100, 70, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.fillRect(cx + 20, cy - 20, 20, 40);
+    
+    ctx.fillStyle = '#f1c40f';
+    ctx.beginPath();
+    ctx.arc(cx + 20, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+  } else if (badgeId === 'b_moeda') {
+    const grad = ctx.createRadialGradient(cx - 15, cy - 15, 5, cx, cy, 50);
+    grad.addColorStop(0, '#e67e22');
+    grad.addColorStop(1, '#b87333');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 50, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🪙', cx, cy);
+
+  } else if (badgeId === 'b_nota') {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.strokeStyle = '#bdc3c7';
+    ctx.lineWidth = 2;
+    
+    ctx.save();
+    ctx.translate(cx - 40, cy - 10);
+    ctx.rotate(-0.4);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 30, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    
+    ctx.save();
+    ctx.translate(cx + 40, cy - 10);
+    ctx.rotate(0.4);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 30, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    const grad = ctx.createLinearGradient(cx - 40, cy - 25, cx + 40, cy + 25);
+    grad.addColorStop(0, '#2ecc71');
+    grad.addColorStop(1, '#27ae60');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(cx - 40, cy - 25, 80, 50, 4);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('$$', cx, cy);
+
+  } else if (badgeId === 'b_poupanca') {
+    ctx.fillStyle = '#f368e0';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx - 40, cy - 40);
+    ctx.lineTo(cx - 20, cy - 45);
+    ctx.lineTo(cx - 25, cy - 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(cx + 40, cy - 40);
+    ctx.lineTo(cx + 20, cy - 45);
+    ctx.lineTo(cx + 25, cy - 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    const grad = ctx.createRadialGradient(cx - 15, cy - 15, 5, cx, cy, 50);
+    grad.addColorStop(0, '#ff9ff3');
+    grad.addColorStop(1, '#f368e0');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 50, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#ff9ff3';
+    ctx.beginPath();
+    ctx.roundRect(cx - 18, cy + 10, 36, 24, 12);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.arc(cx - 6, cy + 22, 3, 0, Math.PI * 2);
+    ctx.arc(cx + 6, cy + 22, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+  } else if (badgeId === 'b_reserva') {
+    const grad = ctx.createLinearGradient(cx - 45, cy - 50, cx + 45, cy + 50);
+    grad.addColorStop(0, '#d2dae2');
+    grad.addColorStop(1, '#485460');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(cx - 45, cy - 50);
+    ctx.lineTo(cx + 45, cy - 50);
+    ctx.lineTo(cx + 45, cy);
+    ctx.lineTo(cx, cy + 50);
+    ctx.lineTo(cx - 45, cy);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#1e272e';
+    ctx.beginPath();
+    ctx.moveTo(cx - 25, cy - 35);
+    ctx.lineTo(cx + 25, cy - 35);
+    ctx.lineTo(cx + 25, cy - 5);
+    ctx.lineTo(cx, cy + 30);
+    ctx.lineTo(cx - 25, cy - 5);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillStyle = '#54a0ff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🛡️', cx, cy - 5);
+
+  } else if (badgeId === 'b_investimento') {
+    const grad = ctx.createLinearGradient(cx - 45, cy - 50, cx + 45, cy + 50);
+    grad.addColorStop(0, '#54a0ff');
+    grad.addColorStop(1, '#2e86de');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 50);
+    ctx.lineTo(cx + 45, cy - 20);
+    ctx.lineTo(cx + 30, cy + 45);
+    ctx.lineTo(cx - 30, cy + 45);
+    ctx.lineTo(cx - 45, cy - 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 50); ctx.lineTo(cx, cy + 45);
+    ctx.moveTo(cx - 45, cy - 20); ctx.lineTo(cx + 45, cy - 20);
+    ctx.moveTo(cx - 45, cy - 20); ctx.lineTo(cx, cy + 10); ctx.lineTo(cx + 45, cy - 20);
+    ctx.stroke();
+
+  } else if (badgeId === 'b_duelo') {
+    const grad = ctx.createLinearGradient(cx, cy - 50, cx, cy + 50);
+    grad.addColorStop(0, '#ff2a2a');
+    grad.addColorStop(0.5, '#ee5253');
+    grad.addColorStop(1, '#ff9f43');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 50);
+    ctx.bezierCurveTo(cx + 35, cy - 25, cx + 45, cy + 15, cx + 25, cy + 45);
+    ctx.bezierCurveTo(cx + 5, cy + 55, cx - 25, cy + 45, cx - 35, cy + 15);
+    ctx.bezierCurveTo(cx - 45, cy - 25, cx, cy - 50, cx, cy - 50);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    const innerGrad = ctx.createLinearGradient(cx, cy - 10, cx, cy + 40);
+    innerGrad.addColorStop(0, '#ffeaa7');
+    innerGrad.addColorStop(1, '#fecb2f');
+    ctx.fillStyle = innerGrad;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 15);
+    ctx.bezierCurveTo(cx + 15, cy, cx + 20, cy + 20, cx + 10, cy + 35);
+    ctx.bezierCurveTo(cx, cy + 40, cx - 15, cy + 35, cx - 10, cy + 20);
+    ctx.bezierCurveTo(cx - 20, cy, cx, cy - 15, cx, cy - 15);
+    ctx.closePath();
+    ctx.fill();
+
+  } else {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(Math.PI / 4);
+    
+    const grad = ctx.createLinearGradient(-35, -35, 35, 35);
+    grad.addColorStop(0, '#ffeaa7');
+    grad.addColorStop(0.5, '#fdcb6e');
+    grad.addColorStop(1, '#ffeaa7');
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.rect(-35, -35, 70, 70);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.strokeStyle = '#d39e00';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.rect(-18, -18, 36, 36);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.restore();
 }
 
 function downloadStoriesCard() {
@@ -5772,10 +6389,7 @@ function downloadStoriesCard() {
   ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
   ctx.restore();
   
-  ctx.font = '140px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(badge.emoji, cx, cy);
+  drawBadgeArtworkCanvas(ctx, cx, cy, badgeId);
 
   ctx.textBaseline = 'alphabetic';
   ctx.font = 'bold 44px sans-serif';
