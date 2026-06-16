@@ -19,12 +19,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="lib/chart.umd.min.js"></script>
+  <script src="lib/xlsx.full.min.js"></script>
   <!-- Firebase SDKs (Compat Version) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-auth-compat.js"></script>
+  <script src="lib/firebase-firestore-compat.js"></script>
   <style>
 /* ═══════════════════════════════════════════════════
    iCloud / Apple Minimalist Theme Tokens
@@ -196,7 +196,7 @@ ul{list-style:none;}
   /* Set table to fit exactly 100% of the screen (One Page) */
   .w-table { min-width: 100%; table-layout: fixed; width: 100%; }
   .w-table th, .w-table td { padding: 8px 6px; font-size: 12px; }
-  .w-table th { top: var(--header-h) !important; }
+  .w-table th { top: 0 !important; }
   
   /* Day column */
   .t-day-block { gap: 4px; justify-content: center; }
@@ -3135,6 +3135,7 @@ let lastDeletedState = null;
 let deleteTimeoutId = null;
 let mensalViewMode = 'list';
 let gestaoSelectedIds = new Set();
+var _saldoInicialCache = { semanaKey: null, valor: 0 };
 
 // ─── UTILS ───
 function $(id) { return document.getElementById(id); }
@@ -3160,8 +3161,27 @@ function toastWithUndo(msg, undoCallback) {
   if (window.toastTimeoutId) clearTimeout(window.toastTimeoutId);
   window.toastTimeoutId = setTimeout(() => t.classList.remove('show'), 5000);
 }
-function dtKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function parseDt(k) { const [y,m,d] = k.split('-'); return new Date(y, m-1, d); }
+function dtKey(d) {
+  if (!d || !(d instanceof Date) || isNaN(d.getTime())) {
+    d = new Date();
+  }
+  const y = d.getFullYear();
+  const m = ('0' + (d.getMonth() + 1)).slice(-2);
+  const date = ('0' + d.getDate()).slice(-2);
+  return `${y}-${m}-${date}`;
+}
+function parseDt(k) {
+  if (!k || typeof k !== 'string' || !k.includes('-')) {
+    console.warn('[DinDimpass] parseDt: data inválida ou ausente:', k);
+    return new Date();
+  }
+  const [y, m, d] = k.split('-');
+  const parsed = new Date(y, m - 1, d);
+  if (isNaN(parsed.getTime())) {
+    return new Date();
+  }
+  return parsed;
+}
 
 function getEmailKey() {
   let email = '';
@@ -3578,9 +3598,9 @@ function saveUserProfile() {
   const users = loadUsers();
   const idx = users.findIndex(u => u.email.toLowerCase().trim() === getEmailKey());
   if (idx !== -1) {
-    users[idx] = { ...users[idx], ...profileData };
+    users[idx] = Object.assign({}, users[idx], profileData);
   } else {
-    users.push({ ...profileData });
+    users.push(Object.assign({}, profileData));
   }
   saveUsers(users);
 
@@ -3641,12 +3661,14 @@ function getInstances(startDate, endDate) {
   const end = new Date(endDate); end.setHours(23,59,59,999);
 
   appData.transacoes.forEach(tx => {
+    // Proteção contra transações malformadas
+    if (!tx || !tx.data || !tx.tipo || tx.valor === undefined) return;
     const txDate = parseDt(tx.data); txDate.setHours(0,0,0,0);
 
     const addInst = (candidateDate) => {
       const k = dtKey(candidateDate);
       if (tx.exclusoes && tx.exclusoes.includes(k)) return;
-      instances.push({...tx, instanceDate: new Date(candidateDate)});
+      instances.push(Object.assign({}, tx, { instanceDate: new Date(candidateDate) }));
     };
 
     // ── Pontual ──
@@ -3704,7 +3726,7 @@ function getInstances(startDate, endDate) {
       const loopEnd = new Date(Math.min(end.getTime(), dataFim.getTime()));
 
       const unit = rec.unit || 'dias';
-      const interval = rec.interval || 1;
+      const interval = Math.max(1, parseInt(rec.interval) || 1);
       const maxParcelas = rec.parcelas || Infinity;
       let parcelasCount = 0;
 
@@ -3718,7 +3740,7 @@ function getInstances(startDate, endDate) {
         }
       } else if (unit === 'semanas') {
         // A cada X semanas, nos dias da semana marcados
-        const weekdays = rec.weekdays && rec.weekdays.length ? rec.weekdays : [txDate.getDay()];
+        const weekdays = Array.isArray(rec.weekdays) && rec.weekdays.length ? rec.weekdays : [txDate.getDay()];
         let weekStart = new Date(txDate);
         // Alinha para a semana da data de início
         weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
@@ -3736,7 +3758,7 @@ function getInstances(startDate, endDate) {
         }
       } else if (unit === 'meses') {
         // A cada X meses, nos dias do mês definidos
-        const monthdays = rec.monthdays && rec.monthdays.length ? rec.monthdays : [txDate.getDate()];
+        const monthdays = Array.isArray(rec.monthdays) && rec.monthdays.length ? rec.monthdays : [txDate.getDate()];
         let curMonth = new Date(txDate.getFullYear(), txDate.getMonth(), 1);
         while (curMonth <= loopEnd && parcelasCount < maxParcelas) {
           for (const md of monthdays.sort((a,b) => a-b)) {
@@ -3948,7 +3970,7 @@ function openModal(id) { $(id).classList.add('active'); }
 let iaInsightsCached = null;
 
 function renderDash() {
-  $('dash-greeting').textContent = `Olá, ${currentUser.nome.split(' ')[0]}!`;
+  $('dash-greeting').textContent = `Olá, ${(currentUser.nome || currentUser.email || 'Usuário').split(' ')[0]}!`;
   
   // Render streak count on dash
   const dashStreak = $('dash-streak-count');
@@ -4295,6 +4317,28 @@ function changeWeek(delta) {
   renderSemanal();
 }
 
+// Variável de cache no escopo da função ou módulo
+var _saldoInicialCache = { semanaKey: null, valor: 0 };
+
+function getSaldoInicialSemana(startDate) {
+  var key = startDate.toISOString().slice(0, 10) + '_' + (appData.lastUpdated || 0) + '_' + (appData.transacoes ? appData.transacoes.length : 0);
+  if (_saldoInicialCache.semanaKey === key) {
+    return _saldoInicialCache.valor;
+  }
+  var prevEnd = new Date(startDate);
+  prevEnd.setDate(prevEnd.getDate() - 1);
+  prevEnd.setHours(23, 59, 59, 999);
+  var pastInsts = getInstances(new Date(2000, 0, 1), prevEnd);
+  var te = 0, ts = 0;
+  pastInsts.forEach(function(x) {
+    if (x.tipo === 'entrada') te += x.valor;
+    else ts += x.valor;
+  });
+  var total = te - ts;
+  _saldoInicialCache = { semanaKey: key, valor: total };
+  return total;
+}
+
 function renderSemanal() {
   let startDate, endDate, label, subLabel, loopDays;
   if (weeklyViewMode === 'semana') {
@@ -4329,22 +4373,26 @@ function renderSemanal() {
   $('week-dates').textContent = subLabel;
 
   const tbody = $('week-tbody'); tbody.innerHTML = '';
-  const insts = getInstances(startDate, endDate);
-  
+
+  let insts = [];
+  try {
+    insts = getInstances(startDate, endDate);
+  } catch(e) {
+    console.error('[DinDimpass] Erro em getInstances (renderSemanal):', e);
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--apple-red);">Erro ao carregar dados. Tente reabrir a tela.</td></tr>';
+    return;
+  }
+
   let periodNet = 0;
 
-  // Calcula o saldo inicial acumulado antes do início do período (startDate)
-  const prevEnd = new Date(startDate);
-  prevEnd.setDate(prevEnd.getDate() - 1);
-  prevEnd.setHours(23, 59, 59, 999);
-  
-  const pastInsts = getInstances(new Date(2000, 0, 1), prevEnd);
-  let te = 0, ts = 0;
-  pastInsts.forEach(x => {
-    if (x.tipo === 'entrada') te += x.valor;
-    else ts += x.valor;
-  });
-  let runningBalance = (appData.saldoInicial || 0) + te - ts;
+  // Saldo inicial com proteção contra erro no histórico
+  let runningBalance = 0;
+  try {
+    runningBalance = (appData.saldoInicial || 0) + getSaldoInicialSemana(startDate);
+  } catch(e) {
+    console.error('[DinDimpass] Erro em getSaldoInicialSemana:', e);
+    runningBalance = appData.saldoInicial || 0;
+  }
 
   for(let i=0; i<loopDays; i++) {
     const curD = new Date(startDate); curD.setDate(curD.getDate() + i);
@@ -5639,7 +5687,7 @@ function updateCfg() {
 
   // Atualiza UI imediatamente
   if ($('ui-name')) $('ui-name').textContent = nome + (sobrenome ? ' ' + sobrenome : '');
-  if ($('dash-greeting')) $('dash-greeting').textContent = `Olá, ${nome.split(' ')[0]}!`;
+  if ($('dash-greeting')) $('dash-greeting').textContent = `Olá, ${(nome || currentUser.email || 'Usuário').split(' ')[0]}!`;
 
   toast('✅ Ajustes salvos e sincronizados!');
 }
@@ -5719,16 +5767,17 @@ ${JSON.stringify(rowsToProcess)}`;
           }]
         })
       })
-      .then(async res => {
+      .then(res => {
         if(!res.ok) {
-          let errMsg = 'Erro status ' + res.status;
-          try {
-            const errJson = await res.json();
+          return res.json().then(errJson => {
+            let errMsg = 'Erro status ' + res.status;
             if(errJson && errJson.error && errJson.error.message) {
               errMsg = errJson.error.message;
             }
-          } catch(e) {}
-          throw new Error(errMsg);
+            throw new Error(errMsg);
+          }).catch(function() {
+            throw new Error('Erro status ' + res.status);
+          });
         }
         return res.json();
       })
@@ -6230,7 +6279,7 @@ function renderDuels() {
     const userStreak = appData.streakCount || 1;
     
     const leaderboard = [
-      { name: currentUser.nome.split(' ')[0] + ' (Você)', streak: userStreak, isUser: true }
+      { name: (currentUser.nome || currentUser.email || 'Você').split(' ')[0] + ' (Você)', streak: userStreak, isUser: true }
     ];
     
     duel.opponents.forEach(opp => {
