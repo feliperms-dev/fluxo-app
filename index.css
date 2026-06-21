@@ -773,6 +773,11 @@ ul{list-style:none;}
   border-radius: var(--r-md);
   margin-bottom: 8px;
   font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.totais-row-item:hover {
+  background: #F2F2F7;
 }
 
 /* ─── CONQUISTAS (BADGES) ─── */

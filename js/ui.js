@@ -9,7 +9,7 @@ function startApp() {
       if (ntxData) ntxData.value = dtKey(curDate);
       updateStreak();
       initGamificationState();
-      navTo('dash');
+      navTo('semanal');
     });
   };
 
