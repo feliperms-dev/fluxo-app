@@ -31,10 +31,11 @@ function loadData(callback) {
     appData = {
       saldoInicial: localData.saldoInicial !== undefined ? localData.saldoInicial : 0,
       transacoes: localData.transacoes || [],
+      deletedDiarios: localData.deletedDiarios || [],
       lastUpdated: localLastUpdated
     };
   } else {
-    appData = { saldoInicial: 0, transacoes: [], lastUpdated: 0 };
+    appData = { saldoInicial: 0, transacoes: [], deletedDiarios: [], lastUpdated: 0 };
   }
 
   if (useFirebase && currentUser && currentUser.uid) {
@@ -62,12 +63,14 @@ function loadData(callback) {
             appData = {
               saldoInicial: localData.saldoInicial !== undefined ? localData.saldoInicial : (data.saldoInicial || 0),
               transacoes: localData.transacoes,
+              deletedDiarios: localData.deletedDiarios || [],
               lastUpdated: localLastUpdated
             };
             console.log(`[DinDimpass] Local mais recente (${localTxCount} tx). Sincronizando no Firestore...`);
             firebase.firestore().collection('users').doc(currentUser.uid).set({
               transacoes: appData.transacoes,
               saldoInicial: appData.saldoInicial || 0,
+              deletedDiarios: appData.deletedDiarios || [],
               lastUpdated: appData.lastUpdated,
               email: currentUser.email || ''
             }, { merge: true }).catch(err => console.error('[DinDimpass] Erro sync Firestore:', err));
@@ -75,6 +78,7 @@ function loadData(callback) {
             appData = {
               saldoInicial: data.saldoInicial || 0,
               transacoes: dbTransacoes,
+              deletedDiarios: data.deletedDiarios || [],
               lastUpdated: dbLastUpdated
             };
             console.log(`[DinDimpass] Firestore mais completo (${dbTxCount} tx). Atualizando localStorage e UI...`);
@@ -145,6 +149,7 @@ function saveData() {
       firebase.firestore().collection('users').doc(currentUser.uid).set({
         transacoes: appData.transacoes,
         saldoInicial: appData.saldoInicial || 0,
+        deletedDiarios: appData.deletedDiarios || [],
         lastUpdated: appData.lastUpdated,
         email: currentUser.email || ''
       }, { merge: true }).catch(err => console.error('Erro ao salvar transacoes no Firestore:', err));
@@ -402,13 +407,14 @@ function getInstances(startDate, endDate) {
         dailyBudget = orcamentoLegado;
       }
 
-      if (dailyBudget > 0) {
+      const dayKey = dtKey(curDay);
+      if (dailyBudget > 0 && !(appData.deletedDiarios && appData.deletedDiarios.includes(dayKey))) {
         instances.push({
-          id: 'dynamic-diario-' + dtKey(curDay),
+          id: 'dynamic-diario-' + dayKey,
           tipo: 'diario',
           valor: dailyBudget,
           desc: 'Orçamento Diário',
-          data: dtKey(curDay),
+          data: dayKey,
           frequencia: 'none',
           macro: 'Variáveis',
           formaPagamento: 'Dinheiro',

@@ -227,3 +227,127 @@ function sugerirMetaReserva() {
     toast(`💡 Meta sugerida: ${fmt(sugestao)} (${mesesSug}x custo de vida médio)`);
   }
 }
+
+
+function showMovimentacaoDetalhes(tipo) {
+  const y = curDate.getFullYear(); const m = curDate.getMonth();
+  const start = new Date(y, m, 1);
+  const end = new Date(y, m + 1, 0);
+  const insts = getInstances(start, end);
+
+  let filtered = [];
+  let title = '';
+
+  if (tipo === 'credito') {
+    filtered = insts.filter(i => i.formaPagamento === 'Crédito');
+    title = 'Lançamentos no Crédito';
+  } else {
+    filtered = insts.filter(i => i.tipo === tipo && i.formaPagamento !== 'Crédito');
+    if (tipo === 'entrada') title = 'Lançamentos de Entrada';
+    else if (tipo === 'saida') title = 'Lançamentos de Saída';
+    else if (tipo === 'diario') title = 'Orçamentos Diários';
+    else if (tipo === 'economia') title = 'Economias / Investimentos';
+  }
+
+  const listContainer = $('mov-detalhes-list');
+  const titleEl = $('mov-detalhes-title');
+  if (!listContainer || !titleEl) return;
+
+  titleEl.textContent = title;
+  listContainer.innerHTML = '';
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = '<div style="text-align:center; color:var(--text-3); padding: 20px;">Nenhum lançamento encontrado nesta categoria.</div>';
+  } else {
+    filtered.forEach(i => {
+      const c = i.tipo === 'entrada' ? 'var(--apple-green)' : (i.tipo === 'economia' ? 'var(--apple-blue)' : 'var(--apple-red)');
+      const dateStr = parseDt(i.data).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+      listContainer.innerHTML += `
+        <div class="tx-item" style="cursor: pointer; padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;" onclick="closeModal('modal-mov-detalhes'); openEditTxModal('${i.id}')">
+          <div class="tx-info">
+            <div class="tx-desc" style="font-weight: 600;">${i.desc}</div>
+            <div class="tx-meta" style="font-size: 11px; color: var(--text-3); margin-top: 4px;">${dateStr} • ${i.macro} • ${i.formaPagamento}</div>
+          </div>
+          <div class="tx-val" style="color: ${c}; font-weight: 700;">
+            ${fmt(i.valor)}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  openModal('modal-mov-detalhes');
+}
+
+function showIndicatorInfo(indicator) {
+  const titleEl = $('indicator-info-title');
+  const contentEl = $('indicator-info-content');
+  if (!titleEl || !contentEl) return;
+
+  let title = '';
+  let content = '';
+
+  if (indicator === 'performance') {
+    title = 'ℹ️ Performance Financeira';
+    content = `
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+        <p>A <strong>Performance</strong> mede o resultado financeiro líquido do seu mês, indicando se sobrou ou faltou dinheiro.</p>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; font-family: monospace; font-size: 13px; color: var(--apple-blue);">
+          Fórmula:<br/>
+          Performance = Entradas − Custo de Vida − Economizado
+        </div>
+        <p>Onde:</p>
+        <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+          <li><strong>Entradas (↙):</strong> Ganhos reais no mês (salário, freelance, etc.).</li>
+          <li><strong>Custo de Vida:</strong> Soma de Saídas, Diários e Crédito.</li>
+          <li><strong>Economizado (E):</strong> Valores enviados para investimentos ou reserva de emergência.</li>
+        </ul>
+      </div>
+    `;
+  } else if (indicator === 'economizado') {
+    title = 'ℹ️ Percentual Economizado';
+    content = `
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+        <p>O indicador <strong>Economizado</strong> exibe a taxa de poupança (savings rate) em relação às suas entradas totais.</p>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; font-family: monospace; font-size: 13px; color: var(--apple-blue);">
+          Fórmula:<br/>
+          Taxa = (Economias / Entradas) × 100
+        </div>
+        <p><strong>Meta recomendada:</strong> Tente guardar no mínimo <strong>10% a 20%</strong> da sua renda mensal para construir patrimônio e sua reserva de emergência.</p>
+      </div>
+    `;
+  } else if (indicator === 'custo_vida') {
+    title = 'ℹ️ Custo de Vida';
+    content = `
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+        <p>O <strong>Custo de Vida</strong> representa tudo o que foi consumido no mês para manter seu padrão de vida.</p>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; font-family: monospace; font-size: 13px; color: var(--apple-blue);">
+          Fórmula:<br/>
+          Custo de Vida = Saídas + Diários + Crédito
+        </div>
+        <p>Onde:</p>
+        <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+          <li><strong>Saídas (↗):</strong> Gastos fixos e contas pontuais pagas à vista.</li>
+          <li><strong>Diários (D):</strong> Gastos variáveis diários acumulados.</li>
+          <li><strong>Crédito (C):</strong> Faturas e despesas de cartão de crédito.</li>
+        </ul>
+      </div>
+    `;
+  } else if (indicator === 'diario_medio') {
+    title = 'ℹ️ Diário Médio';
+    content = `
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+        <p>O <strong>Diário Médio</strong> mostra a média real gasta por dia do seu Orçamento Diário.</p>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; font-family: monospace; font-size: 13px; color: var(--apple-blue);">
+          Fórmula:<br/>
+          Diário Médio = Total gasto em Diários / Dias passados do mês
+        </div>
+        <p><strong>Comparação:</strong> Idealmente, seu diário médio deve ficar abaixo da <strong>Meta Diária</strong> calculada ou do orçamento que você estipulou em Ajustes.</p>
+      </div>
+    `;
+  }
+
+  titleEl.textContent = title;
+  contentEl.innerHTML = content;
+  openModal('modal-indicator-info');
+}

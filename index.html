@@ -175,7 +175,7 @@
 
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ════════���══════════════════════════════════════════
    MAIN APP LAYOUT
 ═══════════════════════════════════════════════════ -->
 <div id="app-layout" class="layout" style="display:none;">
@@ -220,39 +220,31 @@
         </div>
         <div class="nav-label">Totais</div>
       </div>
-      <!-- Item "Tags" -->
-      <div class="nav-item" data-page="lancamentos" onclick="navTo('lancamentos')">
-        <div class="nav-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-            <circle cx="7" cy="7" r="1.5" fill="currentColor"></circle>
-          </svg>
-        </div>
-        <div class="nav-label">Tags</div>
-      </div>
-      <!-- Item "Menu" -->
-      <div class="nav-item" id="sidebar-menu-btn" onclick="toggleSidebarMenuDropdown(event)">
+      <!-- Item "Configurações" -->
+      <div class="nav-item" data-page="config" onclick="navTo('config')">
         <div class="nav-icon">
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </div>
-        <div class="nav-label">Menu</div>
+        <div class="nav-label">Configurações</div>
       </div>
-      <!-- Dropdown interno do Menu -->
-      <div id="sidebar-menu-dropdown" class="sidebar-dropdown-menu" style="display: none;">
-        <div class="dropdown-item" onclick="navTo('dash')">🏠 Início</div>
-        <div class="dropdown-item" onclick="navTo('anual')">📅 Visão Anual</div>
-        <div class="dropdown-item" onclick="navTo('frequencia')">Ofensiva</div>
-        <div class="dropdown-item" onclick="navTo('config')">⚙️ Ajustes & IA</div>
-        <div class="dropdown-item" onclick="logout()" style="color: var(--apple-red); border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px;">🚪 Sair</div>
+      <!-- Item "Encerrar Sessão" -->
+      <div class="nav-item" onclick="logout()" style="color: var(--apple-red); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+        <div class="nav-label">Encerrar Sessão</div>
       </div>
 
       <!-- Espaçador e botões de ação rápida -->
       <div style="margin-top: auto; padding: 12px 0 0 0; display: flex; flex-direction: column; gap: 8px;">
-        <button class="btn btn-sidebar-action" onclick="openAddTxForToday()" style="background: #FFF; color: #1D1D1F; border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 8px; box-shadow: var(--shadow-sm);">
+        <button class="btn btn-sidebar-action" onclick="navTo('lancamentos')" style="background: #FFF; color: #1D1D1F; border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 8px; box-shadow: var(--shadow-sm);">
           <span style="font-size: 16px; font-weight: 900; line-height: 1; color: #1D1D1F;">+</span>
           <span class="nav-label">Adicionar</span>
         </button>
@@ -264,7 +256,6 @@
           <span class="nav-label">Ir pra hoje</span>
         </button>
       </div>
-    </nav>
 
     <div class="user-profile" onclick="navTo('config')" style="position: relative;">
       <div class="user-avatar" id="ui-avatar">U</div>
@@ -445,7 +436,13 @@
           </div>
         </div>
 
-        <div class="table-wrapper">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+          <button class="btn btn-secondary" onclick="navTo('horizonte')" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px;">
+            <span>🌅 Horizonte de Saldos</span>
+          </button>
+        </div>
+
+<div class="table-wrapper">
           <table class="w-table">
             <thead>
               <tr>
@@ -632,23 +629,23 @@
         <div class="card card-pad" style="margin-top: 20px; margin-bottom: 20px;">
           <h3 style="margin-bottom: 16px; font-size: 15px;">Movimentações do mês</h3>
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div class="totais-row-item">
+            <div class="totais-row-item" onclick="showMovimentacaoDetalhes('entrada')">
               <span style="display: flex; align-items: center; gap: 8px;"><span style="color: var(--apple-green); font-size: 18px;">↙</span> Entradas</span>
               <span id="totais-row-ent" style="color: var(--apple-green);">R$ 0,00</span>
             </div>
-            <div class="totais-row-item">
+            <div class="totais-row-item" onclick="showMovimentacaoDetalhes('saida')">
               <span style="display: flex; align-items: center; gap: 8px;"><span style="color: var(--apple-red); font-size: 18px;">↗</span> Saídas</span>
               <span id="totais-row-sai" style="color: var(--apple-red);">R$ 0,00</span>
             </div>
-            <div class="totais-row-item">
+            <div class="totais-row-item" onclick="showMovimentacaoDetalhes('diario')">
               <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #FF2D55; font-size: 16px; font-weight: bold; border: 1.5px solid #FF2D55; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">D</span> Diários (orçado)</span>
               <span id="totais-row-dia" style="color: #FF2D55;">R$ 0,00</span>
             </div>
-            <div class="totais-row-item">
+            <div class="totais-row-item" onclick="showMovimentacaoDetalhes('economia')">
               <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #4CD964; font-size: 16px; font-weight: bold; border: 1.5px solid #4CD964; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">E</span> Economias</span>
               <span id="totais-row-eco" style="color: #4CD964;">R$ 0,00</span>
             </div>
-            <div class="totais-row-item">
+            <div class="totais-row-item" onclick="showMovimentacaoDetalhes('credito')">
               <span style="display: flex; align-items: center; gap: 8px;"><span style="color: #8E8E93; font-size: 13px; font-weight: bold; border: 1.5px solid #8E8E93; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">C</span> Crédito</span>
               <span id="totais-row-cre" style="color: #8E8E93;">R$ 0,00</span>
             </div>
@@ -1093,50 +1090,9 @@
           </div>
         </div>
 
-        <!-- Loja DinDimpass -->
-        <div id="shop-section" class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(255, 149, 0, 0.25); background: linear-gradient(135deg, var(--bg-card), rgba(255, 149, 0, 0.02));">
-          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">🛒 Loja DinDimpass</h3>
-          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Gaste seus DinDins acumulados por consistência em vantagens e personalizações premium!</p>
-          
-          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-            Seu saldo: <span style="color: var(--apple-orange);">🪙 <span id="shop-dindins-count">0</span> DinDins</span>
-          </div>
+        
 
-          <div style="display: flex; flex-direction: column; gap: 14px;">
-            <!-- Item 1: Streak Freeze -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(0,0,0,0.02); border-radius: var(--r-md); border: 1px solid var(--border);">
-              <div>
-                <div style="font-weight: 700; font-size: 14px;">Gelador de Ofensiva (Streak Freeze) 🧊</div>
-                <div style="font-size: 12px; color: var(--text-2); margin-top: 2px;">Protege sua ofensiva caso você passe 1 dia sem registrar lançamentos.</div>
-                <div style="font-size: 11px; color: var(--apple-blue); margin-top: 4px; font-weight: bold;">Possuídos: <span id="shop-streak-freezes">0</span></div>
-              </div>
-              <button class="btn btn-primary btn-sm" onclick="buyItem('streak_freeze', 100)" style="white-space: nowrap; background: #0071E3;">100 🪙</button>
-            </div>
-
-            <!-- Item 2: Temas de cores -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(0,0,0,0.02); border-radius: var(--r-md); border: 1px solid var(--border);">
-              <div>
-                <div style="font-weight: 700; font-size: 14px;">Temas Premium 🎨</div>
-                <div style="font-size: 12px; color: var(--text-2); margin-top: 2px;">Mude o estilo visual das suas finanças!</div>
-                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;" id="themes-activation-area">
-                  <!-- Injetado via JS -->
-                </div>
-              </div>
-              <button class="btn btn-primary btn-sm" onclick="buyItem('themes', 300)" id="btn-buy-themes" style="white-space: nowrap; background: #0071E3;">300 🪙</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Duelos Ativos -->
-        <div class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(225, 29, 72, 0.2); background: linear-gradient(135deg, var(--bg-card), rgba(225, 29, 72, 0.02));">
-          <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">⚔️ Central de Duelos</h3>
-          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 16px;">Participe de disputas locais de ofensiva contra bots ou outros perfis cadastrados!</p>
-          
-          <div id="duels-list-container" style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- Injetado via JS -->
-          </div>
-          <button class="btn btn-primary" onclick="openCreateDuelModal()" style="width: 100%; margin-top: 12px; background: #e11d48; border-color: #e11d48;">Criar Novo Duelo ⚔️</button>
-        </div>
+        
 
         <!-- Central de Aprendizado -->
         <div class="card card-pad" style="max-width: 600px; margin-top: 24px; border: 1.5px solid rgba(52, 199, 89, 0.2); background: linear-gradient(135deg, var(--bg-card), rgba(52, 199, 89, 0.02));">
@@ -1317,6 +1273,8 @@
     <div class="segment" style="margin-bottom: 16px;">
       <div class="seg-btn active" id="ed-seg-saida" onclick="setEdType('saida')">Saída</div>
       <div class="seg-btn" id="ed-seg-entrada" onclick="setEdType('entrada')">Entrada</div>
+      <div class="seg-btn" id="ed-seg-economia" onclick="setEdType('economia')">Economia</div>
+      <div class="seg-btn" id="ed-seg-diario" onclick="setEdType('diario')">Diário</div>
     </div>
 
     <div class="input-group">
@@ -1415,6 +1373,20 @@
     </div>
     
     <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="saveVoiceTx()">Salvar Lançamento</button>
+  </div>
+</div>
+
+<!-- Modal Movimentações Detalhes (Drill-down) -->
+<div class="overlay" id="modal-mov-detalhes">
+  <div class="modal" style="max-width: 450px;">
+    <div class="m-header">
+      <div class="m-title" id="mov-detalhes-title">Lançamentos</div>
+      <div class="m-close" onclick="closeModal('modal-mov-detalhes')">✕</div>
+    </div>
+    <div style="max-height: 400px; overflow-y: auto; margin-bottom: 16px;">
+      <div id="mov-detalhes-list" class="tx-list"></div>
+    </div>
+    <button class="btn btn-secondary" style="width: 100%;" onclick="closeModal('modal-mov-detalhes')">Fechar</button>
   </div>
 </div>
 
