@@ -436,7 +436,173 @@ function renderDayTxList() {
   });
 }
 
+let selectedTxIdForEdit = null;
+let curEdType = 'saida';
+
+function openEditTxModal(id) {
+  let tx = appData.transacoes.find(x => x.id === id);
+  if (!tx && typeof id === 'string' && id.startsWith('dynamic-diario-')) {
+    const dateStr = id.replace('dynamic-diario-', '');
+    const insts = getInstances(parseDt(dateStr), parseDt(dateStr));
+    const found = insts.find(x => x.id === id);
+    if (found) {
+      tx = {
+        id: id,
+        desc: found.desc,
+        valor: found.valor,
+        data: found.data,
+        tipo: 'diario',
+        formaPagamento: found.formaPagamento,
+        frequencia: found.frequencia,
+        macro: found.macro
+      };
+    }
+  }
+  
+  if (!tx) {
+    console.warn("Transação não encontrada:", id);
+    return;
+  }
+  
+  selectedTxIdForEdit = id;
+  
+  $('ed-desc').value = tx.desc || '';
+  $('ed-val').value = tx.valor || '';
+  $('ed-data').value = tx.data || '';
+  
+  if ($('ed-pag')) $('ed-pag').value = tx.formaPagamento || 'Pix';
+  if ($('ed-freq')) $('ed-freq').value = tx.frequencia || 'none';
+  
+  setEdType(tx.tipo || 'saida');
+  $('ed-cat').value = tx.macro || 'Outros';
+  
+  openModal('modal-edit-tx');
+}
+
+function setEdType(tipo) {
+  curEdType = tipo;
+  $('ed-seg-saida').classList.toggle('active', tipo === 'saida');
+  $('ed-seg-entrada').classList.toggle('active', tipo === 'entrada');
+  const econEl = $('ed-seg-economia');
+  if (econEl) econEl.classList.toggle('active', tipo === 'economia');
+  const diarEl = $('ed-seg-diario');
+  if (diarEl) diarEl.classList.toggle('active', tipo === 'diario');
+  updateEdMacroOptions(tipo);
+}
+
+function updateEdMacroOptions(tipo) {
+  const sel = $('ed-cat');
+  if (!sel) return;
+  const cats = MACRO_CATS[tipo] || MACRO_CATS.saida;
+  sel.innerHTML = cats.map((c, i) => `<option value="${c.v}"${i === 0 ? ' selected' : ''}>${c.l}</option>`).join('');
+}
+
+function saveEditedTx() {
+  if (!selectedTxIdForEdit) return;
+  const val = parseFloat($('ed-val').value);
+  const desc = $('ed-desc').value.trim() || 'Lançamento';
+  const data = $('ed-data').value;
+  const macro = $('ed-cat').value;
+  const formaPagamento = $('ed-pag') ? $('ed-pag').value : 'Pix';
+  const frequencia = $('ed-freq') ? $('ed-freq').value : 'none';
+  
+  if (isNaN(val) || val <= 0) {
+    toast('Valor inválido.');
+    return;
+  }
+  if (!data) {
+    toast('Data inválida.');
+    return;
+  }
+  
+  const txIndex = appData.transacoes.findIndex(x => x.id === selectedTxIdForEdit);
+  if (txIndex !== -1) {
+    appData.transacoes[txIndex].valor = val;
+    appData.transacoes[txIndex].desc = desc;
+    appData.transacoes[txIndex].data = data;
+    appData.transacoes[txIndex].tipo = curEdType;
+    appData.transacoes[txIndex].macro = macro;
+    appData.transacoes[txIndex].formaPagamento = formaPagamento;
+    appData.transacoes[txIndex].frequencia = frequencia;
+    
+    saveData();
+    closeModal('modal-edit-tx');
+    
+    renderSemanal();
+    renderDayTxList();
+    if (typeof renderTotais === 'function') renderTotais();
+    if (typeof renderDash === 'function') renderDash();
+    
+    toast('Lançamento atualizado!');
+  } else if (typeof selectedTxIdForEdit === 'string' && selectedTxIdForEdit.startsWith('dynamic-diario-')) {
+    const dateStr = selectedTxIdForEdit.replace('dynamic-diario-', '');
+    const newTx = {
+      id: 'tx-' + Date.now() + '-' + Math.floor(Math.random()*1000),
+      valor: val,
+      desc: desc,
+      data: data,
+      tipo: curEdType,
+      macro: macro,
+      formaPagamento: formaPagamento,
+      frequencia: frequencia,
+      usuarioId: currentUser ? currentUser.uid : null
+    };
+    appData.transacoes.push(newTx);
+    
+    appData.deletedDiarios = appData.deletedDiarios || [];
+    if (!appData.deletedDiarios.includes(dateStr)) {
+      appData.deletedDiarios.push(dateStr);
+    }
+    
+    saveData();
+    closeModal('modal-edit-tx');
+    
+    renderSemanal();
+    renderDayTxList();
+    if (typeof renderTotais === 'function') renderTotais();
+    if (typeof renderDash === 'function') renderDash();
+    
+    toast('Lançamento atualizado!');
+  }
+}
+
+function deleteTxFromEditModal() {
+  if (!selectedTxIdForEdit) return;
+  deleteTx(selectedTxIdForEdit);
+  closeModal('modal-edit-tx');
+  if (typeof renderTotais === 'function') renderTotais();
+  if (typeof renderDash === 'function') renderDash();
+}
+
 function deleteTx(id) {
+  if (typeof id === 'string' && id.startsWith('dynamic-diario-')) {
+    const dateStr = id.replace('dynamic-diario-', '');
+    appData.deletedDiarios = appData.deletedDiarios || [];
+    if (!appData.deletedDiarios.includes(dateStr)) {
+      appData.deletedDiarios.push(dateStr);
+    }
+    saveData();
+    renderDayTxList();
+    renderSemanal();
+    if (typeof renderTotais === 'function') renderTotais();
+    if (typeof renderDash === 'function') renderDash();
+    toast('Orçamento diário removido deste dia.');
+    return;
+  }
+  
+  const tx = appData.transacoes.find(x => x.id === id);
+  if (tx && tx.tipo === 'diario') {
+    const dateStr = tx.data;
+    appData.deletedDiarios = appData.deletedDiarios || [];
+    if (!appData.deletedDiarios.includes(dateStr)) {
+      appData.deletedDiarios.push(dateStr);
+    }
+  }
+  
   appData.transacoes = appData.transacoes.filter(x => x.id !== id);
-  saveData(); renderDayTxList(); renderSemanal();
+  saveData();
+  renderDayTxList();
+  renderSemanal();
+  if (typeof renderTotais === 'function') renderTotais();
+  if (typeof renderDash === 'function') renderDash();
 }
